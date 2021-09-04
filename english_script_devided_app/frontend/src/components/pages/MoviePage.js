@@ -35,6 +35,8 @@ export default class MoviePage extends Component {
 
   render() {
     return (
+
+      <div className='listPage'>
       <Grid container
       direction="column"
       justifyContent="center"
@@ -53,6 +55,7 @@ export default class MoviePage extends Component {
           ))}
         </Grid>
       </Grid>
+      </div>
     );
   }
 }

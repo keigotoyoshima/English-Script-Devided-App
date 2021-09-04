@@ -1,6 +1,7 @@
 import React,{Component, components} from "react";
 import { render } from "react-dom";
-import HomePage from "./HomePage";
+import HomePage from "./pages/HomePage";
+import { createMuiTheme } from '@material-ui/styles';
 
 export default class App extends Component{
   constructor(props){
@@ -9,12 +10,14 @@ export default class App extends Component{
 
   render(){
     return (
-      <div className="center">
-        <HomePage/>
-      </div>
+      
+        <HomePage></HomePage>
+      
+      
+
     );
   }
 }
 
-const appDiv = document.getElementById("app");
-render(<App name="keigo"/>, appDiv);
+// const appDiv = document.getElementById("app");
+// render(<App name="home"/>, appDiv);

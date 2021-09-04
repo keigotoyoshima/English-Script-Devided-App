@@ -2,9 +2,9 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 const ListTitle = ({listTitle})=>{
   return(
-    <div className="listTitle">
-      <Link to='/movie'>
-      <h3>{listTitle.title}</h3>
+    <div className="listTitles">
+      <Link to='/movie' style={{ textDecoration: 'none'}}>
+      <h3 className='listTitle'>{listTitle.title}</h3>
       </Link>
       
     </div>

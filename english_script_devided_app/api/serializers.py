@@ -1,19 +1,19 @@
 from rest_framework import serializers
-from .models import  Room
+from .models import Movie
 
-class RoomSerializer(serializers.ModelSerializer):
+class MovieSerializer(serializers.ModelSerializer):
   class Meta:
-    model = Room
-    fields = ( 'code', 'host', 'guest_can_pause', 'votes_to_skip', 'created_at')
+    model = Movie
+    fields = ('__all__')
 
-class CreateRoomSerializer(serializers.ModelSerializer):
+class CreateMovieSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Room
-        fields = ('guest_can_pause', 'votes_to_skip')
+        model = Movie
+        fields = ('title',)
 
 
-class UpdateRoomSerializer(serializers.ModelSerializer):
+class UpdateMovieSerializer(serializers.ModelSerializer):
     code = serializers.CharField(validators=[])
     class Meta:
-        model = Room
-        fields = ('guest_can_pause', 'votes_to_skip', 'code')
+        model = Movie
+        fields = ('title')

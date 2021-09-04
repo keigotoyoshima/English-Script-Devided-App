@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "bootstrap": "^5.0.0-beta3",
+    "react-window": "^1.8.6"
+  },
+  "devDependencies": {
+    "axios": "^0.21.1"
+  }
+}

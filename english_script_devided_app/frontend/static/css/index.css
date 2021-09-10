@@ -39,9 +39,11 @@ body {
   width: 500px;
 }
 
-.listPage{
-  margin-top: 30px;
-
+.listPage {
+  margin-top: 40px;
+}
+.scriptPage{
+  margin-top: 40px;
 }
 
 .listTitles{
@@ -58,8 +60,6 @@ body {
   margin-left: 5px;
 
 }
-
-
 
 .btn {
   display: inline-block;
@@ -80,4 +80,60 @@ body {
   margin: 5px;
   padding: 3px 7px;
   font-size: 17px;
+}
+
+
+.card-radius{
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,.2);
+}
+
+.card {
+  background-color: #fff;
+  box-shadow: 0 0 0px rgba(0, 0, 0, .16);
+  color: #212121;
+  text-decoration: none;
+}
+
+
+.card__title {
+  width: 100%;
+  font-size: 1.6rem;
+  order: 1;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.card__thumbnail {
+  margin: 0;
+  order: 0;
+}
+
+.card__image {
+  width: 100%;
+}
+
+.card__body {
+  padding: 20px 20px;
+}
+
+.card__text {
+  font-size: .8rem;
+  text-align:center;
+  text-decoration: none;
+}
+
+.card__text2 {
+  font-size: .8rem;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.divider{
+  border: 1px solid #000;
+}
+.formSelect{
+  padding-top: 20px;
+  padding-bottom: 20px;
 }

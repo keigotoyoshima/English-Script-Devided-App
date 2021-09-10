@@ -13,13 +13,6 @@ const useStyles = makeStyles((theme) => ({
 
 const SelectForm = ({callback}) => {
   const classes = useStyles();
-  function FormRow({title, created}) {
-    console.log({title})  
-    return ({title} === undefined) ? "yes":"No"  
-  }
-
-
-  
   const [id, setId] = useState('')
 
   const onSubmit = (e) => {
@@ -38,6 +31,18 @@ const SelectForm = ({callback}) => {
     callback(data.title)
   }
 
+  function Table(props){
+    return (
+      <Grid container spacing={1}>
+      <Grid container item xs={6} spacing={3}>
+        <h3>{props.type}</h3>
+      </Grid>
+      <Grid container item xs={6} spacing={3}>
+        <h3>{props.content}</h3>
+      </Grid>
+    </Grid>
+    );
+  }
   return (
     <div className="l-wrapper card-radius">
     <article className="card">
@@ -59,14 +64,8 @@ const SelectForm = ({callback}) => {
       <div className='divider'></div>
 
       <div className="card__body">
-        <Grid container spacing={1}>
-          <Grid container item xs={12} spacing={3}>
-            <FormRow title='this is title'/>
-          </Grid>
-          <Grid container item xs={12} spacing={3}>
-            <FormRow created='2021-09-05'/>
-          </Grid>
-        </Grid>
+        <Table type="a" content="b"></Table>
+        <Table type="c" content="d"></Table>
       </div>    
     </article>
   </div>

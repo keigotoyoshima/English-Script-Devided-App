@@ -34,7 +34,7 @@ export default class HomePage extends Component {
         <Grid item xs={12}>
           <Typography 
           variant="h2" compact="h3">
-            Choose type
+            Choose Choose type
           </Typography>
         </Grid>
         <Grid item xs={12} >

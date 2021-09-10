@@ -1,9 +1,27 @@
 import { useState } from 'react'
 import React from 'react'
-import { Grid, Button, Typography } from "@material-ui/core";
+import { Grid, Button, Typography, Divider } from "@material-ui/core";
+import { makeStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
 
-const SelectForm = ({  }) => {
-  const [id, setId] = useState(0)
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    padding: theme.spacing(1),
+    textAlign: 'center',
+  },
+}));
+
+const SelectForm = ({callback}) => {
+  const classes = useStyles();
+  function FormRow({title, created}) {
+    console.log({title})  
+    return ({title} === undefined) ? "yes":"No"  
+  }
+
+
+  
+  const [id, setId] = useState('')
+
   const onSubmit = (e) => {
     e.preventDefault();
     if (!id) {
@@ -11,39 +29,48 @@ const SelectForm = ({  }) => {
       return
     }
     handleSubmit()
-    setId('')
   }
 
   const handleSubmit = async ()=>{
     const response = await fetch(`/api/get-movie?id=${id}`)
     const data = await response.json()
 
-    console.log("setState in handleSubmit(select form)")
-    setId(data.title)
+    callback(data.title)
   }
 
   return (
-    <Grid container spacing={1} >
-      <Grid item xs={12}  >
-      <form className='add-form' onSubmit={onSubmit}>
-        <Grid item xs={12} >
-          <label>Select id: </label>
+    <div className="l-wrapper card-radius">
+    <article className="card">
+      <div className="formSelect">
+        <div>
+          <h3 className="card__title">Select</h3>
+        </div>
+        <div>
+          <form  onSubmit={onSubmit}>
             <input
               type='id'
               placeholder='Select id'
               value={id}
               onChange={(e) => setId(e.target.value)}
             />
+          </form>
+        </div>
+      </div>
+      <div className='divider'></div>
+
+      <div className="card__body">
+        <Grid container spacing={1}>
+          <Grid container item xs={12} spacing={3}>
+            <FormRow title='this is title'/>
+          </Grid>
+          <Grid container item xs={12} spacing={3}>
+            <FormRow created='2021-09-05'/>
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
-        <input type='submit' value='Confirm' className='btn btn-block' />
-        </Grid>
-        
-     
-      </form>
-      </Grid>
-    </Grid>
-   
+      </div>    
+    </article>
+  </div>
+
    
   );
 }

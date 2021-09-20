@@ -1,6 +1,6 @@
 .vscode/
 # dependencies
-/node_modules
+node_modules/
 # Environments
 .env
 venv/

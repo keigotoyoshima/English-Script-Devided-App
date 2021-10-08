@@ -12,7 +12,7 @@ export default class Selection extends React.Component {
   
   render(){
     return (
-      <select value={this.props.value} onChange={this.handleChange}>
+      <select className="minutes_select" value={this.props.value} onChange={this.handleChange}>
       <option value=""></option>
       <option value="1">0-10 minites</option>
       <option value="2">10-20 minites</option>

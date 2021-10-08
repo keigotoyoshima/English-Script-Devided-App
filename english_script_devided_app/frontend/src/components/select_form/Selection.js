@@ -3,17 +3,10 @@ import React from 'react'
 export default class Selection extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      value: '',
-    };
     this.handleChange = this.handleChange.bind(this);
   }
   handleChange(event) {
-    this.setState({
-      value: event.target.value,
-    });
-    console.log('handle Change');
-    this.props.callback(this.state.value);
+    this.props.callback(event.target.value);
   }
 
   

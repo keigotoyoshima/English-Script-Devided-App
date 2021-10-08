@@ -5,6 +5,7 @@ from . import models
 
 @admin.register(models.Category)
 class CategoryAdmin(admin.ModelAdmin):
+    list_filter=['category', ]
     pass
 
 

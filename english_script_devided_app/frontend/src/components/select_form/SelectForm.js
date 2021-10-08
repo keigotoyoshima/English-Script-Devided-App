@@ -52,23 +52,17 @@ export default class SelectForm extends React.Component {
     this.handleSubmit()
   }
 
-  // for content
+  // for script content
   async handleSubmit(){
     const response = await fetch(`/api/get-movie?id=${this.id}`)
     const data = await response.json()
-    // callback to Movie.js 
-    
-    // TODO selectによって変える。
-    const capture = ProduceContent()
-    // if (!this.state.value) {
-    //   alert('Please add a task')
-    //   return
-    // }
-    this.props.callback(capture)
+    var capture = ProduceContent(this.state.value)
+    var script_contnet = data[capture]
+    if(script_contnet == '') script_contnet = "No script for that minutes"
+    this.props.callback(script_contnet)
   }
 
   handleChange(value) {
-    console.log(value)
     this.setState({
       value: value,
     });
@@ -86,7 +80,7 @@ export default class SelectForm extends React.Component {
           </div>
           <div>
             <form  onSubmit={this.onSubmit}>
-              <Selection callback={()=>{this.handleChange}}></Selection>
+              <Selection callback={this.handleChange}></Selection>
               <input type="submit" value="Confirm" />
             </form>
           </div>

@@ -1,4 +1,4 @@
-# Friends English 
+# English Script Devided in about 10 minutes
 
 Django and React web application.
 

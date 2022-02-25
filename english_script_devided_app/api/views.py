@@ -1,10 +1,31 @@
-from django.http.response import JsonResponse
+from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import render
 from rest_framework import generics, serializers, status
 from .serializers import MovieSerializer, CreateMovieSerializer, UpdateMovieSerializer,CategorySerializer
 from .models import Category, Movie
 from rest_framework.views import APIView
 from rest_framework.response import Response
+
+# def SampleView(request,):
+#     # print(f'{s=}')
+#     parameter = request.GET.copy()
+#     print(f'{parameter=}')
+#     k = parameter.pop('s')
+#     print(f'{k=}')
+#     print(f'{parameter=}')
+    
+#     path_1 = request.path
+#     path_2 = request.get_full_path()
+#     path_3 = request.build_absolute_uri()
+#     print(f'{path_1=}')
+#     print(f'{path_2=}')
+#     print(f'{path_3=}')
+
+#     print(f'{request=}')
+#     response = HttpResponse('this is sample view')
+#     print(f'{response=}')
+    
+#     return response 
 
 class MovieView(generics.ListAPIView):
     queryset = Movie.objects.all()
@@ -20,6 +41,7 @@ class GetMovie(APIView):
             movie = Movie.objects.filter(id=id)
             if len(movie) > 0:
                 data = MovieSerializer(movie[0]).data
+                print(f'{data=}')
                 # data['is_host'] = self.request.session.session_key == movie[0].host
                 return Response(data, status=status.HTTP_200_OK)
             return Response({'Movie Not Found': 'Invalid Movie Code.'}, status=status.HTTP_404_NOT_FOUND)

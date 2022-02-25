@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import CategoryView, GetCategory, MovieView, CreateMovieView,GetMovie,JoinMovie,UserInMovie,LeaveMovie,UpdateMovie
+from .views import CategoryView, GetCategory, MovieView, SampleView,CreateMovieView,GetMovie,JoinMovie,UserInMovie,LeaveMovie,UpdateMovie
 
 
 urlpatterns = [
+    # path('sample/', SampleView),
     path('movie', MovieView.as_view()),
     path('category', CategoryView.as_view()),
     path('get-category', GetCategory.as_view()),

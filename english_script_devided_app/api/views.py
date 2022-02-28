@@ -6,26 +6,26 @@ from .models import Category, Movie
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-# def SampleView(request,):
-#     # print(f'{s=}')
-#     parameter = request.GET.copy()
-#     print(f'{parameter=}')
-#     k = parameter.pop('s')
-#     print(f'{k=}')
-#     print(f'{parameter=}')
+def SampleView(request,):
+    # print(f'{s=}')
+    parameter = request.GET.copy()
+    print(f'{parameter=}')
+    k = parameter.pop('s')
+    print(f'{k=}')
+    print(f'{parameter=}')
     
-#     path_1 = request.path
-#     path_2 = request.get_full_path()
-#     path_3 = request.build_absolute_uri()
-#     print(f'{path_1=}')
-#     print(f'{path_2=}')
-#     print(f'{path_3=}')
+    path_1 = request.path
+    path_2 = request.get_full_path()
+    path_3 = request.build_absolute_uri()
+    print(f'{path_1=}')
+    print(f'{path_2=}')
+    print(f'{path_3=}')
 
-#     print(f'{request=}')
-#     response = HttpResponse('this is sample view')
-#     print(f'{response=}')
+    print(f'{request=}')
+    response = HttpResponse('this is sample view')
+    print(f'{response=}')
     
-#     return response 
+    return response 
 
 class MovieView(generics.ListAPIView):
     queryset = Movie.objects.all()

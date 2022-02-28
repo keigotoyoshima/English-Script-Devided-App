@@ -2,6 +2,8 @@ import React, {Component} from "react";
 import MoviePage from "./MoviePage";
 import DramaPage from "./DramaPage";
 import Movie from "../Movie";
+import YoutubePage from  "./YoutubePage";
+
 
 
 import { Grid, Button, ButtonGroup, Typography, ThemeProvider } from "@material-ui/core";
@@ -39,11 +41,14 @@ export default class HomePage extends Component {
         </Grid>
         <Grid item xs={12} >
           <ButtonGroup disableElevation color="primary"> 
-          <Button variant="outlined"color="default" to="/moviepage" component={Link}>
-              Movie
+            <Button variant="outlined"color="default" to="/moviepage" component={Link}>
+                Movie
             </Button>
             <Button variant="outlined" color="default" to="/drama" component={Link}>
               Drama
+            </Button>
+            <Button variant="outlined" color="default" to="/youtube" component={Link}>
+              Youtube
             </Button>
           </ButtonGroup>
         </Grid>
@@ -75,8 +80,8 @@ export default class HomePage extends Component {
           />
           <Route path="/moviepage" component={MoviePage} />
           <Route path="/movie/:id" component={Movie} />
-
           <Route path="/drama" component={DramaPage} />
+          <Route path="/youtube" component={YoutubePage} />
         </Switch>
       </Router>
     );

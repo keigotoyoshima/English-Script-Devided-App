@@ -5,28 +5,39 @@ from .serializers import MovieSerializer, CreateMovieSerializer, UpdateMovieSeri
 from .models import Category, Movie
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from youtube_transcript_api import YouTubeTranscriptApi
 
-def SampleView(request,):
-    # print(f'{s=}')
-    parameter = request.GET.copy()
-    print(f'{parameter=}')
-    k = parameter.pop('s')
-    print(f'{k=}')
-    print(f'{parameter=}')
+class GetYoutube(APIView):
+    serializer_class = MovieSerializer
+#     # lookup_url_kwarg = 'id'
+
+    def get(self, request, format=None):
+        print("call GetYoutube")
+        transcript = YouTubeTranscriptApi.get_transcript("O6P86uwfdR0")
+        # print(transcript)
+        
+        # movie = Movie.objects.filter(id=1)
+
+        # data = MovieSerializer(movie[0]).data
+        # print(data)
+        
+
+        return Response(transcript, status=status.HTTP_200_OK)
+#         # id = request.GET.get(self.lookup_url_kwarg)
+#         # print("call GetMovie")
+#         # if id != None:
+#         #     movie = Movie.objects.filter(id=id)
+#         #     if len(movie) > 0:
+#         #         data = MovieSerializer(movie[0]).data
+#         #         # print(f'{data=}')
+#         #         # data['is_host'] = self.request.session.session_key == movie[0].host
+#         #         return Response(data, status=status.HTTP_200_OK)
+#         #     return Response({'Movie Not Found': 'Invalid Movie Code.'}, status=status.HTTP_404_NOT_FOUND)
+
+#         # return Response({'Bad Request': 'Code paramater not found in request'}, status=status.HTTP_400_BAD_REQUEST)
     
-    path_1 = request.path
-    path_2 = request.get_full_path()
-    path_3 = request.build_absolute_uri()
-    print(f'{path_1=}')
-    print(f'{path_2=}')
-    print(f'{path_3=}')
-
-    print(f'{request=}')
-    response = HttpResponse('this is sample view')
-    print(f'{response=}')
     
-    return response 
-
+    
 class MovieView(generics.ListAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
@@ -37,11 +48,12 @@ class GetMovie(APIView):
 
     def get(self, request, format=None):
         id = request.GET.get(self.lookup_url_kwarg)
+        print("call GetMovie")
         if id != None:
             movie = Movie.objects.filter(id=id)
             if len(movie) > 0:
                 data = MovieSerializer(movie[0]).data
-                print(f'{data=}')
+                # print(f'{data=}')
                 # data['is_host'] = self.request.session.session_key == movie[0].host
                 return Response(data, status=status.HTTP_200_OK)
             return Response({'Movie Not Found': 'Invalid Movie Code.'}, status=status.HTTP_404_NOT_FOUND)

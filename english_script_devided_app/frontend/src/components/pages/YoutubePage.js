@@ -37,28 +37,46 @@ export default class YoutubePage extends Component {
     super(props);
     this.state = {
       inputValue: '',
-      src:"",
-      video_id:"",
-      transcription:[]
+      src: "",
+      video_id: "",
+      transcription: [],
+      vocabulary_list: ["a", "b", "c"],
     };
 
   }
+
+
   getYoutube() {
     fetch("/api/get-youtube")
       .then((response) => response.json()).then(
         (data) => {
           console.log(data);
+          // startを00:00に上書き
+          data.forEach((item) => {
+            let given_seconds = item.start;
+            let hours = Math.floor(given_seconds / 3600);
+            let minutes = Math.floor((given_seconds - (hours * 3600)) / 60);
+            let seconds = given_seconds - (hours * 3600) - (minutes * 60);
+            seconds = Math.floor(seconds);
+
+            // 今のところhoursは入れない
+            // item.start = hours.toString().padStart(2, '0') + ':' +
+            //   minutes.toString().padStart(2, '0') + ':' +
+            //   seconds.toString().padStart(2, '0');
+            item.start = minutes.toString().padStart(2, '0') + ':' +
+              seconds.toString().padStart(2, '0');
+          })
           this.setState({
             transcription: data
           });
-          
+
         })
       .catch((error) => {
         console.log(error);
       });
   }
-  componentDidMount(){
-    console.log("componentDidMount()"); 
+  componentDidMount() {
+    console.log("componentDidMount()");
     // var d = document.getElementById("d1");
     setTimeout(() => {
       this.getYoutube();
@@ -71,7 +89,7 @@ export default class YoutubePage extends Component {
       const b = document.getElementsByClassName("react-button")[0];
       console.log(b, 'b');
     }, 1000)
-   
+
     // d.setAttribute("aria-valuenow", "400");
   }
   getAttribute() {
@@ -102,60 +120,78 @@ export default class YoutubePage extends Component {
     const url = new URL(this.state.inputValue);
     const params = new URLSearchParams(url.search);
     for (let param of params) {
-      if (param[0] == "v"){
+      if (param[0] == "v") {
         this.setState();
         this.setState({ video_id: param[1] }, () => {
           this.getAttribute();
-          
-        });  
+
+        });
       }
     }
-    
+
   }
 
   render() {
     return (
-      <Grid container spacing={0}>
-        <Grid item xs={2}>
-          {/* <Item>xs=8</Item> */}
-        </Grid>
-        <Grid item xs={8}>
-          <div className="row">
-
-              <form onSubmit={this.onSubmit}>
-
-                <Container className="mt-4">
-                  <Row>
-                    <Col xs={9}>
-                    <CssTextField id="outlined-basic" style={{ width: '100%' }} label="URL" variant="outlined" size='small'  value={this.state.inputValue} onChange={e => this.updateInputValue(e)}/>
-                    </Col>
-                    <Col xs={1}>
-                      <Button className="react-button" variant="outlined" type="submit" margin="normal">
-                        Confirm
-                      </Button>
-                    </Col>
-                  </Row>
-                </Container>
-
-              </form>
-
-            <div className='row'>
-             {/* <iframe width="560" height="315" src="https://www.youtube.com/embed/DINxNbBOEoI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> */}
-              <iframe id='src' width="560" height="315" src="https://www.youtube.com/embed/uirRaVjRsf4" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
-            </div>
-          </div>
-            
+      <Container>
+        <Row>
+          <Container className="mt-4">
+            <form onSubmit={this.onSubmit}>
+              <Row>
+                <Col xs={10}>
+                  <CssTextField style={{ margin: "auto auto" }} id="outlined-basic" style={{ width: '100%' }} label="URL" variant="outlined" size='small' value={this.state.inputValue} onChange={e => this.updateInputValue(e)} />
+                </Col>
+                <Col xs={2}>
+                  <Button style={{ margin: "auto auto", padding: "auto auto"}} className="react-button" variant="outlined" type="submit" margin="normal">
+                    Confirm
+                  </Button>
+                </Col>
+              </Row>
+            </form>
+          </Container>
+          <Container className="mt-4">
             <Row>
               <Col>
-                <div className="script-zone">
-                  <Paper style={{ maxHeight: 500, overflow: 'auto' }}>
+                <Row>
+                  <Col><Container><iframe id='src' style={{ margin: "auto auto" }} width="560" height="450" src="https://www.youtube.com/embed/O6P86uwfdR0" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe></Container></Col>
+                  <Col>
+                    <Container className="vocabulary-zone mt-3">
+                      <Paper style={{ maxHeight: 1000, maxWidth: 560, overflow: 'auto' }} elevation={8}>
+                        <List sx={{
+                          width: '100%',
+                          maxWidth: 560,
+                          bgcolor: 'background.paper',
+                          position: 'relative',
+                          overflow: 'auto',
+                          maxHeight: '100%',
+                          '& ul': { padding: 0 },
+                        }}
+                          subheader={<li />}>
+                          {this.state.vocabulary_list.map((item, index) => (
+                            <li key={`section-${index}`}>
+                              <ul>
+                                <ListItem key={`item-${index}`}>
+                                  <ListItemText primary={`${item}`} />
+                                </ListItem>
+                              </ul>
+                            </li>
+                          ))}
+                        </List>
+                      </Paper>
+                    </Container>
+                  </Col>
+                </Row>
+              </Col>
+              <Col>
+                <Container className="script-zone">
+                  <Paper style={{ maxHeight: 1000, overflow: 'auto' }}>
                     <List sx={{
                       width: '100%',
                       maxWidth: 500,
                       bgcolor: 'background.paper',
                       position: 'relative',
                       overflow: 'auto',
-                      maxHeight: 300,
+                      maxHeight: '100%',
                       '& ul': { padding: 0 },
                     }}
                       subheader={<li />}>
@@ -163,28 +199,22 @@ export default class YoutubePage extends Component {
                         <li key={`section-${index}`}>
                           <ul>
                             <ListItem key={`item-${index}`}>
-                              <ListItemText primary={`text: ${item.text}`} />
+                              <ListItemText primary={`${item.start} : ${item.text}`} />
                             </ListItem>
                           </ul>
                         </li>
                       ))}
                     </List>
                   </Paper>
-                </div>
-              </Col>
-              <Col>
-                <div className="vocabulary-zone">
-                  this is vocabulary - zone.
-                </div>
+                </Container>
               </Col>
             </Row>
+          </Container>
+        </Row>
+      </Container>
 
-          
-        </Grid>
-        <Grid item xs={2}>
-          {/* <Item>xs=8</Item> */}
-        </Grid>
-      </Grid>
+
+
 
 
     );

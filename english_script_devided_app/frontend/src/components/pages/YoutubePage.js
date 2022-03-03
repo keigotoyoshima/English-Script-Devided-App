@@ -14,23 +14,14 @@ import CssTextField from "../theme/MuiThemeTextField";
 import { Row, Col, Container } from "react-bootstrap";
 import { Paper, List } from "@material-ui/core";
 import { ListItemText, ListItem } from "@material-ui/core";
-
-
-
-
-
-const styles = {
-  input1: {
-    height: 50
-  },
-  input2: {
-    height: 200,
-    fontSize: "3em"
-  }
-};
+import { Checkbox } from "@material-ui/core";
+import dictionaryApi from "../frontend_api/DictionaryApi"
+import { useState } from "react";
+import Header from "../definitions/header";
+import Footer from "../definitions/footer";
+import Definitions from "../definitions/definitions";
 
 const base_url = "https://www.youtube.com/embed/"
-
 
 export default class YoutubePage extends Component {
   constructor(props) {
@@ -41,16 +32,38 @@ export default class YoutubePage extends Component {
       video_id: "",
       transcription: [],
       vocabulary_list: ["a", "b", "c"],
+      movie_list: ["movie-1", "movie-2", "movie-3"],
+      word: "",
+      meanings: [],
+      language: "en",
     };
-
+  }
+  setWord = (word) => {
+    this.setState({
+      word: word
+    });
+    this.callDictionaryApi();
+  }
+  setMeanings = (meanings) => {
+    this.setState({
+      meanings: meanings
+    });
+  }
+  setLanguage = (language) => {
+    this.setState({
+      language: language
+    });
   }
 
+  async callDictionaryApi() {
+    let data = await dictionaryApi(this.state.language, this.state.word);
+    this.setMeanings(data)
+  }
 
   getYoutube() {
     fetch("/api/get-youtube")
       .then((response) => response.json()).then(
         (data) => {
-          console.log(data);
           // startを00:00に上書き
           data.forEach((item) => {
             let given_seconds = item.start;
@@ -77,25 +90,12 @@ export default class YoutubePage extends Component {
   }
   componentDidMount() {
     console.log("componentDidMount()");
-    // var d = document.getElementById("d1");
     setTimeout(() => {
       this.getYoutube();
-      // window.open("https://www.youtube.com/watch?v=O6P86uwfdR0&t=119s", "window_name", "width=250,height=350,scrollbars=yes,resizable=yes,status=yes");
-
-      // const p = document.getElementById('src').contentWindow.document.getElementsByClassName("ytp-progress-bar")[0];
-      // console.log(p, 'p');
-      // const d = document.getElementsByClassName("ytp-progress-bar")[0];
-      // console.log(d, 'd');
-      const b = document.getElementsByClassName("react-button")[0];
-      console.log(b, 'b');
     }, 1000)
-
-    // d.setAttribute("aria-valuenow", "400");
   }
   getAttribute() {
-    console.log(this.state.video_id);
     let src = base_url + this.state.video_id;
-    console.log(src);
     this.setState({ src: src });
   }
 
@@ -104,18 +104,9 @@ export default class YoutubePage extends Component {
     this.setState({
       inputValue: val
     });
-    console.log("update");
-    // const  d = document.getElementsByClassName("ytp-progress-bar")[0];
-    // console.log(d, 'd');
-    // const b = document.getElementsByClassName("react-button")[0];
-    // console.log(b, 'b');
-    // var d = document.getElementsByClassName("ytp-progress-bar");
-    // console.log(d,'d');
-    // d.setAttribute("aria-valuenow", "400");
   }
   /* なぜか通常のfunctionで定義するとコールバック関数が実行されるときにthisが渡されない．単純にonFormSubmit関数が実行される． アローfunctionに変えてあげるとthisが自動的に渡される*/
   onSubmit = (e) => {
-    console.log('Click');
     e.preventDefault();
     const url = new URL(this.state.inputValue);
     const params = new URLSearchParams(url.search);
@@ -133,85 +124,146 @@ export default class YoutubePage extends Component {
 
   render() {
     return (
-      <Container>
-        <Row>
-          <Container className="mt-4">
-            <form onSubmit={this.onSubmit}>
-              <Row>
-                <Col xs={10}>
-                  <CssTextField style={{ margin: "auto auto" }} id="outlined-basic" style={{ width: '100%' }} label="URL" variant="outlined" size='small' value={this.state.inputValue} onChange={e => this.updateInputValue(e)} />
-                </Col>
-                <Col xs={2}>
-                  <Button style={{ margin: "auto auto", padding: "auto auto"}} className="react-button" variant="outlined" type="submit" margin="normal">
-                    Confirm
-                  </Button>
-                </Col>
-              </Row>
-            </form>
+      <Row>
+        <Col xs={2}>
+          <Container className="check-box-list">
+            <List sx={{
+              width: '100%',
+              maxwidth: 50,
+              bgcolor: 'background.paper',
+              position: 'relative',
+              overflow: 'auto',
+              maxHeight: '100%',
+              '& ul': { padding: 0 },
+            }}
+              subheader={<li />}>
+              {this.state.vocabulary_list.map((item, index) => (
+                <li key={`section-${index}`}>
+                  <ul>
+                    <ListItem key={`item-${index}`}>
+                      <label><Checkbox />{`${item}`}</label>
+                      {/* <ListItemText primary={`${item}`} /> */}
+                    </ListItem>
+                  </ul>
+                </li>
+              ))}
+            </List>
           </Container>
-          <Container className="mt-4">
+        </Col>
+        <Col xs={8}>
+          <Container>
             <Row>
-              <Col>
+              <Container className="mt-3">
+                <form onSubmit={this.onSubmit}>
+                  <Row>
+                    <Col xs={11}>
+                      <Container className="pl-4">
+                        <CssTextField  style={{ margin: "auto auto" }} id="outlined-basic" style={{ width: '100%' }} label="URL" variant="outlined" size='small' value={this.state.inputValue} onChange={e => this.updateInputValue(e)} />
+                      </Container>
+                    </Col>
+                    <Col xs={1}>
+
+                      <Button style={{ margin: "auto auto", width:"100%"}} className="react-button" variant="outlined" type="submit" margin="normal">
+                        Confirm
+                      </Button>
+
+                    </Col>
+                  </Row>
+                </form>
+              </Container>
+              <Container className="mt-2">
                 <Row>
-                  <Col><Container><iframe id='src' style={{ margin: "auto auto" }} width="560" height="450" src="https://www.youtube.com/embed/O6P86uwfdR0" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe></Container></Col>
                   <Col>
-                    <Container className="vocabulary-zone mt-3">
-                      <Paper style={{ maxHeight: 1000, maxWidth: 560, overflow: 'auto' }} elevation={8}>
-                        <List sx={{
-                          width: '100%',
-                          maxWidth: 560,
-                          bgcolor: 'background.paper',
-                          position: 'relative',
-                          overflow: 'auto',
-                          maxHeight: '100%',
-                          '& ul': { padding: 0 },
-                        }}
-                          subheader={<li />}>
-                          {this.state.vocabulary_list.map((item, index) => (
-                            <li key={`section-${index}`}>
-                              <ul>
-                                <ListItem key={`item-${index}`}>
-                                  <ListItemText primary={`${item}`} />
-                                </ListItem>
-                              </ul>
-                            </li>
-                          ))}
-                        </List>
-                      </Paper>
-                    </Container>
+                    <Row>
+                      <Col><Container><iframe id='src' style={{ margin: "auto auto" }} width="560" height="400" src="https://www.youtube.com/embed/O6P86uwfdR0" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe></Container></Col>
+                      <Col>
+                        <Container className="vocabulary-zone mt-2">
+                          <Paper style={{ height: 430, maxheight: 1000, overflow: 'auto' }} elevation={8}>
+                            <Container
+                              maxwidth="md"
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                height: "500",
+                                justifyContent: "space-evenly",
+                              }}
+                            >
+                              <Header
+                                setWord={this.setWord}
+                                word={this.state.word}
+                                setLanguage={this.setLanguage}
+                                language={this.state.language}
+                                setMeanings={this.setMeanings}
+                              />
+                              {this.state.meanings && (
+                                <Definitions
+                                  meanings={this.state.meanings}
+                                  word={this.state.word}
+                                  language={this.state.language}
+                                />
+                              )}
+                            </Container>
+                          </Paper>
+                        </Container>
+                      </Col>
+                    </Row>
+                  </Col>
+                  <Col>
+
+                    <Paper style={{ height: 845, maxHeight: 1000, overflow: 'auto' }}>
+                      <List sx={{
+                        width: '100%',
+                        maxwidth: 500,
+                        bgcolor: 'background.paper',
+                        position: 'relative',
+                        overflow: 'auto',
+                        maxHeight: '100%',
+                        '& ul': { padding: 0 },
+                      }}
+                        subheader={<li />}>
+                        {this.state.transcription.map((item, index) => (
+                          <li key={`section-${index}`}>
+                            <ul>
+                              <ListItem key={`item-${index}`}>
+                                <ListItemText primary={`${item.start} : ${item.text}`} />
+                              </ListItem>
+                            </ul>
+                          </li>
+                        ))}
+                      </List>
+                    </Paper>
+
                   </Col>
                 </Row>
-              </Col>
-              <Col>
-                <Container className="script-zone">
-                  <Paper style={{ maxHeight: 1000, overflow: 'auto' }}>
-                    <List sx={{
-                      width: '100%',
-                      maxWidth: 500,
-                      bgcolor: 'background.paper',
-                      position: 'relative',
-                      overflow: 'auto',
-                      maxHeight: '100%',
-                      '& ul': { padding: 0 },
-                    }}
-                      subheader={<li />}>
-                      {this.state.transcription.map((item, index) => (
-                        <li key={`section-${index}`}>
-                          <ul>
-                            <ListItem key={`item-${index}`}>
-                              <ListItemText primary={`${item.start} : ${item.text}`} />
-                            </ListItem>
-                          </ul>
-                        </li>
-                      ))}
-                    </List>
-                  </Paper>
-                </Container>
-              </Col>
+              </Container>
             </Row>
           </Container>
-        </Row>
-      </Container>
+        </Col>
+        <Col xs={2} >
+          <Container className="list-of-movie">
+            <List sx={{
+              width: '100%',
+              maxwidth: 50,
+              bgcolor: 'background.paper',
+              position: 'relative',
+              overflow: 'auto',
+              maxHeight: '100%',
+              '& ul': { padding: 0 },
+            }}
+              subheader={<li />}>
+              {this.state.movie_list.map((item, index) => (
+                <li key={`section-${index}`}>
+                  <ul>
+                    <ListItem key={`item-${index}`}>
+                      <ListItemText primary={`${item}`} />
+                    </ListItem>
+                  </ul>
+                </li>
+              ))}
+            </List>
+          </Container>
+        </Col>
+      </Row>
 
 
 

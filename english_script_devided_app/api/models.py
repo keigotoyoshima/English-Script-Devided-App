@@ -1,6 +1,25 @@
 from django.db import models
 from django.urls import reverse_lazy
 
+
+class Word(models.Model):
+    # list_idに変更したい
+    list_key = models.CharField(
+        max_length=255,
+        blank=False,
+        null=False,
+    )
+    
+    word = models.CharField(    
+        max_length=255,
+        blank=False,
+        null=False,
+    )
+
+    def __str__(self):
+        return self.word
+
+
 class Category(models.Model):
     category = models.CharField(
         max_length=255,

@@ -6,10 +6,10 @@ const dictionaryApi = async (language, word) => {
       `https://api.dictionaryapi.dev/api/v2/entries/${language}/${word}`
       // `https://api.dictionaryapi.dev/api/v2/entries/en/plane`
     );
-    console.log(data.data, 'int dictionaryApi');
     return data.data
   } catch (error) {
-    console.log(error);
+    // console.log(error);
+    return false
   }
 };
 

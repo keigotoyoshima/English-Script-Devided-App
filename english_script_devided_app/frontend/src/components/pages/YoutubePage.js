@@ -20,25 +20,51 @@ import { useState } from "react";
 import Header from "../definitions/header";
 import Footer from "../definitions/footer";
 import Definitions from "../definitions/definitions";
+import CircularProgress from '@mui/material/CircularProgress';
+import { filledInputClasses } from "@mui/material";
+import { HashLink } from 'react-router-hash-link';
+import axios from "axios";
+import { createTask, getAllWordsTask, getSingleWordTask } from "../frontend_api/DjangoApi";
+import { ListItemButton } from "@mui/material";
+import AnchorLink from 'react-anchor-link-smooth-scroll'
+
+
 
 const base_url = "https://www.youtube.com/embed/"
+
+let initial_transcription = [];
+let initial_refs = {};
 
 export default class YoutubePage extends Component {
   constructor(props) {
     super(props);
+  
     this.state = {
-      inputValue: '',
+      inputURL: '',
       src: "",
       video_id: "",
-      transcription: [],
-      vocabulary_list: ["a", "b", "c"],
+      transcription: initial_transcription,
+      vocabulary_list: [],
       movie_list: ["movie-1", "movie-2", "movie-3"],
       word: "",
       meanings: [],
-      language: "en",
+      time:"",
+      isLoadingMeanings: false,
+      isLoadingTranscript: false,
+      isLoadingVideo: false,
+      headerError:false,
+      addError:false,
+      refs: initial_refs,
     };
   }
+  componentDidMount(){
+    // ローリングでstateを変えるのでここに配置
+    this.getYoutubeTranscript();
+    this.getAllSavedWord();
+  }
+
   setWord = (word) => {
+    this.setIsLoading("isLoadingMeanings", true);
     this.setState({
       word: word
     });
@@ -49,19 +75,79 @@ export default class YoutubePage extends Component {
       meanings: meanings
     });
   }
-  setLanguage = (language) => {
+  setIsLoading = (name,flag) => {
+    if (name == "isLoadingMeanings"){
+      this.setState({
+        isLoadingMeanings: flag
+      });
+    } else if (name == "isLoadingTranscript"){
+      this.setState({
+        isLoadingTranscript: flag
+      });
+    } else if (name == "isLoadingVideo"){
+      this.setState({
+        isLoadingVideo: flag
+      });
+    }
+  }
+  setError = (flag) => {
     this.setState({
-      language: language
+      headerError: flag
+    })
+  }
+  setTime = (time) => {
+    this.setState({
+      time: time
     });
   }
 
-  async callDictionaryApi() {
-    let data = await dictionaryApi(this.state.language, this.state.word);
-    this.setMeanings(data)
+  saveWordAndTime = async(time) =>{
+    if(time == ""){
+      this.setState({addError:true})
+    }else{
+      this.setState({ addError: false })
+      let index_key = -1;
+      // 後で効率化
+      this.state.transcription.forEach((item, index) => {
+        if (item.start == time) {
+          index_key = index;
+        }
+      })
+      // 該当箇所がなかった場合
+      if (index_key == -1){
+        this.setState({ addError: true })
+      } else{
+        await createTask({ word: this.state.word, key: index_key });
+        this.getAllSavedWord();
+      }
+    }
   }
 
-  getYoutube() {
-    fetch("/api/get-youtube")
+  async callDictionaryApi() {
+    let data = await dictionaryApi("en", this.state.word);
+    this.setIsLoading("isLoadingMeanings",false);
+    if(data){
+      this.setError(false);
+      this.setMeanings(data)
+    }else{
+      // falseが返ってきた場合
+      this.setError(true);
+    }
+  }
+
+  async getAllSavedWord(){
+    // json形式で取得
+    let all_words = await getAllWordsTask();
+    this.setState({
+      vocabulary_list:all_words.data
+    })
+  }
+
+  // URL系
+  async getYoutubeTranscript() {
+    this.setIsLoading("isLoadingTranscript", true);
+    let transcriptin = []
+    await fetch("/api/get-youtube-transcript")
       .then((response) => response.json()).then(
         (data) => {
           // startを00:00に上書き
@@ -71,64 +157,79 @@ export default class YoutubePage extends Component {
             let minutes = Math.floor((given_seconds - (hours * 3600)) / 60);
             let seconds = given_seconds - (hours * 3600) - (minutes * 60);
             seconds = Math.floor(seconds);
-
-            // 今のところhoursは入れない
-            // item.start = hours.toString().padStart(2, '0') + ':' +
-            //   minutes.toString().padStart(2, '0') + ':' +
-            //   seconds.toString().padStart(2, '0');
             item.start = minutes.toString().padStart(2, '0') + ':' +
               seconds.toString().padStart(2, '0');
           })
-          this.setState({
-            transcription: data
-          });
-
+          transcriptin = data
         })
       .catch((error) => {
         console.log(error);
-      });
+      }
+    );
+
+
+    this.makeRefList(transcriptin);
   }
-  componentDidMount() {
-    console.log("componentDidMount()");
-    setTimeout(() => {
-      this.getYoutube();
-    }, 1000)
-  }
-  getAttribute() {
+
+  // 動画関係
+  getYoutubeVideo() {
     let src = base_url + this.state.video_id;
     this.setState({ src: src });
   }
 
+  // URLinput
   updateInputValue(evt) {
     const val = evt.target.value;
     this.setState({
-      inputValue: val
+      inputURL: val
     });
   }
-  /* なぜか通常のfunctionで定義するとコールバック関数が実行されるときにthisが渡されない．単純にonFormSubmit関数が実行される． アローfunctionに変えてあげるとthisが自動的に渡される*/
   onSubmit = (e) => {
     e.preventDefault();
-    const url = new URL(this.state.inputValue);
+    this.setIsLoading("isLoadingVideo", true);
+    const url = new URL(this.state.inputURL);
     const params = new URLSearchParams(url.search);
     for (let param of params) {
       if (param[0] == "v") {
         this.setState();
         this.setState({ video_id: param[1] }, () => {
-          this.getAttribute();
-
-        });
+          this.getYoutubeVideo();
+          this.setIsLoading("isLoadingVideo", filledInputClasses);
+        }); 
       }
     }
-
   }
+
+  // スクロール関係
+  makeRefList(list){
+    let refs =  list.reduce((acc, value, currentIndex) => {
+      acc[currentIndex] = React.createRef();
+      return acc;
+    }, {});
+    this.setState({
+      transcription: list,
+      refs: refs
+    })
+    this.setIsLoading("isLoadingTranscript", false);
+  }
+
+  handleClickToScroll(id){  
+    this.state.refs[id].current.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }
+
+
 
   render() {
     return (
       <Row>
         <Col xs={2}>
-          <Container className="check-box-list">
+
             <List sx={{
               width: '100%',
+              height: 20,
               maxwidth: 50,
               bgcolor: 'background.paper',
               position: 'relative',
@@ -138,17 +239,21 @@ export default class YoutubePage extends Component {
             }}
               subheader={<li />}>
               {this.state.vocabulary_list.map((item, index) => (
-                <li key={`section-${index}`}>
-                  <ul>
-                    <ListItem key={`item-${index}`}>
-                      <label><Checkbox />{`${item}`}</label>
-                      {/* <ListItemText primary={`${item}`} /> */}
-                    </ListItem>
+                <li key={item.id}>
+                  <ul>  
+                    <ListItem key={`item-${item.list_key}`}>
+                      <Checkbox></Checkbox>
+                      {/* ここにオンクリック */}
+                      <ListItemButton >
+                        <ListItemText className="wordlist" id={`text-${item.list_key}`} primary={`${item.word}`} primaryTypographyProps={{ fontSize: '25px' }} onClick={()=>this.handleClickToScroll(item.list_key)} />
+                      </ListItemButton>
+                    </ListItem> 
+
                   </ul>
                 </li>
               ))}
             </List>
-          </Container>
+
         </Col>
         <Col xs={8}>
           <Container>
@@ -158,7 +263,7 @@ export default class YoutubePage extends Component {
                   <Row>
                     <Col xs={11}>
                       <Container className="pl-4">
-                        <CssTextField  style={{ margin: "auto auto" }} id="outlined-basic" style={{ width: '100%' }} label="URL" variant="outlined" size='small' value={this.state.inputValue} onChange={e => this.updateInputValue(e)} />
+                        <CssTextField  style={{ margin: "auto auto" }} id="outlined-basic" style={{ width: '100%' }} label="URL" variant="outlined" size='small' value={this.state.inputURL} onChange={e => this.updateInputValue(e)} />
                       </Container>
                     </Col>
                     <Col xs={1}>
@@ -175,7 +280,14 @@ export default class YoutubePage extends Component {
                 <Row>
                   <Col>
                     <Row>
-                      <Col><Container><iframe id='src' style={{ margin: "auto auto" }} width="560" height="400" src="https://www.youtube.com/embed/O6P86uwfdR0" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe></Container></Col>
+                      <Col><Container>
+                        {this.state.isLoadingVideo?
+                        <CircularProgress />
+                        :
+                          <iframe id='src' style={{ margin: "auto auto" }} width="560" height="400" src="https://www.youtube.com/embed/O6P86uwfdR0" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> 
+                        }
+                        
+                        </Container></Col>
                       <Col>
                         <Container className="vocabulary-zone mt-2">
                           <Paper style={{ height: 430, maxheight: 1000, overflow: 'auto' }} elevation={8}>
@@ -190,16 +302,21 @@ export default class YoutubePage extends Component {
                             >
                               <Header
                                 setWord={this.setWord}
-                                word={this.state.word}
-                                setLanguage={this.setLanguage}
-                                language={this.state.language}
-                                setMeanings={this.setMeanings}
+                                headerError={this.state.headerError}
                               />
-                              {this.state.meanings && (
+
+                              {this.state.isLoadingMeanings && (
+                                <Container style={{ display: 'flex', justifyContent: 'center', alignItems:'center', height:'100%' }}>
+                                  <CircularProgress />
+                                </Container>
+                              )}
+                              {!this.state.isLoadingMeanings && (
                                 <Definitions
                                   meanings={this.state.meanings}
                                   word={this.state.word}
-                                  language={this.state.language}
+                                  setTime={this.setTime}
+                                  addWordAndTime={this.saveWordAndTime}
+                                  addError={this.state.addError}
                                 />
                               )}
                             </Container>
@@ -211,26 +328,34 @@ export default class YoutubePage extends Component {
                   <Col>
 
                     <Paper style={{ height: 845, maxHeight: 1000, overflow: 'auto' }}>
-                      <List sx={{
-                        width: '100%',
-                        maxwidth: 500,
-                        bgcolor: 'background.paper',
-                        position: 'relative',
-                        overflow: 'auto',
-                        maxHeight: '100%',
-                        '& ul': { padding: 0 },
-                      }}
-                        subheader={<li />}>
-                        {this.state.transcription.map((item, index) => (
-                          <li key={`section-${index}`}>
-                            <ul>
-                              <ListItem key={`item-${index}`}>
-                                <ListItemText primary={`${item.start} : ${item.text}`} />
-                              </ListItem>
-                            </ul>
-                          </li>
-                        ))}
-                      </List>
+                      {this.state.isLoadingTranscript?
+                        <Container style={{ display: "flex", justifyContent: 'center',alignItems:'center' ,height:"100%"}}>
+                          <CircularProgress/>
+                        </Container>
+                        :
+                        <List sx={{
+                          width: '100%',
+                          maxwidth: 500,
+                          bgcolor: 'background.paper',
+                          position: 'relative',
+                          overflow: 'auto',
+                          maxHeight: '100%',
+                          '& ul': { padding: 0 },
+                        }}
+                          subheader={<li />}>
+                          {this.state.transcription.map((item, index) => (
+                            // ref追加  
+                            <li key={index} ref={this.state.refs[index]}>
+                              <ul>
+                                <ListItem key={`item-${index}`}>
+                                  <ListItemText primary={`${item.start} : ${item.text}`} />
+                                </ListItem>
+                              </ul>
+                            </li>
+                          ))}
+                        </List>
+                      }
+                      
                     </Paper>
 
                   </Col>

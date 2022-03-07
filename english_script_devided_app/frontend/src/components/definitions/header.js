@@ -9,18 +9,8 @@ import CssTextField from "../theme/MuiThemeTextField";
 
 const Header = ({
   setWord,
-  language,
-  setLanguage,
-  word,
-  setMeanings,
+  headerError,
 }) => {
-
-  const handleChange = (e) => {
-    setLanguage(e.target.value);
-    console.log(e.target.value, "e.target.value in handleChange")
-    setWord("");
-    setMeanings([]);
-  };
 
   const deb = useCallback(
     debounce((text) => setWord(text), 1000),
@@ -35,26 +25,13 @@ const Header = ({
     <div className="header">
       <div className="inputs">
         <CssTextField
+          error={headerError}
+          helperText={headerError ? "Incorrect word, please search correct word." : ""}
           className="search"
-          id="filled-basic"
-          // value={word}
-          label="Search"
+          id="outlined-basic"
+          label={headerError ? "" : "Search"}
           onChange={(e) => handleText(e.target.value)}
         />
-        {/* <CssTextField
-          select
-          label="Language"
-          value={language}
-          onChange={(e) => handleChange(e)}
-          className="select"
-        >
-          {languages.map((option) => (
-            <MenuItem key={option.label} value={option.label}>
-              {option.value}
-            </MenuItem>
-          ))}
-        </CssTextField> */}
-
       </div>
     </div>
   );

@@ -4,43 +4,38 @@ import { Container } from "@material-ui/core";
 import { Row, Col } from "react-bootstrap";
 import { Button } from "@material-ui/core";
 import CssTextField from "../theme/MuiThemeTextField";
-import { Component } from "react";
+import { useState } from "react";
 
-export default class Definitions extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      time: '',
-    };
-  }
+const Definitions = (props) =>{
 
-  updateInputValue = (evt) => {
+  const [time, setTime] = useState()
+
+  const updateInputValue = (evt) => {
     console.log(evt.target.value);
-    this.state.time = evt.target.value;
+    setTime(evt.target.value)
   }
 
-  onClick = () => {
+  const onClick = () => {
     console.log('onClick');
-    // this.props.setTime(this.state.time);
-    this.props.addWordAndTime(this.state.time)
+    props.addWordAndTime(time)
   }
 
-  render() {
+
     return (
       <div className="meanings-zone">
 
-        {this.props.meanings[0] && this.props.word && (
+        {props.meaning_list[0] && props.word && (
           <Container>
             <Row>
               <Col>
                 <Row>
-                  <span>Pronunciation: {this.props.meanings[0].phonetics[0].text}</span>
+                  <span>Pronunciation: {props.meaning_list[0].phonetics[0] ? props.meaning_list[0].phonetics[0].text: ""}</span>
                 </Row>
                 <Row>
                   <audio
                     className="padding-left-release"
                     style={{ backgroundColor: "#fff", borderRadius: 10 }}
-                    src={this.props.meanings[0].phonetics[0] && this.props.meanings[0].phonetics[0].audio}
+                    src={props.meaning_list[0].phonetics[0] && props.meaning_list[0].phonetics[0].audio}
                     controls
                   >
                     Your browser does not support the audio element.
@@ -51,13 +46,13 @@ export default class Definitions extends Component {
 
                   <Row>
                     <Col>
-                    <CssTextField style={{ margin: "auto 0" }} id="outlined-basic" style={{ width: "100%" }} label={this.props.addError ? "Not found" : "Time"} size='small' onChange={e => this.updateInputValue(e)} error={this.props.addError}
+                    <CssTextField style={{ margin: "auto 0" }} id="outlined-basic" style={{ width: "100%" }} label={props.addError ? "Not found" : "Time"} size='small' onChange={e => updateInputValue(e)} error={props.addError}
                    />
                     </Col>
                     <Col>
                       <Container style={{ display: "flex", justifyContent: 'end', alignItems: 'end', 
                         height: "100%", width: "100%", margin: 0, padding: 0 }}>
-                        <Button style={{ width: "100%", height: 25}} className="react-button" variant="outlined" margin="normal" onClick={this.onClick} >
+                        <Button style={{ width: "100%", height: 25}} className="react-button" variant="outlined" margin="normal" onClick={onClick} >
                           Add
                         </Button>
                       </Container>
@@ -73,10 +68,10 @@ export default class Definitions extends Component {
 
 
         <div className="meanings">
-          {this.props.word === "" ? (
+          {props.word === "" ? (
             <span className="no-meanings"></span>
           ) : (
-            this.props.meanings.map((mean) =>
+            props.meaning_list.map((mean) =>
               mean.meanings.map((item) =>
                 item.definitions.map((def, index) => (
                   <div
@@ -87,7 +82,7 @@ export default class Definitions extends Component {
                       color: "black",
                     }}
                   >
-                    <b>Definitin : {def.definition}</b>
+                    <b>Definition : {def.definition}</b>
 
                     {/* 例文があったら */}
                     {def.example && (
@@ -111,6 +106,7 @@ export default class Definitions extends Component {
       </div>
     );
   }
-}
 
 
+
+export default Definitions;

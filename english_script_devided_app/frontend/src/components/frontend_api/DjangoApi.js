@@ -10,24 +10,40 @@ const client = axios.create({
   },
 });
 
-export function getAllWordsTask() {
-  return client.get('/api/youtube-word-get');
+
+export function postUserTask(params) {
+  console.log(params, 'params in postMovieTask')
+  return client.post('/api/user-post', params);
 }
 
+export function getAllMoviesTask() {
+  return client.get('/api/movie-get');
+}
+
+export function getSingleMovieTask(id) {
+  console.log('params in createTask')
+  return client.get(`/api/movie-get?id=${id}`);
+}
+
+
+export function postMovieTask(params) {
+  console.log(params, 'params in postMovieTask')
+  return client.post('/api/movie-post', params);
+}
+
+export function getAllWordsTask() {
+  return client.get('/api/word-get');
+}
+// 使ってない
 export function getSingleWordTask(id) {
   console.log('params in createTask')
-  return client.get(`/api/youtube-word-get?id=${id}`);
-}
-
-export function getWordKeyTask(id) {
-  console.log('params in createTask')
-  return client.get(`/api/youtube-word-key-get?id=${id}`);
+  return client.get(`/api/word-get?id=${id}`);
 }
 
 
-export function createTask(params) {
-  console.log(params, 'params in createTask')
-  return client.post('/api/youtube-word-post', params);
+export function postWordTask(params) {
+  console.log(params, 'params in postWordTask')
+  return client.post('/api/word-post', params);
 }
 
 export function editTask(id, params) {

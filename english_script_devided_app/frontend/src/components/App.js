@@ -1,19 +1,17 @@
-import React,{Component, components} from "react";
-import { render } from "react-dom";
-import HomePage from "./pages/HomePage";
-import { createMuiTheme } from '@material-ui/styles';
+import React from "react";
+import { useUserContext } from "./userContext/userContext";
+import Auth from "./userContext/auth";
+import YoutubePage from "./pages/YoutubePage";
 
-export default class App extends Component{
-  constructor(props){
-    super(props);
-  }
+function App() {
+  const { user, loading, error } = useUserContext();
 
-  render(){
-    return (
-       <HomePage></HomePage>
-    );
-  }
+  return (
+    <div className="App">
+      {error && <p className="error">{error}</p>}
+      {loading ? <h2>Loading...</h2> : <> {user ? <YoutubePage /> : <Auth />} </>}
+    </div>
+  );
 }
 
-// const appDiv = document.getElementById("app");
-// render(<App name="home"/>, appDiv);
+export default App;

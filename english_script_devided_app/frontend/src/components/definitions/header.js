@@ -1,4 +1,4 @@
-import { TextField } from "@material-ui/core";
+
 import React, { useCallback } from "react";
 import "../../../static/css/header.css";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -9,17 +9,23 @@ import CssTextField from "../theme/MuiThemeTextField";
 
 const Header = ({
   setWord,
+  setWordWithCalling,
   headerError,
 }) => {
 
   const deb = useCallback(
-    debounce((text) => setWord(text), 1000),
+    debounce((text) => setWordWithCalling(text), 1000),
     []
   );
 
   const handleText = (text) => {
     deb(text);
+    console.log(text);
   };
+  
+  const onSubmit = () => {
+    console.log("onSubmit in Header.js")
+  }
 
   return (
     <div className="header">
@@ -31,6 +37,7 @@ const Header = ({
           id="outlined-basic"
           label={headerError ? "" : "Search"}
           onChange={(e) => handleText(e.target.value)}
+          onSubmit={onSubmit}
         />
       </div>
     </div>

@@ -1,59 +1,46 @@
-import React, {Component} from "react";
-import { Grid, Button, ButtonGroup, Typography } from "@material-ui/core";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  Redirect,
-} from "react-router-dom";
+import React, { Component } from "react";
+import { Navbar } from "react-bootstrap";
+import App from "../App";
+import { Container } from "@material-ui/core";
+import { NavDropdown } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
+import { Nav } from "react-bootstrap";
+import { useUserContext } from "../userContext/userContext";
 
-export default class Navbar extends Component {
-  constructor(props) {
-    super(props);
+const AppNavBar = () => {
+  const { logoutUser, user } = useUserContext();
 
+  const onClickHandler = () => {
+    console.log(onClickHandler);
+    logoutUser();
   }
 
+  return (
+    <Navbar bg="dark" variant="dark">
 
-  render() {
-    return (
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
-          <div class="container">
-            <a class="navbar-brand" href="#">
-              English Script Devided by 10 minites
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="#">Home</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">Link</a>
-                </li>
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Create
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li>
-                      <hr class="dropdown-divider"></hr>
-                    </li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </div>
-          </div>
-      </nav>
-
-     
+      <Container width="100%">
+        <Row>
+          <Col><Navbar.Brand href="#home">Youtube for English Learning</Navbar.Brand></Col>
+          <Col md="auto">
+            <Navbar.Collapse>
+              <Navbar.Text>
+                Signed in as: {user.displayName}
+              </Navbar.Text>
+            </Navbar.Collapse>
+          </Col>
+          <Col xs lg="1">
+            <Container width="100%">
+              <NavDropdown className="justfy-content-end" title="Logout" id="basic-nav-dropdown">
+                <NavDropdown.Item onClick={onClickHandler}>Logout</NavDropdown.Item>
+                <NavDropdown.Item>Cancel</NavDropdown.Item>
+              </NavDropdown>
+            </Container>
+          </Col>
+        </Row>
+      </Container> 
 
 
-    );
-  }
+    </Navbar>
+  );
 }
+export default AppNavBar;

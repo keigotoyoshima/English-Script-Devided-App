@@ -3,12 +3,16 @@ import MoviePage from "./MoviePage";
 import DramaPage from "./DramaPage";
 import Movie from "../Movie";
 import YoutubePage from  "./YoutubePage";
+import SignUpPage from "./SignUpPage";
+import SignInPage from "./SignInPage";
+
 
 
 
 import { Grid, Button, ButtonGroup, Typography, ThemeProvider } from "@material-ui/core";
 import {
   BrowserRouter as Router,
+  PrivateRoute,
   Switch,
   Route,
   Link,
@@ -20,6 +24,7 @@ export default class HomePage extends Component {
     super(props);
     this.state = {
       roomCode: null,
+      user: userCredential.user
     };
     this.clearRoomCode = this.clearRoomCode.bind(this);
   }
@@ -28,11 +33,11 @@ export default class HomePage extends Component {
     return (
       <div className="center welcome" >
         <Grid container
-      direction="column"
-      justifyContent="center"
-      alignItems="center"
-      spacing={3}
-      >
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+        spacing={3}
+        >
         <Grid item xs={12}>
           <Typography 
           variant="h2" compact="h3">
@@ -41,14 +46,19 @@ export default class HomePage extends Component {
         </Grid>
         <Grid item xs={12} >
           <ButtonGroup disableElevation color="primary"> 
-            <Button variant="outlined"color="default" to="/moviepage" component={Link}>
+            {/* <Button variant="outlined"color="default" to="/moviepage" component={Link}>
                 Movie
             </Button>
             <Button variant="outlined" color="default" to="/drama" component={Link}>
               Drama
+            </Button> */}
+
+            {/* 認証ページに変更 */}
+            <Button variant="outlined" color="default" to="/sign-in" component={Link}>
+              Sign In 
             </Button>
-            <Button variant="outlined" color="default" to="/youtube" component={Link}>
-              Youtube
+            <Button variant="outlined" color="default" to="/sign-up" component={Link}>
+              Sign Up
             </Button>
           </ButtonGroup>
         </Grid>
@@ -71,17 +81,22 @@ export default class HomePage extends Component {
     return (
       <Router>
         <Switch>
-         <Route
+         <PrivateRoute
+
             exact
             path="/"
-            render={() => {
+            render={user.invalid ? () => {
+              return this.renderHomePage();
+            } :() => {
               return this.renderHomePage();
             }}
           />
-          <Route path="/moviepage" component={MoviePage} />
+          {/* <Route path="/moviepage" component={MoviePage} />
           <Route path="/movie/:id" component={Movie} />
-          <Route path="/drama" component={DramaPage} />
-          <Route path="/youtube" component={YoutubePage} />
+          <Route path="/drama" component={DramaPage} /> */}
+          {/* <PrivateRoute exact path="/" component={YoutubePage} /> */}
+          {/* <Route path="/sign-in" component={SignInPage} />
+          <Route path="/sign-up" component={SignUpPage} /> */}
         </Switch>
       </Router>
     );

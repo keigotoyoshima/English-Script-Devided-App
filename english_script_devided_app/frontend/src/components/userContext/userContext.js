@@ -11,7 +11,9 @@ import {
 } from "firebase/auth";
 import React from "react";
 import { auth } from "../../firebase";
+// import { postUserTask } from "../frontend_api/DjangoApi";
 import { postUserTask } from "../frontend_api/DjangoApi";
+
 
 
 export const UserContext = createContext({});
@@ -39,6 +41,7 @@ export const UserContextProvider = ({ children }) => {
     return unsubscribe;
   }, []);
 
+  // displayNameを重複不可にする必要あり
   const registerUser = (email, password, name) => {
     setLoading(true);
     createUserWithEmailAndPassword(auth, email, password)
@@ -48,7 +51,6 @@ export const UserContextProvider = ({ children }) => {
         })
       )
       .then((res) =>{ 
-        console.log(res)
         // django-dbにユーザー情報登録
         postUserTask({displayName: name, email:email})
       })
@@ -60,8 +62,6 @@ export const UserContextProvider = ({ children }) => {
     setLoading(true);
     signInWithEmailAndPassword(auth, email, password)
       .then((res) => {
-        console.log(res)
-
       })
       .catch((err) => setError(err.code))
       .finally(() => setLoading(false));

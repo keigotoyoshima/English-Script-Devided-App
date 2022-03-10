@@ -10,11 +10,11 @@ import Header from "../definitions/header";
 import Footer from "../definitions/footer";
 import Definitions from "../definitions/definitions";
 import CircularProgress from '@mui/material/CircularProgress';
-import { postWordTask, getAllWordsTask, getAllMoviesTask, postMovieTask } from "../frontend_api/DjangoApi";
 import { ListItemButton } from "@mui/material";
 import AppNavBar from "../navber/Navbar";
 import { useUserContext } from "../userContext/userContext"
 import { useState, useEffect } from "react";
+import { useDjangoApiContext } from "../frontend_api/DjangoApi";
 
 const base_url = "https://www.youtube.com/embed/"
 
@@ -36,22 +36,33 @@ const YoutubePage = () => {
   const [addError, setAddError] = useState(false)
   const [refs, setRefs] = useState({})
 
-  // const onSubmit = (e) => {
-  //   e.preventDefault();
-  //   const email = emailRef.current.value;
-  //   const password = psdRef.current.value;
-  //   if (email && password) signInUser(email, password);
-  // };
+  const { postUserTask, getAllMoviesTask, postMovieTask, getAllWordsTask, postWordTask} = useDjangoApiContext()
+
+  const { user } = useUserContext()
 
   useEffect(()=>{
-    getAllSavedWords(user);
-    getAllSavedMovies(user);
+    console.log("useEffect1!!")
+    // アカウント別のmovieをリロード時に取得
+    getAllSavedMovies();
   }, []);
 
+  useEffect(() => {
+    console.log("useEffect2!!")
+    setInputURL("")
+  }, [video_id]);
+
+
+
   const setWordWithCalling =  (text)=>{
-    console.log(text, "text");
     setWord(text);
     callDictionaryApi(text);
+  }
+
+  const methodAtSameTime = (v) => {
+    setVideo_id(v)
+    getAllSavedWords(v)
+    getYoutubeVideo(v)
+    getYoutubeTranscript(v)
   }
 
   // useEffect(() => {
@@ -63,30 +74,27 @@ const YoutubePage = () => {
       setAddError(true)
     } else {
       setAddError(false)
-      let index_key = -1;
+      let list_id = -1;
       // 後で効率化
       transcription_list.forEach((item, index) => {
         if (item.start == time) {
-          index_key = index;
+          list_id = index;
         }
       })
       // 該当箇所がなかった場合
-      if (index_key == -1) {
+      if (list_id == -1) {
         setAddError(true)
       } else {
-        await postWordTask({ word: word, key: index_key });
-        getAllSavedWords();
+        await postWordTask({ word: word, list_id: list_id, v:video_id});
+        getAllSavedWords(video_id);
       }
     }
   }
   const callDictionaryApi = async (word) => {
     let data = await dictionaryApi("en", word)
-    console.log(word, "word");
-    console.log(data, "data");
     setIsloadingMeanings(false)
     if (data) {
       setheaderError(false)
-      console.log(data, "data")
       setMeaning_list(data)
       
     } else {
@@ -96,16 +104,15 @@ const YoutubePage = () => {
     }
   }
 
-  const getAllSavedWords = async() => {
-    const all_words = await getAllWordsTask();
+  const getAllSavedWords = async(v) => {
+    const all_words = await getAllWordsTask(v);
     setVocabulary_list(all_words.data)
   }
 
-    // URL系
-  const getYoutubeTranscript = async () => {
+  // URL系
+  const getYoutubeTranscript = async (v) => {
     setIsloadingTranscript(true)
-    let transcriptin = []
-    await fetch(`/api/get-youtube-transcript?v=${video_id}`)
+    await fetch(`/api/get-youtube-transcript?v=${v}`)
       .then((response) => response.json()).then(
         (data) => {
           // startを00:00に上書き
@@ -118,15 +125,12 @@ const YoutubePage = () => {
             item.start = minutes.toString().padStart(2, '0') + ':' +
               seconds.toString().padStart(2, '0');
           })
-          transcriptin = data
+          makeRefList(data);
         })
       .catch((error) => {
-        console.log(error);
+        makeRefList([{ "start": "Sorry,", "text": " no transcript for this video." },]);
       }
       );
-
-
-    makeRefList(transcriptin);
   }
 
   // スクロール関係
@@ -148,13 +152,12 @@ const YoutubePage = () => {
   }
 
   const handleClickToSelectMovie = (v) => {
-    console.log("handleClickToSelectMovie");
-    console.log(v, "v");
+    methodAtSameTime(v)
   }
 
   // 動画関係
-  const getYoutubeVideo = () => {
-    let src = base_url + video_id;
+  const getYoutubeVideo = (v) => {
+    let src = base_url + v;
     setSrc(src)
   }
 
@@ -165,7 +168,8 @@ const YoutubePage = () => {
   }
 
   const postMovie = async (title, v) => {
-    await postMovieTask({ title: title, v: v });
+    
+    await postMovieTask({displayName:user.displayName, title: title, v: v });
     getAllSavedMovies();
   }
 
@@ -175,17 +179,18 @@ const YoutubePage = () => {
     setMovie_list(all_movie.data)
   }
 
-  const onSubmit = (e) => {
+  const onSubmit =  (e) => {
     e.preventDefault();
     setIsLoadingVideo(true)
     const url = new URL(inputURL);
     const params = new URLSearchParams(url.search);
     for (let param of params) {
       if (param[0] == "v") {
-        console.log(param[1], "param[1]")
-        setVideo_id(param[1])
-        getYoutubeVideo()
-        getYoutubeTranscript()
+        methodAtSameTime(param[1])
+        // setVideo_id(param[1])
+        // getYoutubeVideo(param[1])
+        // getYoutubeTranscript(param[1])
+        // getAllSavedWords(param[1]);
         postMovie(param[1], param[1])
         setIsLoadingVideo(false)
       }
@@ -328,7 +333,7 @@ const YoutubePage = () => {
                           // ref追加  
                           <li key={index} ref={refs[index]}>
                             <ul>
-                              <ListItem key={`item-${index}`}>
+                              <ListItem key={`item-${index}`} >
                                 <ListItemText primary={`${item.start} : ${item.text}`} />
                               </ListItem>
                             </ul>
@@ -345,7 +350,7 @@ const YoutubePage = () => {
           </Row>
         </Container>
       </Col>
-      {/* <Col xs={2} >
+      <Col xs={2} >
         <Container className="list-of-movie">
           <List sx={{
             width: '100%',
@@ -361,14 +366,14 @@ const YoutubePage = () => {
               <li key={`section-${index}`}>
                 <ul>
                   <ListItemButton >
-                    <ListItemText className="wordlist" id={`text-${index}`} primary={`${item.title}`} onClick={() => handleClickToSelectMovie(item.v)} />
+                    <ListItemText className="movielist" id={`text-${index}`} primary={`${item.title}`} onClick={() => handleClickToSelectMovie(item.v)} />
                   </ListItemButton>
                 </ul>
               </li>
             ))}
           </List>
         </Container>
-      </Col> */}
+      </Col>
     </Row>
   );
 }

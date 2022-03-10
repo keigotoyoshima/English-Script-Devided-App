@@ -8,7 +8,6 @@ const dictionaryApi = async (language, word) => {
     );
     return data.data
   } catch (error) {
-    // console.log(error);
     return false
   }
 };

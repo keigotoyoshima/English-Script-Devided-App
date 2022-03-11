@@ -16,6 +16,9 @@ import { useUserContext } from "../userContext/userContext"
 import { useState, useEffect } from "react";
 import { useDjangoApiContext } from "../frontend_api/DjangoApi";
 import youtubeDataApi from "../frontend_api/YoutubeDataApi";
+import { seekVideo, loadVideo } from "../frontend_api/YoutubeIframeApi";
+import onYouTubeIframeAPIReady from "../frontend_api/YoutubeIframeApi";
+
 
 
 const base_url = "https://www.youtube.com/embed/"
@@ -34,23 +37,24 @@ const YoutubePage = () => {
   const [time, setTime] = useState("")
   const [isLoadingMeanings, setIsloadingMeanings] = useState(false)
   const [isLoadingTranscript, setIsloadingTranscript] = useState(false)
-  const [isLoadingVideo,setIsLoadingVideo] = useState(false)
+  const [isLoadingVideo, setIsLoadingVideo] = useState(false)
   const [headerError, setheaderError] = useState(false)
   const [addError, setAddError] = useState(false)
   const [refs, setRefs] = useState({})
 
-  const { postUserTask, getAllMoviesTask, postMovieTask, getAllWordsTask, postWordTask} = useDjangoApiContext()
+  const { postUserTask, getAllMoviesTask, postMovieTask, getAllWordsTask, postWordTask } = useDjangoApiContext()
 
   const { user } = useUserContext()
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log("useEffect1!!")
     // callYoutubeDataApi()
+    onYouTubeIframeAPIReady();
     // アカウント別のmovieをリロード時に取得
     getAllSavedMovies();
   }, []);
 
-  const callYoutubeDataApi = async(v)=>{
+  const callYoutubeDataApi = async (v) => {
     let data = await youtubeDataApi(v)
     // let data = await youtubeDataApi("FcwfjMebjTU")
     let givenTitle = data.items[0].snippet.localized.title;
@@ -68,7 +72,7 @@ const YoutubePage = () => {
 
 
 
-  const setWordWithCalling =  (text)=>{
+  const setWordWithCalling = (text) => {
     setWord(text);
     callDictionaryApi(text);
   }
@@ -77,14 +81,16 @@ const YoutubePage = () => {
     console.log(v, "v")
     setVideo_id(v)
     getAllSavedWords(v)
-    getYoutubeVideo(v)
+    // onYouTubeIframeAPIReady(v)
+    loadVideo(v);
+    // getYoutubeVideo(v)
     getYoutubeTranscript(v)
   }
 
   // useEffect(() => {
   //   callDictionaryApi()
   // }, [word]);
-  
+
   const saveWordAndTime = async (time) => {
     if (time == "") {
       setAddError(true)
@@ -93,7 +99,7 @@ const YoutubePage = () => {
       let list_id = -1;
       // 後で効率化
       transcription_list.forEach((item, index) => {
-        if (item.start == time) {
+        if (item.startText == time) {
           list_id = index;
         }
       })
@@ -101,7 +107,7 @@ const YoutubePage = () => {
       if (list_id == -1) {
         setAddError(true)
       } else {
-        await postWordTask({ word: word, list_id: list_id, v:video_id});
+        await postWordTask({ word: word, list_id: list_id, v: video_id });
         getAllSavedWords(video_id);
       }
     }
@@ -112,7 +118,7 @@ const YoutubePage = () => {
     if (data) {
       setheaderError(false)
       setMeaning_list(data)
-      
+
     } else {
       // falseが返ってきた場合
       setheaderError(true);
@@ -120,15 +126,15 @@ const YoutubePage = () => {
     }
   }
 
-  const getAllSavedWords = async(v) => {
+  const getAllSavedWords = async (v) => {
     const all_words = await getAllWordsTask(v);
-    if(all_words.data != ""){
+    if (all_words.data != "") {
       setVocabulary_list(all_words.data)
-    }else{
+    } else {
       // なかった場合は，初期化
       setVocabulary_list([])
     }
-    
+
   }
 
   // URL系
@@ -144,9 +150,10 @@ const YoutubePage = () => {
             let minutes = Math.floor((given_seconds - (hours * 3600)) / 60);
             let seconds = given_seconds - (hours * 3600) - (minutes * 60);
             seconds = Math.floor(seconds);
-            item.start = minutes.toString().padStart(2, '0') + ':' +
-              seconds.toString().padStart(2, '0');
+            item.startText = minutes.toString().padStart(2, '0') + ':' +
+            seconds.toString().padStart(2, '0');
           })
+          console.log(data, "in getYoutubeTranscript")
           makeRefList(data);
         })
       .catch((error) => {
@@ -171,7 +178,14 @@ const YoutubePage = () => {
       behavior: 'smooth',
       block: 'start',
     });
+    seekVideo(transcription_list[id].start)
   }
+
+  const handleClickToMoveMovie = (startTime) => {
+    console.log(startTime, "startTime in handleClickToMoveMovie");
+    seekVideo(startTime);
+  }
+
 
   const handleClickToSelectMovie = (v) => {
     methodAtSameTime(v)
@@ -191,11 +205,11 @@ const YoutubePage = () => {
 
   const postMovie = async (title, v) => {
 
-    await postMovieTask({displayName:user.displayName, title: title, v: v });
+    await postMovieTask({ displayName: user.displayName, title: title, v: v });
     getAllSavedMovies();
   }
 
-  const getAllSavedMovies = async() => {
+  const getAllSavedMovies = async () => {
     // json形式で取得
     const all_movie = await getAllMoviesTask();
     setMovie_list(all_movie.data)
@@ -283,21 +297,14 @@ const YoutubePage = () => {
               <Row>
                 <Col>
                   <Row>
-                    <Col><Container>
-                      {isLoadingVideo ?
-                        <Paper style={{ height: 400, width: 560, overflow: 'auto' }} elevation={5}>  <Container style={{ display: "flex", justifyContent: 'center', alignItems: 'center', height: "100%" }}>
-                          <CircularProgress />
-                        </Container></Paper>
+                    <Col>
+                    <Container>
 
-                        :
-
-                        src == "" ? <Paper style={{ height: 400, width: 560, overflow: 'auto' }} elevation={5}></Paper> : <iframe id='src' style={{ margin: "auto auto" }} width="560" height="400" src={src} title="YouTube video player" frameBorder="10" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
-
-
-
-                      }
-
-                    </Container></Col>
+                        <Paper style={{ height: 400, width: 560, overflow: 'auto' }} elevation={5}>
+                          <div id="player"></div>
+                        </Paper>
+                    </Container>
+                    </Col>
                     <Col>
                       <Container className="vocabulary-zone mt-2">
                         <Paper style={{ height: 430, maxheight: 1000, overflow: 'auto' }} elevation={5}>
@@ -359,8 +366,9 @@ const YoutubePage = () => {
                           <li key={index} ref={refs[index]}>
                             <ul>
                               <ListItem key={`item-${index}`} >
-                                <ListItemText primary={`${item.start} : ${item.text}`} />
+                                <ListItemText primary={`${item.startText} : ${item.text}`} onClick={()=> handleClickToMoveMovie(item.start)} />
                               </ListItem>
+                              <Divider/>
                             </ul>
                           </li>
                         ))}
@@ -393,7 +401,7 @@ const YoutubePage = () => {
                   <ListItemButton >
                     <ListItemText className="movielist" id={`text-${index}`} primary={`${item.title}`} onClick={() => handleClickToSelectMovie(item.v)} />
                   </ListItemButton>
-                  <Divider style={{"height":"10"}}/>
+                  <Divider style={{ "height": "10" }} />
                 </ul>
               </li>
             ))}

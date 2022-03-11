@@ -5,13 +5,13 @@ from django.urls import reverse_lazy
 class User(models.Model):
     displayName = models.CharField(
         max_length=255,
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
     )
 
     email = models.CharField(
         max_length=255,
-        blank=False,
+        blank=True,
         null=True,
     )
 
@@ -24,14 +24,14 @@ class Movie(models.Model):
     # version1ではvを格納
     title = models.CharField(
         max_length=255,
-        blank=False,
+        blank=True,
         null=True,
     )
     
     # youtube-API用key
     v = models.CharField(
         max_length=255,
-        blank=False,
+        blank=True,
         null=True,
     )
     
@@ -44,14 +44,14 @@ class Word(models.Model):
     
     list_id = models.CharField(
         max_length=255,
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
     )
     
     word = models.CharField(    
         max_length=255,
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
     )
 
     def __str__(self):

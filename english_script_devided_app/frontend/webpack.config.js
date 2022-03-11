@@ -1,3 +1,4 @@
+const Dotenv = require('dotenv-webpack');
 const path = require("path");
 const webpack = require("webpack");
 
@@ -23,8 +24,9 @@ module.exports = {
     minimize: true,
   },
   plugins: [
-    new webpack.DefinePlugin({  
-      'process.env.NODE_ENV' : JSON.stringify('development')
-  })
+    new Dotenv(),
+  //   new webpack.DefinePlugin({  
+  //     'process.env.NODE_ENV' : JSON.stringify('development')
+  // })
   ],
 };

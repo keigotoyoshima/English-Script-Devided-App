@@ -55,7 +55,7 @@ def MoviePost(request):
         #     print("serializer.is_valid()")
         #     serializer.save()
         #     return JsonResponse(serializer.data, status=201)
-        return JsonResponse({"movie": m}, status=201)
+        return JsonResponse({"movie post": "success"}, status=201)
             
 
 
@@ -114,7 +114,7 @@ class WordGet(APIView):
                 return Response(data, status=status.HTTP_200_OK)
             return Response({'Word Not Found': 'Invalid Word Code.'}, status=status.HTTP_204_NO_CONTENT)
         else:
-            return Response({'Word Not Found': 'Invalid Word Code.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'displayName Not Found': 'Invalid Word Code.'}, status=status.HTTP_404_NOT_FOUND)
         
 
 class GetYoutubeTranscript(APIView):

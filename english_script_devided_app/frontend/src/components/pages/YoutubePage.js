@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Grid, Button, ButtonGroup, Typography } from "@material-ui/core";
 import CssTextField from "../theme/MuiThemeTextField";
 import { Row, Col, Container } from "react-bootstrap";
-import { Paper, List } from "@material-ui/core";
+import { Paper, List, Divider } from "@material-ui/core";
 import { ListItemText, ListItem } from "@material-ui/core";
 import { Checkbox } from "@material-ui/core";
 import dictionaryApi from "../frontend_api/DictionaryApi"
@@ -15,6 +15,8 @@ import AppNavBar from "../navber/Navbar";
 import { useUserContext } from "../userContext/userContext"
 import { useState, useEffect } from "react";
 import { useDjangoApiContext } from "../frontend_api/DjangoApi";
+import youtubeDataApi from "../frontend_api/YoutubeDataApi";
+
 
 const base_url = "https://www.youtube.com/embed/"
 
@@ -23,6 +25,7 @@ const YoutubePage = () => {
   const [inputURL, setInputURL] = useState("")
   const [src, setSrc] = useState("")
   const [video_id, setVideo_id] = useState("")
+  const [title, setTitle] = useState("")
   const [transcription_list, setTranscription_list] = useState([])
   const [vocabulary_list, setVocabulary_list] = useState([])
   const [movie_list, setMovie_list] = useState([])
@@ -42,13 +45,25 @@ const YoutubePage = () => {
 
   useEffect(()=>{
     console.log("useEffect1!!")
+    // callYoutubeDataApi()
     // アカウント別のmovieをリロード時に取得
     getAllSavedMovies();
   }, []);
 
+  const callYoutubeDataApi = async(v)=>{
+    let data = await youtubeDataApi(v)
+    // let data = await youtubeDataApi("FcwfjMebjTU")
+    let givenTitle = data.items[0].snippet.localized.title;
+    setTitle(givenTitle)
+
+    postMovie(givenTitle, v)
+
+  }
+
   useEffect(() => {
     console.log("useEffect2!!")
     setInputURL("")
+    setWord("")
   }, [video_id]);
 
 
@@ -59,6 +74,7 @@ const YoutubePage = () => {
   }
 
   const methodAtSameTime = (v) => {
+    console.log(v, "v")
     setVideo_id(v)
     getAllSavedWords(v)
     getYoutubeVideo(v)
@@ -106,7 +122,13 @@ const YoutubePage = () => {
 
   const getAllSavedWords = async(v) => {
     const all_words = await getAllWordsTask(v);
-    setVocabulary_list(all_words.data)
+    if(all_words.data != ""){
+      setVocabulary_list(all_words.data)
+    }else{
+      // なかった場合は，初期化
+      setVocabulary_list([])
+    }
+    
   }
 
   // URL系
@@ -168,7 +190,7 @@ const YoutubePage = () => {
   }
 
   const postMovie = async (title, v) => {
-    
+
     await postMovieTask({displayName:user.displayName, title: title, v: v });
     getAllSavedMovies();
   }
@@ -179,7 +201,7 @@ const YoutubePage = () => {
     setMovie_list(all_movie.data)
   }
 
-  const onSubmit =  (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     setIsLoadingVideo(true)
     const url = new URL(inputURL);
@@ -191,7 +213,10 @@ const YoutubePage = () => {
         // getYoutubeVideo(param[1])
         // getYoutubeTranscript(param[1])
         // getAllSavedWords(param[1]);
-        postMovie(param[1], param[1])
+        await callYoutubeDataApi(param[1])
+        // 一つ前のstate参照になる
+        // console.log(title, "title in onSubmit")
+        // postMovie(title, param[1])
         setIsLoadingVideo(false)
       }
     }
@@ -368,6 +393,7 @@ const YoutubePage = () => {
                   <ListItemButton >
                     <ListItemText className="movielist" id={`text-${index}`} primary={`${item.title}`} onClick={() => handleClickToSelectMovie(item.v)} />
                   </ListItemButton>
+                  <Divider style={{"height":"10"}}/>
                 </ul>
               </li>
             ))}

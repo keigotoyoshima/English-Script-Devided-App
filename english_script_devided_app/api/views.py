@@ -36,10 +36,8 @@ def MoviePost(request):
         displayName = data["displayName"]
         u = User.objects.filter(displayName=displayName)
         print(f'{u} in MoviePost')
-        saved_v = Movie.objects.filter(v=data["v"])
         try:
-            print("len(saved_v)")
-            print(len(saved_v))
+            saved_v = Movie.objects.filter(v=data["v"])
             if len(saved_v) == 0 :
                 m = Movie.objects.create(
                 user=u[0], title=data["title"], v=data["v"])

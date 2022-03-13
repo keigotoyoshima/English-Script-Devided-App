@@ -211,8 +211,13 @@ const YoutubePage = () => {
 
   const getAllSavedMovies = async () => {
     // json形式で取得
-    const all_movie = await getAllMoviesTask();
-    setMovie_list(all_movie.data)
+    const all_movies = await getAllMoviesTask();
+    if (all_movies.data != "") {
+      setMovie_list(all_movies.data)
+    } else {
+      // なかった場合は，初期化
+      setMovie_list([])
+    }
   }
 
   const onSubmit = async (e) => {

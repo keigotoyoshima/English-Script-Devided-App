@@ -3,10 +3,10 @@ import { useUserContext } from '../userContext/userContext';
 import { createContext,useContext } from 'react';
 import React from 'react';
 
-const API_BASE_URL = 'http://127.0.0.1:8000/'; 
+const IP_AND_PORT = process.env.REACT_APP_DJANGO_DATA_API_IP_PORT; 
 
 const client = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: IP_AND_PORT,
   headers: {
     'Content-Type': 'application/json'
   },

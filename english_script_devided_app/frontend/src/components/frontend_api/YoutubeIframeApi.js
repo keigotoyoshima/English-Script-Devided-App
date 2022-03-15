@@ -10,7 +10,6 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 var player;
 const onYouTubeIframeAPIReady = () => {
-  console.log("called onYouTubeIframeAPIReady in YoutubeIframeApi,js")
   player = new YT.Player('player', {
     height: '400',
     width: '560',
@@ -65,9 +64,6 @@ export function seekVideo(startTime){
 //   player.loadVideoById(v);
 // }
 export function loadVideo (v) {
-  console.log("called loadVideo")
-  console.log(v,"v")
-  console.log(player, "player")
   player.loadVideoById(v);
 }
 

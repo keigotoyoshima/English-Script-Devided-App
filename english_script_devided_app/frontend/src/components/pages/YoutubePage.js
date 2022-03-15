@@ -47,7 +47,6 @@ const YoutubePage = () => {
   const { user } = useUserContext()
 
   useEffect(() => {
-    console.log("useEffect1!!")
     // callYoutubeDataApi()
     onYouTubeIframeAPIReady();
     // アカウント別のmovieをリロード時に取得
@@ -65,7 +64,6 @@ const YoutubePage = () => {
   }
 
   useEffect(() => {
-    console.log("useEffect2!!")
     setInputURL("")
     setWord("")
   }, [video_id]);
@@ -78,7 +76,6 @@ const YoutubePage = () => {
   }
 
   const methodAtSameTime = (v) => {
-    console.log(v, "v")
     setVideo_id(v)
     getAllSavedWords(v)
     // onYouTubeIframeAPIReady(v)
@@ -107,7 +104,7 @@ const YoutubePage = () => {
       if (list_id == -1) {
         setAddError(true)
       } else {
-        await postWordTask({ word: word, list_id: list_id, v: video_id });
+        await postWordTask(video_id, { word: word, list_id: list_id, v: video_id });
         getAllSavedWords(video_id);
       }
     }
@@ -153,7 +150,7 @@ const YoutubePage = () => {
             item.startText = minutes.toString().padStart(2, '0') + ':' +
             seconds.toString().padStart(2, '0');
           })
-          console.log(data, "in getYoutubeTranscript")
+
           makeRefList(data);
         })
       .catch((error) => {
@@ -182,7 +179,6 @@ const YoutubePage = () => {
   }
 
   const handleClickToMoveMovie = (startTime) => {
-    console.log(startTime, "startTime in handleClickToMoveMovie");
     seekVideo(startTime);
   }
 
@@ -205,7 +201,7 @@ const YoutubePage = () => {
 
   const postMovie = async (title, v) => {
 
-    await postMovieTask({ displayName: user.displayName, title: title, v: v });
+    await postMovieTask({ title: title, v: v });
     getAllSavedMovies();
   }
 
@@ -234,7 +230,7 @@ const YoutubePage = () => {
         // getAllSavedWords(param[1]);
         await callYoutubeDataApi(param[1])
         // 一つ前のstate参照になる
-        // console.log(title, "title in onSubmit")
+
         // postMovie(title, param[1])
         setIsLoadingVideo(false)
       }

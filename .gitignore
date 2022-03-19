@@ -13,8 +13,5 @@ __pycache__/
 *$py.class
 
 
-staticfiles/
-conection.txt
-main.js
 english_script_devided_app/frontend/yarn.lock
 yarn.lock

@@ -1,0 +1,48 @@
+/* cssファイルここに置いていいか微妙 */
+
+.meanings {
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  /* border: 1px solid rgb(105, 105, 105);
+  border-radius: 10px; */
+  padding: 5px 5px;
+  margin-top: 7px;
+  overflow-x: hidden;
+}
+
+.subTitle {
+  font-size: 10;
+  font-family: "Montserrat", sans-serif;
+}
+
+@media (max-width: 900px) {
+  .meanings {
+    overflow: scroll;
+    overflow-x: hidden;
+    height: 20px;
+  }
+}
+.singleMean {
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  margin: 5px 5px;
+}
+hr{
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+audio{
+  width: 100px;
+  height: 20px;
+  padding-left: 0px;
+}
+.padding-left-release{
+  padding-left: 0px;
+}
+.padding-right-release{
+  padding-right: 0px;
+}

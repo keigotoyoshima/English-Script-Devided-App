@@ -1,22 +1,20 @@
-# English Script Devided in about 10 minutes
+# Youtube Language
 
 Django and React web application.
 
 
 
+## Concepts
+This app is an English listening study app that uses Youtube as a teaching material.
+
+You can record and review words you didn't understand in Youtube video efficiently.
 
 
 ## Getting Started
-Please check site from below.
+1, Please check site from below.
 
-### Url : https://keigo-site.herokuapp.com/
+2, Go to Youtube site and search for your favorite Youtube video and copy the URL.
 
-## Concepts
-This site helps you watch English Youtube Video comfortably．
+3, Paste the URL into the Form on this site.
 
-When watching an English Youtube Video, sometimes there are no subtitles or it is difficult to watch.
-
-
-This site is convenient because it store and displays subtitles beautifully．
-
-
+### Url : https://youtubelanguage.com/

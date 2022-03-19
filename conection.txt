@@ -29,6 +29,9 @@ WantedBy=multi-user.target
 sudo systemctl daemon-reload
 sudo systemctl restart gunicorn.service
 sudo systemctl status gunicorn
+; nginx
+sudo systemctl restart nginx
+sudo systemctl status nginx
 
 # ソケット用コマンド
 sudo systemctl start gunicorn.socket
@@ -64,8 +67,7 @@ server {
         }
 }
 
-sudo systemctl restart nginx
-sudo systemctl status nginx
+
 
 sudo tail -F /var/log/nginx/error.log
 

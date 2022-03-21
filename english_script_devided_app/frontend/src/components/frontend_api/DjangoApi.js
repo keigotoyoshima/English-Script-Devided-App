@@ -14,7 +14,9 @@ const client = axios.create({
 
 // register用にpostUserTaskだけProviderから除外
 export const postUserTask = (params) => {
-  return client.post(`/api/user-post/${user.displayName}/`, params);
+  let response = client.post(`/api/user-post/`, params);
+  console.log(response , 'response in postUserTask');
+  return response
 }
 
 export const DjangoApiContext = createContext({});
@@ -24,28 +26,33 @@ export const useDjangoApiContext = () => {
 };
 
 export const DjangoApiContextProvider = ({ children }) => {
-  const {user} = useUserContext();
-
+  const {user, displayName} = useUserContext();
 
 
 
   const getAllMoviesTask = () => {
-    let response = client.get(`/api/movie-get/${user.displayName}/`);
-    console.log(response, 'response');
+    let response = client.get(`/api/movie-get/${displayName}/`);
+    console.log(response, 'response in getAllMoviesTask');
     return response;
   }
 
 
   const postMovieTask = (params) => {
-    return client.post(`/api/movie-post/${user.displayName}/`, params);
+    let response = client.post(`/api/movie-post/${displayName}/`, params);
+    console.log(response, 'response in postMovieTask');
+    return response;
   }
 
   const getAllWordsTask = (v) => {
-    return client.get(`/api/word-get/${user.displayName}/${v}/`);
+    let response =  client.get(`/api/word-get/${displayName}/${v}/`);
+    console.log(response, 'response in getAllWordsTask');
+    return response;
   }
 
   const postWordTask = (v, params) => {
-    return client.post(`/api/word-post/${user.displayName}/${v}/`, params);
+    let response = client.post(`/api/word-post/${displayName}/${v}/`, params);
+    console.log(response, 'response in postWordTask');
+    return response;
   }
 
   const editTask = (id, params) => {

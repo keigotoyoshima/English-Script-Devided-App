@@ -42,7 +42,7 @@ const YoutubePage = () => {
   const [addError, setAddError] = useState(false)
   const [refs, setRefs] = useState({})
 
-  const { postUserTask, getAllMoviesTask, postMovieTask, getAllWordsTask, postWordTask } = useDjangoApiContext()
+  const { getAllMoviesTask, postMovieTask, getAllWordsTask, postWordTask } = useDjangoApiContext()
 
   const { user } = useUserContext()
 
@@ -125,7 +125,10 @@ const YoutubePage = () => {
 
   const getAllSavedWords = async (v) => {
     const all_words = await getAllWordsTask(v);
-    if (all_words.data != "") {
+    // 文字列で条件分岐後で修正
+    if (all_words.data == "Not found Movie in word_api_view"){
+      setVocabulary_list([])
+    } else if (all_words.data != "") {
       setVocabulary_list(all_words.data)
     } else {
       // なかった場合は，初期化

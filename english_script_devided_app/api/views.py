@@ -13,22 +13,14 @@ from rest_framework.decorators import api_view
 
 
 @csrf_exempt
-def user_api_view(request, displayName):
+def user_api_view(request):
     err_msg = {
         "error": {
             "code": 404,
             "message": "User not found",
         }}
-    try:
-        user = User.objects.get(displayName=displayName)
-    except User.DoesNotExist:
-        return HttpResponse(status=404)
 
-    if request.method == "GET":
-        serializer = UserSerializer(user, many=True)
-        return JsonResponse(serializer.data, safe=False)
-
-    elif request.method == "POST":
+    if request.method == "POST":
         data = JSONParser().parse(request)
         serializer = UserSerializer(data=data)
         if serializer.is_valid():
@@ -46,14 +38,13 @@ def movie_api_view(request, displayName):
     try:
         user = User.objects.get(displayName=displayName)
     except User.DoesNotExist:
-        return HttpResponse("Not found User")
-    
+        return HttpResponse("Not found User in movie_api_view")
 
     if request.method == "GET":
         try:
             movies = user.movie_set.all()
-        except User.DoesNotExist:
-            return HttpResponse("Not found Movies")
+        except Movie.DoesNotExist:
+            return HttpResponse("Not found Movies in movie_api_view")
         
         serializer = MovieSerializer(movies, many=True)
         return JsonResponse(serializer.data, safe=False)
@@ -104,17 +95,19 @@ def word_api_view(request, displayName, v=""):
     try:
         user = User.objects.get(displayName=displayName)
     except User.DoesNotExist:   
-        return HttpResponse(status=404)
+        return HttpResponse("Not found User in word_api_view")
     try:
-        movie = Movie.objects.filter(user=user, v=v)[0]
+        movie = Movie.objects.get(user=user, v=v)
     except Movie.DoesNotExist:
-        return HttpResponse(status=404)
+        # Wordに関してのみ，movieが存在しない場合があるので，返り値の文字列で，一旦条件分岐
+        return HttpResponse("Not found Movie in word_api_view")
+    
 
     if request.method == "GET":
         try:
             words = movie.word_set.all()
         except Word.DoesNotExist:
-            return HttpResponse(status=202)
+            return HttpResponse("Not found Word in word_api_view")
             
         serializer = WordSerializer(words, many=True)
         return JsonResponse(serializer.data, safe=False)

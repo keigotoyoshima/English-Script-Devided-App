@@ -8,7 +8,7 @@ import { Nav } from "react-bootstrap";
 import { useUserContext } from "../userContext/userContext";
 
 const AppNavBar = () => {
-  const { logoutUser, user } = useUserContext();
+  const { logoutUser, user, displayName } = useUserContext();
 
   const onClickHandler = () => {
     console.log(onClickHandler);
@@ -24,7 +24,7 @@ const AppNavBar = () => {
           <Col md="auto">
             <Navbar.Collapse>
               <Navbar.Text>
-                Signed in as: {user.displayName}
+                Signed in as: {displayName}
               </Navbar.Text>
             </Navbar.Collapse>
           </Col>

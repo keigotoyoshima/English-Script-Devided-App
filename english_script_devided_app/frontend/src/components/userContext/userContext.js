@@ -24,6 +24,7 @@ export const useUserContext = () => {
 
 export const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [displayName, setDisplayName] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -45,15 +46,16 @@ export const UserContextProvider = ({ children }) => {
   const registerUser = (email, password, name) => {
     setLoading(true);
     createUserWithEmailAndPassword(auth, email, password)
-      .then(() =>
+      .then(() => {
+        // django-dbにユーザー情報登録を先に行う
+        postUserTask({ displayName: name, email: email })
         updateProfile(auth.currentUser, {
           displayName: name,
         })
+        // app.js用 
+        setDisplayName(name)
+      }
       )
-      .then((res) =>{ 
-        // django-dbにユーザー情報登録
-        postUserTask({displayName: name, email:email})
-      })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   };
@@ -62,6 +64,7 @@ export const UserContextProvider = ({ children }) => {
     setLoading(true);
     signInWithEmailAndPassword(auth, email, password)
       .then((res) => {
+        setDisplayName(user.displayName)
       })
       .catch((err) => setError(err.code))
       .finally(() => setLoading(false));
@@ -77,6 +80,7 @@ export const UserContextProvider = ({ children }) => {
 
   const contextValue = {
     user,
+    displayName,
     loading,
     error,
     signInUser,

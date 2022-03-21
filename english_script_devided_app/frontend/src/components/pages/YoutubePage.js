@@ -26,10 +26,10 @@ const base_url = "https://www.youtube.com/embed/"
 
 const YoutubePage = () => {
   const [inputURL, setInputURL] = useState("")
-  const [src, setSrc] = useState("")
   const [video_id, setVideo_id] = useState("")
   const [title, setTitle] = useState("")
   const [transcription_list, setTranscription_list] = useState([])
+  const [display_transcription, setDisplay_transcription] = useState(true)
   const [vocabulary_list, setVocabulary_list] = useState([])
   const [movie_list, setMovie_list] = useState([])
   const [word, setWord] = useState("")
@@ -42,12 +42,11 @@ const YoutubePage = () => {
   const [addError, setAddError] = useState(false)
   const [refs, setRefs] = useState({})
 
-  const { postUserTask, getAllMoviesTask, postMovieTask, getAllWordsTask, postWordTask } = useDjangoApiContext()
+  const { getAllMoviesTask, postMovieTask, getAllWordsTask, postWordTask } = useDjangoApiContext()
 
   const { user } = useUserContext()
 
   useEffect(() => {
-    // callYoutubeDataApi()
     onYouTubeIframeAPIReady();
     // アカウント別のmovieをリロード時に取得
     getAllSavedMovies();
@@ -55,17 +54,15 @@ const YoutubePage = () => {
 
   const callYoutubeDataApi = async (v) => {
     let data = await youtubeDataApi(v)
-    // let data = await youtubeDataApi("FcwfjMebjTU")
     let givenTitle = data.items[0].snippet.localized.title;
     setTitle(givenTitle)
-
     postMovie(givenTitle, v)
-
   }
 
   useEffect(() => {
     setInputURL("")
     setWord("")
+    if (video_id != "") loadVideo(video_id)
   }, [video_id]);
 
 
@@ -78,15 +75,9 @@ const YoutubePage = () => {
   const methodAtSameTime = (v) => {
     setVideo_id(v)
     getAllSavedWords(v)
-    // onYouTubeIframeAPIReady(v)
-    loadVideo(v);
-    // getYoutubeVideo(v)
     getYoutubeTranscript(v)
   }
 
-  // useEffect(() => {
-  //   callDictionaryApi()
-  // }, [word]);
 
   const saveWordAndTime = async (time) => {
     if (time == "") {
@@ -125,7 +116,10 @@ const YoutubePage = () => {
 
   const getAllSavedWords = async (v) => {
     const all_words = await getAllWordsTask(v);
-    if (all_words.data != "") {
+    // 文字列で条件分岐後で修正
+    if (all_words.data == "Not found Movie in word_api_view"){
+      setVocabulary_list([])
+    } else if (all_words.data != "") {
       setVocabulary_list(all_words.data)
     } else {
       // なかった場合は，初期化
@@ -187,10 +181,8 @@ const YoutubePage = () => {
     methodAtSameTime(v)
   }
 
-  // 動画関係
-  const getYoutubeVideo = (v) => {
-    let src = base_url + v;
-    setSrc(src)
+  const handleClickToDisplay = () =>{
+    setDisplay_transcription(prev=>!prev);
   }
 
   // URLinput
@@ -224,14 +216,7 @@ const YoutubePage = () => {
     for (let param of params) {
       if (param[0] == "v") {
         methodAtSameTime(param[1])
-        // setVideo_id(param[1])
-        // getYoutubeVideo(param[1])
-        // getYoutubeTranscript(param[1])
-        // getAllSavedWords(param[1]);
         await callYoutubeDataApi(param[1])
-        // 一つ前のstate参照になる
-
-        // postMovie(title, param[1])
         setIsLoadingVideo(false)
       }
     }
@@ -352,28 +337,37 @@ const YoutubePage = () => {
                         <CircularProgress />
                       </Container>
                       :
-                      <List sx={{
-                        width: '100%',
-                        maxwidth: 500,
-                        bgcolor: 'background.paper',
-                        position: 'relative',
-                        overflow: 'auto',
-                        maxHeight: '100%',
-                        '& ul': { padding: 0 },
-                      }}
-                        subheader={<li />}>
-                        {transcription_list.map((item, index) => (
-                          // ref追加  
-                          <li key={index} ref={refs[index]}>
-                            <ul>
-                              <ListItem key={`item-${index}`} >
-                                <ListItemText primary={`${item.startText} : ${item.text}`} onClick={()=> handleClickToMoveMovie(item.start)} />
-                              </ListItem>
-                              <Divider/>
-                            </ul>
-                          </li>
-                        ))}
-                      </List>
+                      <div>
+                        <Button variant="text" onClick={()=>{
+                          handleClickToDisplay()
+                        }}>display</Button>
+                        <List sx={{
+                          width: '100%',
+                          maxwidth: 500,
+                          bgcolor: 'background.paper',
+                          position: 'relative',
+                          overflow: 'auto',
+                          maxHeight: '100%',
+                          '& ul': { padding: 0 },
+                        }}
+                          subheader={<li />}>
+                            {display_transcription ? <div>
+                            {transcription_list.map((item, index) => (
+                              // ref追加
+                              <li key={index} ref={refs[index]}>
+                                <ul>
+                                  <ListItem key={`item-${index}`} >
+                                    <ListItemText primary={`${item.startText} : ${item.text}`} onClick={() => handleClickToMoveMovie(item.start)} />
+                                  </ListItem>
+                                  <Divider />
+                                </ul>
+                              </li>
+                            ))}
+                            </div>:
+                            <div></div>
+                            }
+                        </List>
+                      </div>
                     }
 
                   </Paper>

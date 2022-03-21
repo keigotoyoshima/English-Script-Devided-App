@@ -4,12 +4,13 @@ import Auth from "./userContext/auth";
 import YoutubePage from "./pages/YoutubePage";
 
 function App() {
-  const { user, loading, error } = useUserContext();
+  const { displayName, user, loading, error } = useUserContext();
 
   return (
     <div className="App">
+      {/* <p>user.displayName</p> */}
       {error && <p className="error">{error}</p>}
-      {loading ? <h2>Loading...</h2> : <> {user ? <YoutubePage /> : <Auth />} </>}
+      {loading ? <h2>Loading...</h2> : <> {displayName ? <YoutubePage /> : <Auth />} </>}
     </div>
   );
 }

@@ -47,22 +47,12 @@ function onPlayerStateChange(event) {
 function stopVideo(){
   player.stopVideo();
 }
-// const stopVideo = () => {
-//  
-// }
 
-// export const seekVideo = () => {
-//   // player.seekTo(seconds:Number, allowSeekAhead:Boolean):Void
-//   player.seekTo(17, true)
-// }
 export function seekVideo(startTime){
   // player.seekTo(seconds:Number, allowSeekAhead:Boolean):Void
   player.seekTo(startTime, true)
 }
 
-// export const loadVideo = (v) => {
-//   player.loadVideoById(v);
-// }
 export function loadVideo (v) {
   player.loadVideoById(v);
 }

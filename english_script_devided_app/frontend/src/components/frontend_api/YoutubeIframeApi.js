@@ -13,7 +13,7 @@ const onYouTubeIframeAPIReady = () => {
   player = new YT.Player('player', {
     height: '400',
     width: '560',
-    videoId: '',
+    videoId: 'UNqcqAhpJdY',
     events: {
       'onReady': onPlayerReady,
       'onStateChange': onPlayerStateChange
@@ -23,6 +23,7 @@ const onYouTubeIframeAPIReady = () => {
 
 function onPlayerReady(event){
   event.target.playVideo();
+  player.stopVideo(); 
 }
 
 // const onPlayerReady = (event) => {
@@ -55,6 +56,7 @@ export function seekVideo(startTime){
 
 export function loadVideo (v) {
   player.loadVideoById(v);
+  player.stopVideo();
 }
 
 export default onYouTubeIframeAPIReady;

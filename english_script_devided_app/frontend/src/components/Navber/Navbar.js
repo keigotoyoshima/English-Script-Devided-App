@@ -20,7 +20,7 @@ const AppNavBar = () => {
 
       <Container width="100%">
         <Row>
-          <Col><Navbar.Brand href="#home">Youtube for English Learning</Navbar.Brand></Col>
+          <Col><Navbar.Brand href="#home">Youtube Language</Navbar.Brand></Col>
           <Col md="auto">
             <Navbar.Collapse>
               <Navbar.Text>

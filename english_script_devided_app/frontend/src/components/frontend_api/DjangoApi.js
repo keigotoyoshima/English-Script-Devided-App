@@ -3,7 +3,8 @@ import { useUserContext } from '../userContext/userContext';
 import { createContext,useContext } from 'react';
 import React from 'react';
 
-const IP_AND_PORT = process.env.REACT_APP_DJANGO_DATA_API_IP_PORT; 
+// const IP_AND_PORT = process.env.REACT_APP_DJANGO_DATA_API_IP_PORT; 
+const IP_AND_PORT = process.env.REACT_APP_DJANGO_DATA_API_IP_PORT_LOCAL; 
 
 const client = axios.create({
   baseURL: IP_AND_PORT,

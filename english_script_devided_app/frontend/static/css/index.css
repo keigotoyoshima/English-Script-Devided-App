@@ -1,3 +1,14 @@
+.transcription{
+  padding-left: 50px;
+}
+.span_transcription {
+  margin-right: 5px;
+}
+.span_start_text {
+  margin-right: 15px;
+}
+
+
 
 html,
 body {

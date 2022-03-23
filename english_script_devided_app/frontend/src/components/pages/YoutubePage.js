@@ -30,17 +30,18 @@ const YoutubePage = () => {
   const [title, setTitle] = useState("")
   const [transcription_list, setTranscription_list] = useState([])
   const [display_transcription, setDisplay_transcription] = useState(true)
+  const [twoDimensionalArray, setTwoDimensionalArray] = useState([[]])
+  const [refs, setRefs] = useState({})
   const [vocabulary_list, setVocabulary_list] = useState([])
   const [movie_list, setMovie_list] = useState([])
   const [word, setWord] = useState("")
+  const [list_id, setList_id] = useState("")
   const [meaning_list, setMeaning_list] = useState([])
-  const [time, setTime] = useState("")
   const [isLoadingMeanings, setIsloadingMeanings] = useState(false)
   const [isLoadingTranscript, setIsloadingTranscript] = useState(false)
   const [isLoadingVideo, setIsLoadingVideo] = useState(false)
   const [headerError, setheaderError] = useState(false)
   const [addError, setAddError] = useState(false)
-  const [refs, setRefs] = useState({})
 
   const { getAllMoviesTask, postMovieTask, getAllWordsTask, postWordTask } = useDjangoApiContext()
 
@@ -62,15 +63,17 @@ const YoutubePage = () => {
   useEffect(() => {
     setInputURL("")
     setWord("")
+    setList_id("")
     if (video_id != "") loadVideo(video_id)
   }, [video_id]);
 
+  useEffect(() => {
+    if(word!=""){
+      callDictionaryApi(word)
+    }
+  }, [word]);
 
 
-  const setWordWithCalling = (text) => {
-    setWord(text);
-    callDictionaryApi(text);
-  }
 
   const methodAtSameTime = (v) => {
     setVideo_id(v)
@@ -79,25 +82,13 @@ const YoutubePage = () => {
   }
 
 
-  const saveWordAndTime = async (time) => {
-    if (time == "") {
+  const saveWordAndTime = async () => {
+    if (list_id == "") {
       setAddError(true)
     } else {
       setAddError(false)
-      let list_id = -1;
-      // 後で効率化
-      transcription_list.forEach((item, index) => {
-        if (item.startText == time) {
-          list_id = index;
-        }
-      })
-      // 該当箇所がなかった場合
-      if (list_id == -1) {
-        setAddError(true)
-      } else {
-        await postWordTask(video_id, { word: word, list_id: list_id, v: video_id });
-        getAllSavedWords(video_id);
-      }
+      await postWordTask(video_id, { word: word, list_id: list_id, v: video_id });
+      getAllSavedWords(video_id);
     }
   }
   const callDictionaryApi = async (word) => {
@@ -144,13 +135,24 @@ const YoutubePage = () => {
             item.startText = minutes.toString().padStart(2, '0') + ':' +
             seconds.toString().padStart(2, '0');
           })
-
-          makeRefList(data);
+          makeTwoDimensionalArray(data);
         })
       .catch((error) => {
-        makeRefList([{ "start": "Sorry,", "text": " no transcript for this video." },]);
+        makeRefList([{ "start": "Sorry,", "text": " No transcript for this video." },]);
       }
       );
+  }
+
+  // transcriptionを二次元配列化
+  const makeTwoDimensionalArray = (list) => {
+    let twoDimensionalArray = []
+    list.forEach((item) => {
+      let newText = item.text.split(" ");
+
+      twoDimensionalArray.push(newText);
+    })
+    setTwoDimensionalArray(twoDimensionalArray)
+    makeRefList(list)
   }
 
   // スクロール関係
@@ -176,6 +178,10 @@ const YoutubePage = () => {
     seekVideo(startTime);
   }
 
+  const handleClickToSearch = (word,list_id) => {
+    setWord(word);
+    setList_id(list_id);
+  }
 
   const handleClickToSelectMovie = (v) => {
     methodAtSameTime(v)
@@ -304,8 +310,7 @@ const YoutubePage = () => {
                             }}
                           >
                             <Header
-                              setWord={setWord}
-                              setWordWithCalling={setWordWithCalling}
+                              word={word}
                               headerError={headerError}
                             />
 
@@ -314,15 +319,15 @@ const YoutubePage = () => {
                                 <CircularProgress />
                               </Container>
                             )}
-                            {!isLoadingMeanings && (
+                            {!isLoadingMeanings && transcription_list.length!=0 && word!="" &&
                               <Definitions
                                 meaning_list={meaning_list}
                                 word={word}
-                                setTime={setTime}
-                                addWordAndTime={saveWordAndTime}
+                                startText={transcription_list[list_id].startText}
+                                saveWordAndTime={saveWordAndTime}
                                 addError={addError}
                               />
-                            )}
+                            }
                           </Container>
                         </Paper>
                       </Container>
@@ -352,17 +357,18 @@ const YoutubePage = () => {
                         }}
                           subheader={<li />}>
                             {display_transcription ? <div>
-                            {transcription_list.map((item, index) => (
-                              // ref追加
-                              <li key={index} ref={refs[index]}>
-                                <ul>
-                                  <ListItem key={`item-${index}`} >
-                                    <ListItemText primary={`${item.startText} : ${item.text}`} onClick={() => handleClickToMoveMovie(item.start)} />
-                                  </ListItem>
-                                  <Divider />
-                                </ul>
+                            {twoDimensionalArray.map((item, index) => {
+                              return (
+                              <li className="transcription" key={index} ref={refs[index]} onClick={()=>{handleClickToMoveMovie(transcription_list[index].start)}}>
+                                  {/* indexで指定しているため，undefinedになり得る */}
+                                  <span className="span_start_text">{transcription_list.length==0? "":transcription_list[index].startText}</span>
+                                  {item.map((item2, index2) => {
+                                    return (
+                                      <span className="span_transcription" key={index2} onClick={()=>{handleClickToSearch(item2, index)}} >{item2}</span>
+                                    )
+                                })}
                               </li>
-                            ))}
+                            )})}
                             </div>:
                             <div></div>
                             }

@@ -8,16 +8,8 @@ import { useState } from "react";
 
 const Definitions = (props) =>{
 
-  const [time, setTime] = useState()
-
-  const updateInputValue = (evt) => {
-    console.log(evt.target.value);
-    setTime(evt.target.value)
-  }
-
   const onClick = () => {
-    console.log('onClick');
-    props.addWordAndTime(time)
+    props.saveWordAndTime()
   }
 
 
@@ -46,7 +38,8 @@ const Definitions = (props) =>{
 
                   <Row>
                     <Col>
-                    <CssTextField style={{ margin: "auto 0" }} id="outlined-basic" style={{ width: "100%" }} label={props.addError ? "Not found" : "Time"} size='small' onChange={e => updateInputValue(e)} error={props.addError}
+                    <CssTextField style={{ margin: "auto 0" }} id="outlined-basic" style={{ width: "100%" }} label={props.addError ? "Not found" : "Time"} value={props.startText} 
+                    size='small' onChange={e => updateInputValue(e)} error={props.addError}
                    />
                     </Col>
                     <Col>

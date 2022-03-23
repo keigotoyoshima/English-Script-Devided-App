@@ -8,24 +8,9 @@ import { debounce } from "lodash";
 import CssTextField from "../theme/MuiThemeTextField";
 
 const Header = ({
-  setWord,
-  setWordWithCalling,
+  word,
   headerError,
 }) => {
-
-  const deb = useCallback(
-    debounce((text) => setWordWithCalling(text), 1000),
-    []
-  );
-
-  const handleText = (text) => {
-    deb(text);
-    console.log(text);
-  };
-  
-  const onSubmit = () => {
-    console.log("onSubmit in Header.js")
-  }
 
   return (
     <div className="header">
@@ -35,9 +20,8 @@ const Header = ({
           helperText={headerError ? "Incorrect word, please search correct word." : ""}
           className="search"
           id="outlined-basic"
-          label={headerError ? "" : "Search"}
-          onChange={(e) => handleText(e.target.value)}
-          onSubmit={onSubmit}
+          label={headerError ? "" : "Word"}
+          value={word != "" ? word : ""}
         />
       </div>
     </div>

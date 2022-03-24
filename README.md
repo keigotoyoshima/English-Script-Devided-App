@@ -18,3 +18,10 @@ You can record and review words you didn't understand in Youtube video efficient
 3, Paste the URL into the Form on this site.
 
 ### Url : https://youtubelanguage.com/
+
+If you want to try it out, please use the account below.
+
+user-name : test-user
+email : develop199987@gmail.com
+password : 111111
+

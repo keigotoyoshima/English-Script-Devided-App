@@ -72,6 +72,7 @@ export const UserContextProvider = ({ children }) => {
 
   const logoutUser = () => {
     signOut(auth);
+    setDisplayName(null)
   };
 
   const forgotPassword = (email) => {

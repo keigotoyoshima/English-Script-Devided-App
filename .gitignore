@@ -18,4 +18,5 @@ english_script_devided_app/frontend/yarn.lock
 yarn.lock
 english_script_devided_app/frontend/static/frontend/main.js.LICENSE.txt
 english_script_devided_app/frontend/static/frontend/main.js
+staticfiles/
 

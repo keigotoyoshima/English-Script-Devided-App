@@ -7,7 +7,7 @@ function App() {
   const { displayName, user, loading, error } = useUserContext();
 
   return (
-    <div className="App">
+    <div className="App" style={{height:"100%"}}>
       {/* <p>user.displayName</p> */}
       {error && <p className="error">{error}</p>}
       {loading ? <h2>Loading...</h2> : <> {displayName ? <YoutubePage /> : <Auth />} </>}

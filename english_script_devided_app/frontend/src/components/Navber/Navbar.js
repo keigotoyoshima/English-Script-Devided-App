@@ -16,30 +16,27 @@ const AppNavBar = () => {
   }
 
   return (
-    <Navbar bg="dark" variant="dark">
-
-      <Container width="100%">
-        <Row>
-          <Col><Navbar.Brand href="#home">Youtube Language</Navbar.Brand></Col>
-          <Col md="auto">
-            <Navbar.Collapse>
-              <Navbar.Text>
+    <Navbar bg="dark" variant="dark" style={{ display: "block" }}>
+      <Row>
+        <Col xs={6} >
+          <Navbar.Brand href="#home" style={{ marginLeft: "2rem", display: "block" }}>Youtube Language</Navbar.Brand>
+        </Col>
+        <Col xs={6}>
+          <Row>
+            <Col xs={10}>
+              <Navbar.Text style={{ display: "block", textAlign: "end", }}>
                 Signed in as: {displayName}
               </Navbar.Text>
-            </Navbar.Collapse>
-          </Col>
-          <Col xs lg="1">
-            <Container width="100%">
-              <NavDropdown className="justfy-content-end" title="Logout" id="basic-nav-dropdown">
+            </Col>
+            <Col xs={2} style={{ textAlign: "start" }}>
+              <NavDropdown title="Logout" id="basic-nav-dropdown">
                 <NavDropdown.Item onClick={onClickHandler}>Logout</NavDropdown.Item>
                 <NavDropdown.Item>Cancel</NavDropdown.Item>
               </NavDropdown>
-            </Container>
-          </Col>
-        </Row>
-      </Container> 
-
-
+            </Col>
+          </Row>
+        </Col>
+      </Row>
     </Navbar>
   );
 }

@@ -68,7 +68,7 @@ const YoutubePage = () => {
   }, [video_id]);
 
   useEffect(() => {
-    if(word!=""){
+    if (word != "") {
       callDictionaryApi(word)
     }
   }, [word]);
@@ -178,7 +178,7 @@ const YoutubePage = () => {
     seekVideo(startTime);
   }
 
-  const handleClickToSearch = (word,list_id) => {
+  const handleClickToSearch = (word, list_id) => {
     setWord(word);
     setList_id(list_id);
   }
@@ -187,8 +187,8 @@ const YoutubePage = () => {
     methodAtSameTime(v)
   }
 
-  const handleClickToDisplay = () =>{
-    setDisplay_transcription(prev=>!prev);
+  const handleClickToDisplay = () => {
+    setDisplay_transcription(prev => !prev);
   }
 
   // URLinput
@@ -232,163 +232,13 @@ const YoutubePage = () => {
 
 
   return (
-    <Row>
-      <AppNavBar></AppNavBar>
-      <Col xs={2}>
 
-        <List sx={{
-          width: '100%',
-          height: 20,
-          maxwidth: 50,
-          bgcolor: 'background.paper',
-          position: 'relative',
-          overflow: 'auto',
-          maxHeight: '100%',
-          '& ul': { padding: 0 },
-        }}
-          subheader={<li />}>
-          {vocabulary_list.map((item, index) => (
-            <li key={item.id}>
-              <ul>
-                <ListItem key={`item-${item.list_id}`}>
-                  <Checkbox></Checkbox>
-                  {/* ここにオンクリック */}
-                  <ListItemButton >
-                    <ListItemText className="wordlist" id={`text-${item.list_id}`} primary={`${item.word}`} primaryTypographyProps={{ fontSize: '25px' }} onClick={() => handleClickToScroll(item.list_id)} />
-                  </ListItemButton>
-                </ListItem>
-
-              </ul>
-            </li>
-          ))}
-        </List>
-
-      </Col>
-      <Col xs={8}>
-        <Container>
-          <Row>
-            <Container className="mt-3">
-              <form onSubmit={onSubmit}>
-                <Row>
-                  <Col xs={11}>
-                    <Container className="pl-4">
-                      <CssTextField style={{ margin: "auto auto" }} id="outlined-basic" style={{ width: '100%' }} label="URL" variant="outlined" size='small' value={inputURL} onChange={e => updateInputValue(e)} />
-                    </Container>
-                  </Col>
-                  <Col xs={1}>
-
-                    <Button style={{ margin: "auto auto", width: "100%" }} className="react-button" variant="outlined" type="submit" margin="normal">
-                      Confirm
-                    </Button>
-
-                  </Col>
-                </Row>
-              </form>
-            </Container>
-            <Container className="mt-2">
-              <Row>
-                <Col>
-                  <Row>
-                    <Col>
-                    <Container>
-
-                        <Paper style={{ height: 400, width: 560, overflow: 'auto' }} elevation={5}>
-                          <div id="player"></div>
-                        </Paper>
-                    </Container>
-                    </Col>
-                    <Col>
-                      <Container className="vocabulary-zone mt-2">
-                        <Paper style={{ height: 430, maxheight: 1000, overflow: 'auto' }} elevation={5}>
-                          <Container
-                            maxwidth="md"
-                            style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              height: "500",
-                              justifyContent: "space-evenly",
-                            }}
-                          >
-                            <Header
-                              word={word}
-                              headerError={headerError}
-                            />
-
-                            {isLoadingMeanings && (
-                              <Container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                                <CircularProgress />
-                              </Container>
-                            )}
-                            {!isLoadingMeanings && transcription_list.length!=0 && word!="" &&
-                              <Definitions
-                                meaning_list={meaning_list}
-                                word={word}
-                                startText={transcription_list[list_id].startText}
-                                saveWordAndTime={saveWordAndTime}
-                                addError={addError}
-                              />
-                            }
-                          </Container>
-                        </Paper>
-                      </Container>
-                    </Col>
-                  </Row>
-                </Col>
-                <Col>
-
-                  <Paper style={{ height: 845, maxHeight: 1000, overflow: 'auto' }}>
-                    {isLoadingTranscript ?
-                      <Container style={{ display: "flex", justifyContent: 'center', alignItems: 'center', height: "100%" }}>
-                        <CircularProgress />
-                      </Container>
-                      :
-                      <div>
-                        <Button variant="text" onClick={()=>{
-                          handleClickToDisplay()
-                        }}>display</Button>
-                        <List sx={{
-                          width: '100%',
-                          maxwidth: 500,
-                          bgcolor: 'background.paper',
-                          position: 'relative',
-                          overflow: 'auto',
-                          maxHeight: '100%',
-                          '& ul': { padding: 0 },
-                        }}
-                          subheader={<li />}>
-                            {display_transcription ? <div>
-                            {twoDimensionalArray.map((item, index) => {
-                              return (
-                              <li className="transcription" key={index} ref={refs[index]} onClick={()=>{handleClickToMoveMovie(transcription_list[index].start)}}>
-                                  {/* indexで指定しているため，undefinedになり得る */}
-                                  <span className="span_start_text">{transcription_list.length==0? "":transcription_list[index].startText}</span>
-                                  {item.map((item2, index2) => {
-                                    return (
-                                      <span className="span_transcription" key={index2} onClick={()=>{handleClickToSearch(item2, index)}} >{item2}</span>
-                                    )
-                                })}
-                              </li>
-                            )})}
-                            </div>:
-                            <div></div>
-                            }
-                        </List>
-                      </div>
-                    }
-
-                  </Paper>
-
-                </Col>
-              </Row>
-            </Container>
-          </Row>
-        </Container>
-      </Col>
-      <Col xs={2} >
-        <Container className="list-of-movie">
+    <div style={{ height: "100%" }}>
+      <AppNavBar style={{ height: "10%" }}></AppNavBar>
+      <Row style={{ height: "90%" }}>
+        <Col xs={2}>
           <List sx={{
             width: '100%',
-            maxwidth: 50,
             bgcolor: 'background.paper',
             position: 'relative',
             overflow: 'auto',
@@ -396,20 +246,146 @@ const YoutubePage = () => {
             '& ul': { padding: 0 },
           }}
             subheader={<li />}>
-            {movie_list.map((item, index) => (
-              <li key={`section-${index}`}>
+            {vocabulary_list.map((item, index) => (
+              <li key={item.id}>
                 <ul>
-                  <ListItemButton >
-                    <ListItemText className="movielist" id={`text-${index}`} primary={`${item.title}`} onClick={() => handleClickToSelectMovie(item.v)} />
-                  </ListItemButton>
-                  <Divider style={{ "height": "10" }} />
+                  <ListItem key={`item-${item.list_id}`}>
+                    <Checkbox></Checkbox>
+                    {/* ここにオンクリック */}
+                    <ListItemButton >
+                      <ListItemText className="wordlist" id={`text-${item.list_id}`} primary={`${item.word}`} primaryTypographyProps={{ fontSize: '25px' }} onClick={() => handleClickToScroll(item.list_id)} />
+                    </ListItemButton>
+                  </ListItem>
                 </ul>
               </li>
             ))}
           </List>
-        </Container>
-      </Col>
-    </Row>
+        </Col>
+        <Col xs={8} style={{ height: "100%" }}>
+
+          <Container className="mt-3" style={{ height: "5%" }}>
+            <form onSubmit={onSubmit}>
+              <Row>
+                <Col xs={11}>
+
+                  <CssTextField style={{ margin: "auto auto" }} id="outlined-basic" style={{ width: '100%' }} label="URL" variant="outlined" size='small' value={inputURL} onChange={e => updateInputValue(e)} />
+
+                </Col>
+                <Col xs={1}>
+                  <Button style={{ margin: "auto auto", width: "100%" }} className="react-button" variant="outlined" type="submit" margin="normal">
+                    Confirm
+                  </Button>
+                </Col>
+              </Row>
+            </form>
+          </Container>
+          <Container className="mt-2" style={{ height: "95%" }}>
+            <Row style={{ height: "100%" }}>
+              <Col xs={6}>
+                <Paper elevation={5} style={{ height: "50%" }}>
+                  <div id="player"></div>
+                </Paper>
+                <Paper elevation={5} style={{ height: "48%" }} className="mt-3" >
+                  <div
+                    maxwidth="md"
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-evenly",
+                    }}
+                  >
+                    <Header
+                      word={word}
+                      headerError={headerError}
+                    />
+                    {isLoadingMeanings && (
+                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                        <CircularProgress />
+                      </div>
+                    )}
+                    {!isLoadingMeanings && transcription_list.length != 0 && word != "" &&
+                      <Definitions
+                        meaning_list={meaning_list}
+                        word={word}
+                        startText={transcription_list[list_id].startText}
+                        saveWordAndTime={saveWordAndTime}
+                        addError={addError}
+                      />
+                    }
+                  </div>
+                </Paper>
+              </Col>
+              <Col xs={6} style={{ height: "100%" }}>
+                <Paper style={{ height: "100%", overflow: "scroll" }}>
+                  {isLoadingTranscript ?
+                    <Container style={{ justifyContent: 'center', alignItems: 'center', height: "100%" }}>
+                      <CircularProgress />
+                    </Container>
+                    :
+                    <Container style={{ height: "100%" }}>
+                      <Button variant="text" onClick={() => {
+                        handleClickToDisplay()
+                      }}>display</Button>
+                      <List sx={{
+                        bgcolor: 'background.paper',
+                        overflow: 'scroll',
+                        height: '100%',
+                        '& ul': { padding: 0 },
+                      }}
+                        subheader={<li />}>
+                        {display_transcription ? <div>
+                          {twoDimensionalArray.map((item, index) => {
+                            return (
+                              <li className="transcription" key={index} ref={refs[index]} onClick={() => { handleClickToMoveMovie(transcription_list[index].start) }}>
+                                {/* indexで指定しているため，undefinedになり得る */}
+                                <span className="span_start_text">{transcription_list.length == 0 ? "" : transcription_list[index].startText}</span>
+                                {item.map((item2, index2) => {
+                                  return (
+                                    <span className="span_transcription" key={index2} onClick={() => { handleClickToSearch(item2, index) }} >{item2}</span>
+                                  )
+                                })}
+                              </li>
+                            )
+                          })}
+                        </div> :
+                          <div></div>
+                        }
+                      </List>
+                    </Container>
+                  }
+                </Paper>
+              </Col>
+            </Row>
+          </Container>
+
+        </Col>
+        <Col xs={2} >
+          <Container className="list-of-movie">
+            <List sx={{
+              width: '100%',
+              maxwidth: 50,
+              bgcolor: 'background.paper',
+              position: 'relative',
+              overflow: 'auto',
+              maxHeight: '100%',
+              '& ul': { padding: 0 },
+            }}
+              subheader={<li />}>
+              {movie_list.map((item, index) => (
+                <li key={`section-${index}`}>
+                  <ul>
+                    <ListItemButton >
+                      <ListItemText className="movielist" id={`text-${index}`} primary={`${item.title}`} onClick={() => handleClickToSelectMovie(item.v)} />
+                    </ListItemButton>
+                    <Divider style={{ "height": "10" }} />
+                  </ul>
+                </li>
+              ))}
+            </List>
+          </Container>
+        </Col>
+      </Row>
+    </div>
   );
 }
 

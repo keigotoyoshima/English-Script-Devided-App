@@ -13,14 +13,20 @@ from rest_framework.decorators import api_view
 
 
 @csrf_exempt
-def user_api_view(request):
+def user_api_view(request, displayName=""):
     err_msg = {
         "error": {
             "code": 404,
             "message": "User not found",
         }}
-
-    if request.method == "POST":
+    if request.method == "GET":
+        try:
+            user = User.objects.get(displayName=displayName)
+        except User.DoesNotExist:
+            return HttpResponse("Not found User in user_api_view")
+        return HttpResponse("Success find User in user_api_view")
+        
+    elif request.method == "POST":
         data = JSONParser().parse(request)
         serializer = UserSerializer(data=data)
         if serializer.is_valid():

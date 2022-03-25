@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import SignInPage from "../pages/SignInPage";
 import SignUpPage from "../pages/SignUpPage";
 import { Container } from "react-bootstrap";
+import { useUserContext } from "./userContext";
 
 const Auth = () => {
-  const [index, setIndex] = useState(false);
+  // const [index, setIndex] = useState(false);
+  const { index, setIndex } = useUserContext();
   const toggleIndex = () => {
     setIndex((prevState) => !prevState);
   };

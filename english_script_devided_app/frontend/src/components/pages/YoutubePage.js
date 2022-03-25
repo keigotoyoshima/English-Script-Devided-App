@@ -281,7 +281,7 @@ const YoutubePage = () => {
           </Container>
           <Container className="mt-2" style={{ height: "95%" }}>
             <Row style={{ height: "100%" }}>
-              <Col xs={6} style={{heigth:"100%"}}> 
+              <Col xs={6} style={{ height:"100%" }}> 
                 <Paper elevation={5} style={{ height: "50%" }}>
                   <div id="player"></div>
                 </Paper>

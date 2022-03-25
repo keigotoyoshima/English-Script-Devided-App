@@ -35,7 +35,7 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignInPage(props) {
-  const { signInUser, forgotPassword } = useUserContext();
+  const { signInUser, forgotPassword, error } = useUserContext();
   const onSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -94,10 +94,6 @@ export default function SignInPage(props) {
               id="password"
               autoComplete="current-password"
             />
-            {/* <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            /> */}
             <Button
               type="submit"
               fullWidth
@@ -106,23 +102,15 @@ export default function SignInPage(props) {
             >
               Sign In
             </Button>
-            {/* <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid> */}
           </Box>
         </Box>
         <Container style={{ "display": "flex", "justifyContent": "end" }} >
-          <p onClick={props.toggleIndex}>{props.text}</p>
+          <p style={{ color: "cornflowerblue" }} onClick={props.toggleIndex}>{props.text}</p>
         </Container>
+        <Container style={{ "display": "flex", "justifyContent": "end" }} >
+          <p style={{color:"red"}}>{error}</p>
+        </Container>
+        
         {/* <Copyright sx={{ mt: 8, mb: 4 }} /> */}
       </Container>
     </ThemeProvider>

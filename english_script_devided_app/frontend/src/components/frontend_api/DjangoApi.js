@@ -13,10 +13,16 @@ const client = axios.create({
   },
 });
 
-// register用にpostUserTaskだけProviderから除外
+// register用にpostUserTaskとgetUserTaskだけProviderから除外
 export const postUserTask = (params) => {
   let response = client.post(`/api/user-post/`, params);
   console.log(response , 'response in postUserTask');
+  return response
+}
+
+export const getUserTask = (name) => {
+  let response = client.get(`/api/user-get/${name}/`);
+  console.log(response, 'response in getUserTask');
   return response
 }
 

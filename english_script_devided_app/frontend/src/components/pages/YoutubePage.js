@@ -281,30 +281,23 @@ const YoutubePage = () => {
           </Container>
           <Container className="mt-2" style={{ height: "95%" }}>
             <Row style={{ height: "100%" }}>
-              <Col xs={6}>
+              <Col xs={6} style={{heigth:"100%"}}> 
                 <Paper elevation={5} style={{ height: "50%" }}>
                   <div id="player"></div>
                 </Paper>
-                <Paper elevation={5} style={{ height: "48%" }} className="mt-3" >
-                  <div
-                    maxwidth="md"
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-evenly",
-                    }}
-                  >
+                <Paper elevation={5} style={{ height: "48%", overflow: "scroll" }} className="mt-3" >
                     <Header
+                      style={{height:"20%"}}
                       word={word}
                       headerError={headerError}
                     />
                     {isLoadingMeanings && (
-                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80%' }}>
                         <CircularProgress />
                       </div>
                     )}
                     {!isLoadingMeanings && transcription_list.length != 0 && word != "" &&
-                      <Definitions
+                      <Definitions style={{height:"80%"}}
                         meaning_list={meaning_list}
                         word={word}
                         startText={transcription_list[list_id].startText}
@@ -312,7 +305,6 @@ const YoutubePage = () => {
                         addError={addError}
                       />
                     }
-                  </div>
                 </Paper>
               </Col>
               <Col xs={6} style={{ height: "100%" }}>

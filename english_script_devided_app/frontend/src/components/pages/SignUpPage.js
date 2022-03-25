@@ -35,7 +35,7 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignUpPage(props) {
-  const { registerUser } = useUserContext();
+  const { registerUser, error } = useUserContext();
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -69,27 +69,6 @@ export default function SignUpPage(props) {
           </Typography>
           <Box component="form" noValidate onSubmit={onSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              {/* <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="First Name"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                />
-              </Grid> */}
               <Grid item xs={12}>
                 <TextField
                   required
@@ -122,12 +101,6 @@ export default function SignUpPage(props) {
                   autoComplete="new-name"
                 />
               </Grid>
-              {/* <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
-                />
-              </Grid> */}
             </Grid>
             <Button
               type="submit"
@@ -137,20 +110,13 @@ export default function SignUpPage(props) {
             >
               Sign Up
             </Button>
-            {/* <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Button variant="outlined" color="default" to="/sign-in" component={Link}>
-                  Already have an account? Sign in
-                </Button> 
-               <Link href="/sign-in" variant="body2">
-                  
-                </Link>
-              </Grid>
-            </Grid> */}
           </Box>
         </Box>
         <Container style={{ "display": "flex", "justifyContent": "end" }} >
-          <p onClick={props.toggleIndex}>{props.text}</p>
+          <p style={{ color:"cornflowerblue"}} onClick={props.toggleIndex}>{props.text}</p>
+        </Container>
+        <Container style={{ "display": "flex", "justifyContent": "end" }} >
+          <p style={{ color: "red" }}>{error}</p>
         </Container>
         {/* <Copyright sx={{ mt: 5 }} /> */}
 

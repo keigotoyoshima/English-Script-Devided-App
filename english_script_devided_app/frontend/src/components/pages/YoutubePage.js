@@ -16,9 +16,7 @@ import { useUserContext } from "../userContext/userContext"
 import { useState, useEffect } from "react";
 import { useDjangoApiContext } from "../frontend_api/DjangoApi";
 import youtubeDataApi from "../frontend_api/YoutubeDataApi";
-import { seekVideo, loadVideo } from "../frontend_api/YoutubeIframeApi";
-import onYouTubeIframeAPIReady from "../frontend_api/YoutubeIframeApi";
-
+import { useYoutubeIframeApiContext } from "../frontend_api/YoutubeIframeApi";
 
 
 const base_url = "https://www.youtube.com/embed/"
@@ -45,7 +43,10 @@ const YoutubePage = () => {
 
   const { getAllMoviesTask, postMovieTask, getAllWordsTask, postWordTask } = useDjangoApiContext()
 
+  const { onYouTubeIframeAPIReady, onPlayerStateChange, seekVideo, loadVideo, currentTime } = useYoutubeIframeApiContext()
+
   const { user } = useUserContext()
+
 
   useEffect(() => {
     onYouTubeIframeAPIReady();
@@ -72,6 +73,13 @@ const YoutubePage = () => {
       callDictionaryApi(word)
     }
   }, [word]);
+
+  useEffect(() => {
+    if (currentTime != 0) {
+      console.log("called useEffect for currentTime");
+      console.log(currentTime, 'currentTime');
+    }
+  }, [currentTime]);
 
 
 
@@ -188,6 +196,8 @@ const YoutubePage = () => {
   }
 
   const handleClickToDisplay = () => {
+    // check
+
     setDisplay_transcription(prev => !prev);
   }
 

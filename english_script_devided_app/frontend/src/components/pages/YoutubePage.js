@@ -68,6 +68,26 @@ const YoutubePage = () => {
     if (video_id != "") loadVideo(video_id)
   }, [video_id]);
 
+  // useEffect(() => {
+  //   // console.log(refs[0].current, 'refs[0].current in useEffect');
+  //   console.log(Object.keys(refs).length, 'Object.keys(refs).length');
+  //   console.log(transcription_list.length, 'transcription_list.length');
+  //   console.log(refs, 'refs');
+  //   if (Object.keys(refs).length > 0 && transcription_list.length > 0){
+  //     console.log(refs[0], 'refs[0]');
+  //     console.log(refs[3], 'refs[3]');
+  //     console.log(refs[0].current, 'refs[0].current');
+  //     console.log(refs[3].current, 'refs[3].current');
+  //     console.log(refs[0]["current"], 'refs[0]["current"]');
+
+
+  //   }
+  //   if (Object.keys(refs).length > 0 && transcription_list.length > 0 && refs[0].current != null) {
+  //     console.log("call onPlayerStateChange2")
+  //     onPlayerStateChange2(transcription_list);
+  //   }
+  // }, [refs]);  
+
   useEffect(() => {
     if (word != "") {
       callDictionaryApi(word)
@@ -75,11 +95,27 @@ const YoutubePage = () => {
   }, [word]);
 
   useEffect(() => {
-    if (currentTime != 0) {
-      console.log("called useEffect for currentTime");
-      console.log(currentTime, 'currentTime');
+    if (currentTime != 0 && transcription_list.length != 0) {
+      let index = binarySearch(transcription_list,currentTime);
+      handleClickToScroll(index);
     }
   }, [currentTime]);
+
+  const binarySearch = (arr, currentTime) => {
+    let target = currentTime
+    let ok = -1;
+    let ng = arr.length;
+    while (Math.abs(ng - ok) > 1) {
+      let mid = Math.floor((ok + ng) / 2);
+      if (arr[mid].start > target) {
+        ng = mid;
+      } else {
+        ok = mid;
+      }
+    }
+
+    return ok
+  }
 
 
 
@@ -143,7 +179,7 @@ const YoutubePage = () => {
             item.startText = minutes.toString().padStart(2, '0') + ':' +
             seconds.toString().padStart(2, '0');
           })
-          makeTwoDimensionalArray(data);
+          makeMarginToTranscription1(v,data);
         })
       .catch((error) => {
         makeRefList([{ "start": "Sorry,", "text": " No transcript for this video." },]);
@@ -151,37 +187,81 @@ const YoutubePage = () => {
       );
   }
 
-  // transcriptionを二次元配列化
-  const makeTwoDimensionalArray = (list) => {
-    let twoDimensionalArray = []
-    list.forEach((item) => {
-      let newText = item.text.split(" ");
+  // const onPlayerStateChange2 = (array) => {
+  //   if (array.length != 0) {
+  //     // playerの状態が変わった瞬間にどこにスクロールするべきかを二分探索で求める
+  //     let index = binarySearch(array);
+  //     // スクロール発火
+  //     handleClickToScroll(index);
+  //     let currentTime = getCurrentTime()
+  //     // 状態が変わるまで，もしくは，array最後まで１行スクロールを繰り返す
+  //     let interval = array[index].start - currentTime;
+  //     while (index < array.length) {
+  //       setTimeout(handleClickToScroll(refs, index), interval)
+  //       interval = array[index].duration;
+  //       index += 1;
+  //     }
+  //   }
+  // }
 
-      twoDimensionalArray.push(newText);
-    })
-    setTwoDimensionalArray(twoDimensionalArray)
-    makeRefList(list)
+  // 余白追加
+  const makeMarginToTranscription1 = (v,array) => {
+    const margin_arr = [...Array(6)].map(() => new Object());
+    margin_arr.map((item) => {
+      item.text = ""
+      item.start = array[0].start
+      item.startText = ""
+    });
+
+    // array = margin_arr.concat(array);
+    makeRefList(array);
+    makeTwoDimensionalArray(array);
   }
 
   // スクロール関係
-  const makeRefList = (list) => {
-    let refs = list.reduce((acc, value, currentIndex) => {
+  const makeRefList = (array) => {
+    let refs = array.reduce((acc, value, currentIndex) => {
       acc[currentIndex] = React.createRef();
       return acc;
     }, {});
-    setTranscription_list(list)
+    setTranscription_list(array)
     setRefs(refs)
+    // onPlayerStateChange2(array)
     setIsloadingTranscript(false)
   }
 
+  // transcriptionを二次元配列化
+  const makeTwoDimensionalArray = (array) => {
+    let twoDimensionalArray = []
+    array.forEach((item) => {
+      let newText = item.text.split(" ");
+      twoDimensionalArray.push(newText);
+    })
+    setTwoDimensionalArray(twoDimensionalArray);
+    // makeMarginToTranscription2(twoDimensionalArray)
+  }
+
   const handleClickToScroll = (id) => {
+    // あえて字幕の上に余白を作る（過ぎた字幕も見れるため）
+    // id = Number(id) - 6;
+    id = Number(id+1)
+
+    refs[id].current.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+    // seekVideo(transcription_list[id].start)
+  }
+
+  const handleClickToScrollForWord = (id) => {
+    id = Number(id)
+
     refs[id].current.scrollIntoView({
       behavior: 'smooth',
       block: 'start',
     });
     seekVideo(transcription_list[id].start)
   }
-
   const handleClickToMoveMovie = (startTime) => {
     seekVideo(startTime);
   }
@@ -238,11 +318,7 @@ const YoutubePage = () => {
     }
   }
 
-
-
-
   return (
-
     <div style={{ height: "100%" }}>
       <AppNavBar style={{ height: "10%" }}></AppNavBar>
       <Row style={{ height: "90%" }}>
@@ -263,7 +339,7 @@ const YoutubePage = () => {
                     <Checkbox></Checkbox>
                     {/* ここにオンクリック */}
                     <ListItemButton >
-                      <ListItemText className="wordlist" id={`text-${item.list_id}`} primary={`${item.word}`} primaryTypographyProps={{ fontSize: '25px' }} onClick={() => handleClickToScroll(item.list_id)} />
+                      <ListItemText className="wordlist" id={`text-${item.list_id}`} primary={`${item.word}`} primaryTypographyProps={{ fontSize: '25px' }} onClick={() => handleClickToScrollForWord(item.list_id)} />
                     </ListItemButton>
                   </ListItem>
                 </ul>

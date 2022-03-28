@@ -9,7 +9,7 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 // 上記でloads the IFrame Player API code
 
 
-var player;
+let player;
 
 export const YoutubeIframeApiContext = createContext({});
 
@@ -25,9 +25,9 @@ export const YoutubeIframeApiContextProvider = ({ children }) => {
     player = new YT.Player('player', {
       height: '100%',
       width: '100%',
-      videoId: 'UNqcqAhpJdY',
+      videoId: 'gp57PcA7YVQ',
       events: {
-        'onReady': onPlayerReady,
+        // 'onReady': onPlayerReady,
         'onStateChange': onPlayerStateChange
       }
     });
@@ -50,33 +50,55 @@ export const YoutubeIframeApiContextProvider = ({ children }) => {
   //   }
   // }
   
-  // event.data = 1-,3-1,5
+  // event.data = -1,3-1,5
   // YT.PlayerState.PLAYING = 1
   const onPlayerStateChange = (event) => {
-    console.log("called onPlayerStateChange")
+    // player.playerInfo.curerentTimeだと取得できない
+    let get = getCurrentTime();
     if (event.data == YT.PlayerState.PLAYING && done) {
-      // setTimeout(stopVideo, 6000);
-      setCurrentTime(player.playerInfo.currentTime);
-      console.log(player.playerInfo.currentTime, 'player.playerInfo.currentTime');
+      setCurrentTime(get);
     }
     // 初回だけ通さない
     done = true;
     
-    // console.log("start onPlayerStateChange")
-    // console.log(event.data, 'event.data');
-    // if (event.data) {
-    //   console.log(event.data, 'event.data');
-    // }
-
-    
   }
+
+
+  
+  const getCurrentTime = () => {
+    let time = player.getCurrentTime()
+    return time;
+  }
+
+
+
+// export const onPlayerStateChange = (event) => {
+//   console.log("onPlayerStateChange start") 
+//   console.log(transcription_list, 'transcription_list');
+//   if (transcription_list.length != 0) {
+//     console.log(transcription_list, 'transcription_list in onPlayerStateChange');
+//     // playerの状態が変わった瞬間にどこにスクロールするべきかを二分探索で求める
+//     let index = binarySearch(transcription_list, player.playerInfo.currentTime);
+//     // スクロール発火
+//     YoutubePage.handleClickToScroll(index);
+//     // 状態が変わるまで，もしくは，transcription_list最後まで１行スクロールを繰り返す
+//     let interval = transcription_list[index].start - player.playerInfo.currentTime;
+//     console.log(transcription_list[index].start, 'transcription_list[index].start');
+//     console.log(player.playerInfo.currentTime, 'player.playerInfo.currentTime');
+//     console.log(interval, 'interval');
+//     while (index < transcription_list.length) {
+//       setTimeout(YoutubePage.handleClickToScroll(index), interval)
+//       interval = transcription_list[index].duration;
+//       index += 1;
+//     }
+//   }
+// }
 
   const stopVideo = () => {
     player.stopVideo();
   }
 
   const seekVideo = (startTime) => {
-    console.log(player.playerInfo.currentTime, 'player.playerInfo.currentTime');
     // player.seekTo(seconds:Number, allowSeekAhead:Boolean):Void
     player.seekTo(startTime, true)
   }

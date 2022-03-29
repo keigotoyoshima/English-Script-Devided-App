@@ -24,6 +24,7 @@ const base_url = "https://www.youtube.com/embed/"
 
 const YoutubePage = () => {
   const [inputURL, setInputURL] = useState("")
+  const [labelURL, setLabelURL] = useState("URL")
   const [video_id, setVideo_id] = useState("")
   const [title, setTitle] = useState("")
   const [transcription_list, setTranscription_list] = useState([])
@@ -63,6 +64,7 @@ const YoutubePage = () => {
 
   useEffect(() => {
     setInputURL("")
+    setLabelURL("URL")
     setWord("")
     setList_id("")
     if (video_id != "") loadVideo(video_id)
@@ -182,6 +184,7 @@ const YoutubePage = () => {
           makeMarginToTranscription1(v,data);
         })
       .catch((error) => {
+        setLabelURL("No transcript for this video.")
         makeRefList([{ "start": "Sorry,", "text": " No transcript for this video." },]);
       }
       );
@@ -353,9 +356,7 @@ const YoutubePage = () => {
             <form onSubmit={onSubmit}>
               <Row>
                 <Col xs={11}>
-
-                  <CssTextField style={{ margin: "auto auto" }} id="outlined-basic" style={{ width: '100%' }} label="URL" variant="outlined" size='small' value={inputURL} onChange={e => updateInputValue(e)} />
-
+                  <CssTextField style={{ margin: "auto auto" }} id="outlined-basic" style={{ width: '100%' }} label={labelURL} error={labelURL!="URL"}  variant="outlined" size='small' value={inputURL} onChange={e => updateInputValue(e)} />
                 </Col>
                 <Col xs={1}>
                   <Button style={{ margin: "auto auto", width: "100%" }} className="react-button" variant="outlined" type="submit" margin="normal">

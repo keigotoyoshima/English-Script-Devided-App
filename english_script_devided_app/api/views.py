@@ -24,9 +24,12 @@ def user_api_view(request, displayName=""):
             "message": "User not found",
         }}
     if request.method == "GET":
+        print("start get")
         try:
             user = UserModel.objects.get(displayName=displayName)
+            print(f'{user} user')
         except UserModel.DoesNotExist:
+            print(" UserModel.DoesNotExist:")
             return HttpResponse("Not found User in user_api_view")
         return HttpResponse("Success find User in user_api_view")
         

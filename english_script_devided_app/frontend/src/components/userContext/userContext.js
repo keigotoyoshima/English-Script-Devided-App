@@ -95,7 +95,8 @@ export const UserContextProvider = ({ children }) => {
     setLoading(true);
     signInWithEmailAndPassword(auth, email, password)
       .then((res) => {
-        setDisplayName(res.user.displayName)
+        // setDisplayName(res.user.displayName)
+        setDisplayName("test_user")
       })
       .catch((err) => {
         switch (err.code) {

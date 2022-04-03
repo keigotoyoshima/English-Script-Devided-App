@@ -1,17 +1,19 @@
 import React, { Component } from "react";
 import { Navbar } from "react-bootstrap";
-import App from "../App";
-import { Container } from "@material-ui/core";
 import { NavDropdown } from "react-bootstrap";
 import { Row, Col } from "react-bootstrap";
-import { Nav } from "react-bootstrap";
 import { useUserContext } from "../userContext/userContext";
+import { IP_AND_PORT } from "../frontend_api/DjangoApi";
 
 const AppNavBar = () => {
   const { logoutUser, user, displayName } = useUserContext();
 
-  const onClickHandler = () => {
-    console.log(onClickHandler);
+
+  const onClickForManagePage = () => {
+    window.location.href = `${IP_AND_PORT}mypage`;
+  }
+
+  const onClickForLogout = () => {
     logoutUser();
   }
 
@@ -22,15 +24,16 @@ const AppNavBar = () => {
           <Navbar.Brand href="#home" style={{ marginLeft: "2rem", display: "block" }}>Youtube Language</Navbar.Brand>
         </Col>
         <Col xs={6}>
-          <Row>
-            <Col xs={10}>
-              <Navbar.Text style={{ display: "block", textAlign: "end", }}>
+          <Row style={{height:"100%"}}>
+            <Col xs={10} style={{ justifyContent: "end", alignItems: "center", display:"flex"}}>
+              <Navbar.Text style={{fontSize:"larger", paddingTop:"0.6rem  "}}>
                 Signed in as: {displayName}
               </Navbar.Text>
             </Col>
-            <Col xs={2} style={{ textAlign: "start" }}>
-              <NavDropdown title="Logout" id="basic-nav-dropdown">
-                <NavDropdown.Item onClick={onClickHandler}>Logout</NavDropdown.Item>
+            <Col xs={2} style={{ justifyContent: "end", alignItems:"center",  display: "flex" }}>
+              <NavDropdown title="Options" id="basic-nav-dropdown" style={{ fontSize: "larger" }}>
+                <NavDropdown.Item onClick={onClickForManagePage}>Manage Page</NavDropdown.Item>
+                <NavDropdown.Item onClick={onClickForLogout}>Logout</NavDropdown.Item>
                 <NavDropdown.Item>Cancel</NavDropdown.Item>
               </NavDropdown>
             </Col>

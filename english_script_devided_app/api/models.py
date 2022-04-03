@@ -2,7 +2,21 @@ from django.db import models
 from django.urls import reverse_lazy
 
 
-class User(models.Model):
+class UserModel(models.Model):
+    created = models.DateTimeField(
+        auto_now_add=True,
+        editable=False,
+        blank=False,
+        null=False
+    )
+
+    updated = models.DateTimeField(
+        auto_now=True,
+        editable=False,
+        blank=False,
+        null=False,
+    )
+    
     displayName = models.CharField(
         max_length=255,
         blank=True,
@@ -18,8 +32,22 @@ class User(models.Model):
     def __str__(self):
         return self.displayName
 
-class Movie(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+class MovieModel(models.Model):
+    created = models.DateTimeField(
+        auto_now_add=True,
+        editable=False,
+        blank=False,
+        null=False
+    )
+
+    updated = models.DateTimeField(
+        auto_now=True,
+        editable=False,
+        blank=False,
+        null=False,
+    )
+    
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, null=True)
     
     # version1ではvを格納
     title = models.CharField(
@@ -39,8 +67,22 @@ class Movie(models.Model):
     def __str__(self):
         return self.title
     
-class Word(models.Model):
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, null=True)
+class WordModel(models.Model):
+    created = models.DateTimeField(
+        auto_now_add=True,
+        editable=False,
+        blank=False,
+        null=False
+    )
+
+    updated = models.DateTimeField(
+        auto_now=True,
+        editable=False,
+        blank=False,
+        null=False,
+    )
+    
+    movie = models.ForeignKey(MovieModel, on_delete=models.CASCADE, null=True)
     
     list_id = models.CharField(
         max_length=255,

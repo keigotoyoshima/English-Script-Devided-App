@@ -3,8 +3,8 @@ import { useUserContext } from '../userContext/userContext';
 import { createContext,useContext } from 'react';
 import React from 'react';
 
-// const IP_AND_PORT = process.env.REACT_APP_DJANGO_DATA_API_IP_PORT; 
-const IP_AND_PORT = process.env.REACT_APP_DJANGO_DATA_API_IP_PORT_LOCAL; 
+// export const IP_AND_PORT = process.env.REACT_APP_DJANGO_DATA_API_IP_PORT; 
+export const IP_AND_PORT = process.env.REACT_APP_DJANGO_DATA_API_IP_PORT_LOCAL; 
 
 const client = axios.create({
   baseURL: IP_AND_PORT,
@@ -50,6 +50,18 @@ export const DjangoApiContextProvider = ({ children }) => {
     return response;
   }
 
+  const putMovieTask = (params) => {
+    let response = client.put(`/api/movie-put/${displayName}/`, params);
+    console.log(response, 'response in putMovieTask');
+    return response;
+  }
+
+  const deleteMovieTask = (v) => {
+    let response = client.delete(`/api/movie-delete/${displayName}/${v}/`);
+    console.log(response, 'response in deleteMovieTask');
+    return response;
+  }
+
   const getAllWordsTask = (v) => {
     let response =  client.get(`/api/word-get/${displayName}/${v}/`);
     console.log(response, 'response in getAllWordsTask');
@@ -73,6 +85,8 @@ export const DjangoApiContextProvider = ({ children }) => {
   const contextValue = {
     getAllMoviesTask,
     postMovieTask,
+    putMovieTask,
+    deleteMovieTask,
     getAllWordsTask,
     postWordTask,
   };

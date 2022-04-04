@@ -73,7 +73,7 @@ SECRET_KEY = env('SECRET_KEY')
 
 ENGINE = env('ENGINE')
 NAME = env('NAME')
-USER = env('USER')
+DBUSER = env('DBUSER')
 PASSWORD = env('PASSWORD')
 HOST = env('HOST')
 PORT = env('PORT')
@@ -82,7 +82,7 @@ DATABASES = {
     'default': {
         'ENGINE': ENGINE,
         'NAME': NAME,
-        'USER': USER,
+        'USER': DBUSER,
         'PASSWORD': PASSWORD,
         'HOST': HOST,
         'PORT': PORT,

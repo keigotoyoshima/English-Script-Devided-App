@@ -65,8 +65,28 @@ from dotenv import (
     load_dotenv,
 )
 load_dotenv(find_dotenv())
+# DATABASES = {
+#     'default': dj_database_url.config(conn_max_age=600),
+# }
+
+SECRET_KEY = env('SECRET_KEY')
+
+ENGINE = env('ENGINE')
+NAME = env('DEBUG')
+USER = env('USER')
+PASSWORD = env('PASSWORD')
+HOST = env('HOST')
+PORT = env('PORT')
+
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600),
+    'default': {
+        'ENGINE': ENGINE,
+        'NAME': NAME,
+        'USER': USER,
+        'PASSWORD': PASSWORD,
+        'HOST': HOST,
+        'PORT': PORT,
+    }
 }
 
 

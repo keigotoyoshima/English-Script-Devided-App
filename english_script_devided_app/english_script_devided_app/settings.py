@@ -72,7 +72,7 @@ load_dotenv(find_dotenv())
 SECRET_KEY = env('SECRET_KEY')
 
 ENGINE = env('ENGINE')
-NAME = env('DEBUG')
+NAME = env('NAME')
 USER = env('USER')
 PASSWORD = env('PASSWORD')
 HOST = env('HOST')

@@ -17,6 +17,7 @@ import { useState, useEffect } from "react";
 import { useDjangoApiContext } from "../frontend_api/DjangoApi";
 import youtubeDataApi from "../frontend_api/YoutubeDataApi";
 import { useYoutubeIframeApiContext } from "../frontend_api/YoutubeIframeApi";
+import ModalEdit from "../modal/modal";
 
 
 const base_url = "https://www.youtube.com/embed/"
@@ -24,6 +25,7 @@ const base_url = "https://www.youtube.com/embed/"
 
 const YoutubePage = () => {
   const [inputURL, setInputURL] = useState("")
+  const [labelURL, setLabelURL] = useState("URL")
   const [video_id, setVideo_id] = useState("")
   const [title, setTitle] = useState("")
   const [transcription_list, setTranscription_list] = useState([])
@@ -57,36 +59,22 @@ const YoutubePage = () => {
   const callYoutubeDataApi = async (v) => {
     let data = await youtubeDataApi(v)
     let givenTitle = data.items[0].snippet.localized.title;
-    setTitle(givenTitle)
     postMovie(givenTitle, v)
   }
 
   useEffect(() => {
     setInputURL("")
+    setLabelURL("URL")
     setWord("")
     setList_id("")
-    if (video_id != "") loadVideo(video_id)
+    setTwoDimensionalArray([[]])
+    setTranscription_list([])
+    if (video_id != "") {
+      loadVideo(video_id)
+      getYoutubeTranscript(video_id)
+    }
   }, [video_id]);
 
-  // useEffect(() => {
-  //   // console.log(refs[0].current, 'refs[0].current in useEffect');
-  //   console.log(Object.keys(refs).length, 'Object.keys(refs).length');
-  //   console.log(transcription_list.length, 'transcription_list.length');
-  //   console.log(refs, 'refs');
-  //   if (Object.keys(refs).length > 0 && transcription_list.length > 0){
-  //     console.log(refs[0], 'refs[0]');
-  //     console.log(refs[3], 'refs[3]');
-  //     console.log(refs[0].current, 'refs[0].current');
-  //     console.log(refs[3].current, 'refs[3].current');
-  //     console.log(refs[0]["current"], 'refs[0]["current"]');
-
-
-  //   }
-  //   if (Object.keys(refs).length > 0 && transcription_list.length > 0 && refs[0].current != null) {
-  //     console.log("call onPlayerStateChange2")
-  //     onPlayerStateChange2(transcription_list);
-  //   }
-  // }, [refs]);  
 
   useEffect(() => {
     if (word != "") {
@@ -95,8 +83,12 @@ const YoutubePage = () => {
   }, [word]);
 
   useEffect(() => {
-    if (currentTime != 0 && transcription_list.length != 0) {
-      let index = binarySearch(transcription_list,currentTime);
+    if (currentTime != -1 && transcription_list.length != 0) {
+      let index = binarySearch(transcription_list, currentTime);
+
+      // indexに-1が入るパターンある
+      if (index < 0) index = 0;
+
       handleClickToScroll(index);
     }
   }, [currentTime]);
@@ -117,10 +109,7 @@ const YoutubePage = () => {
     return ok
   }
 
-
-
   const methodAtSameTime = (v) => {
-    setVideo_id(v)
     getAllSavedWords(v)
     getYoutubeTranscript(v)
   }
@@ -152,7 +141,7 @@ const YoutubePage = () => {
   const getAllSavedWords = async (v) => {
     const all_words = await getAllWordsTask(v);
     // 文字列で条件分岐後で修正
-    if (all_words.data == "Not found Movie in word_api_view"){
+    if (all_words.data == "Not found Movie in word_api_view") {
       setVocabulary_list([])
     } else if (all_words.data != "") {
       setVocabulary_list(all_words.data)
@@ -177,35 +166,24 @@ const YoutubePage = () => {
             let seconds = given_seconds - (hours * 3600) - (minutes * 60);
             seconds = Math.floor(seconds);
             item.startText = minutes.toString().padStart(2, '0') + ':' +
-            seconds.toString().padStart(2, '0');
+              seconds.toString().padStart(2, '0');
           })
-          makeMarginToTranscription1(v,data);
+          makeRefList(data);
+          makeTwoDimensionalArray(data);
+          // makeMarginToTranscription1(v,data);
         })
       .catch((error) => {
-        makeRefList([{ "start": "Sorry,", "text": " No transcript for this video." },]);
+        setTwoDimensionalArray([[]])
+        setTranscription_list([])
+        console.log(error, 'error in getYoutubeTranscript');
+        setLabelURL("No transcript for this video.")
+        // makeRefList([{ "startText": "", "start": "Sorry,", "text": " No transcript for this video." },]);
       }
       );
   }
 
-  // const onPlayerStateChange2 = (array) => {
-  //   if (array.length != 0) {
-  //     // playerの状態が変わった瞬間にどこにスクロールするべきかを二分探索で求める
-  //     let index = binarySearch(array);
-  //     // スクロール発火
-  //     handleClickToScroll(index);
-  //     let currentTime = getCurrentTime()
-  //     // 状態が変わるまで，もしくは，array最後まで１行スクロールを繰り返す
-  //     let interval = array[index].start - currentTime;
-  //     while (index < array.length) {
-  //       setTimeout(handleClickToScroll(refs, index), interval)
-  //       interval = array[index].duration;
-  //       index += 1;
-  //     }
-  //   }
-  // }
-
   // 余白追加
-  const makeMarginToTranscription1 = (v,array) => {
+  const makeMarginToTranscription1 = (v, array) => {
     const margin_arr = [...Array(6)].map(() => new Object());
     margin_arr.map((item) => {
       item.text = ""
@@ -214,8 +192,8 @@ const YoutubePage = () => {
     });
 
     // array = margin_arr.concat(array);
-    makeRefList(array);
-    makeTwoDimensionalArray(array);
+    // makeRefList(array); 
+    // makeTwoDimensionalArray(array);
   }
 
   // スクロール関係
@@ -226,7 +204,6 @@ const YoutubePage = () => {
     }, {});
     setTranscription_list(array)
     setRefs(refs)
-    // onPlayerStateChange2(array)
     setIsloadingTranscript(false)
   }
 
@@ -244,8 +221,7 @@ const YoutubePage = () => {
   const handleClickToScroll = (id) => {
     // あえて字幕の上に余白を作る（過ぎた字幕も見れるため）
     // id = Number(id) - 6;
-    id = Number(id+1)
-
+    id = Number(id)
     refs[id].current.scrollIntoView({
       behavior: 'smooth',
       block: 'start',
@@ -255,7 +231,6 @@ const YoutubePage = () => {
 
   const handleClickToScrollForWord = (id) => {
     id = Number(id)
-
     refs[id].current.scrollIntoView({
       behavior: 'smooth',
       block: 'start',
@@ -272,7 +247,7 @@ const YoutubePage = () => {
   }
 
   const handleClickToSelectMovie = (v) => {
-    methodAtSameTime(v)
+    setVideo_id(v)
   }
 
   const handleClickToDisplay = () => {
@@ -311,7 +286,7 @@ const YoutubePage = () => {
     const params = new URLSearchParams(url.search);
     for (let param of params) {
       if (param[0] == "v") {
-        methodAtSameTime(param[1])
+        setVideo_id(param[1])
         await callYoutubeDataApi(param[1])
         setIsLoadingVideo(false)
       }
@@ -322,7 +297,7 @@ const YoutubePage = () => {
     <div style={{ height: "100%" }}>
       <AppNavBar style={{ height: "10%" }}></AppNavBar>
       <Row style={{ height: "90%" }}>
-        <Col xs={2}>
+        <Col xs={1}>
           <List sx={{
             width: '100%',
             bgcolor: 'background.paper',
@@ -334,15 +309,13 @@ const YoutubePage = () => {
             subheader={<li />}>
             {vocabulary_list.map((item, index) => (
               <li key={item.id}>
-                <ul>
-                  <ListItem key={`item-${item.list_id}`}>
-                    <Checkbox></Checkbox>
-                    {/* ここにオンクリック */}
-                    <ListItemButton >
-                      <ListItemText className="wordlist" id={`text-${item.list_id}`} primary={`${item.word}`} primaryTypographyProps={{ fontSize: '25px' }} onClick={() => handleClickToScrollForWord(item.list_id)} />
-                    </ListItemButton>
-                  </ListItem>
-                </ul>
+                <ListItem key={`item-${item.list_id}`}>
+                  <Checkbox></Checkbox>
+                  {/* ここにオンクリック */}
+                  <ListItemButton >
+                    <ListItemText className="wordlist" id={`text-${item.list_id}`} primary={`${item.word}`} primaryTypographyProps={{ fontSize: '25px' }} onClick={() => handleClickToScrollForWord(item.list_id)} />
+                  </ListItemButton>
+                </ListItem>
               </li>
             ))}
           </List>
@@ -353,9 +326,7 @@ const YoutubePage = () => {
             <form onSubmit={onSubmit}>
               <Row>
                 <Col xs={11}>
-
-                  <CssTextField style={{ margin: "auto auto" }} id="outlined-basic" style={{ width: '100%' }} label="URL" variant="outlined" size='small' value={inputURL} onChange={e => updateInputValue(e)} />
-
+                  <CssTextField style={{ margin: "auto auto" }} id="outlined-basic" style={{ width: '100%' }} label={labelURL} error={labelURL != "URL"} variant="outlined" size='small' value={inputURL} onChange={e => updateInputValue(e)} />
                 </Col>
                 <Col xs={1}>
                   <Button style={{ margin: "auto auto", width: "100%" }} className="react-button" variant="outlined" type="submit" margin="normal">
@@ -367,30 +338,30 @@ const YoutubePage = () => {
           </Container>
           <Container className="mt-2" style={{ height: "95%" }}>
             <Row style={{ height: "100%" }}>
-              <Col xs={6} style={{ height:"100%" }}> 
+              <Col xs={6} style={{ height: "100%" }}>
                 <Paper elevation={5} style={{ height: "50%" }}>
                   <div id="player"></div>
                 </Paper>
                 <Paper elevation={5} style={{ height: "48%", overflow: "scroll" }} className="mt-3" >
-                    <Header
-                      style={{height:"20%"}}
+                  <Header
+                    style={{ height: "20%" }}
+                    word={word}
+                    headerError={headerError}
+                  />
+                  {isLoadingMeanings && (
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80%' }}>
+                      <CircularProgress />
+                    </div>
+                  )}
+                  {!isLoadingMeanings && transcription_list.length != 0 && word != "" &&
+                    <Definitions style={{ height: "80%" }}
+                      meaning_list={meaning_list}
                       word={word}
-                      headerError={headerError}
+                      startText={transcription_list[list_id].startText}
+                      saveWordAndTime={saveWordAndTime}
+                      addError={addError}
                     />
-                    {isLoadingMeanings && (
-                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80%' }}>
-                        <CircularProgress />
-                      </div>
-                    )}
-                    {!isLoadingMeanings && transcription_list.length != 0 && word != "" &&
-                      <Definitions style={{height:"80%"}}
-                        meaning_list={meaning_list}
-                        word={word}
-                        startText={transcription_list[list_id].startText}
-                        saveWordAndTime={saveWordAndTime}
-                        addError={addError}
-                      />
-                    }
+                  }
                 </Paper>
               </Col>
               <Col xs={6} style={{ height: "100%" }}>
@@ -409,8 +380,7 @@ const YoutubePage = () => {
                         overflow: 'scroll',
                         height: '100%',
                         '& ul': { padding: 0 },
-                      }}
-                        subheader={<li />}>
+                      }}>
                         {display_transcription ? <div>
                           {twoDimensionalArray.map((item, index) => {
                             return (
@@ -437,30 +407,28 @@ const YoutubePage = () => {
           </Container>
 
         </Col>
-        <Col xs={2} >
-          <Container className="list-of-movie">
-            <List sx={{
-              width: '100%',
-              maxwidth: 50,
-              bgcolor: 'background.paper',
-              position: 'relative',
-              overflow: 'auto',
-              maxHeight: '100%',
-              '& ul': { padding: 0 },
-            }}
-              subheader={<li />}>
-              {movie_list.map((item, index) => (
-                <li key={`section-${index}`}>
-                  <ul>
-                    <ListItemButton >
-                      <ListItemText className="movielist" id={`text-${index}`} primary={`${item.title}`} onClick={() => handleClickToSelectMovie(item.v)} />
-                    </ListItemButton>
-                    <Divider style={{ "height": "10" }} />
-                  </ul>
-                </li>
-              ))}
-            </List>
-          </Container>
+        <Col xs={3}>
+          <List sx={{
+            width: '100%',
+            maxwidth: 50,
+            bgcolor: 'background.paper',
+            position: 'relative',
+            overflow: 'auto',
+            maxHeight: '100%',
+            '& ul': { padding: 0 },
+          }}
+            subheader={<li />}>
+            {movie_list.map((item, index) => (
+              <li key={`section-${index}`} style={{ width: "100%" }}>
+                <ListItemButton style={{ width: "100%" }}>
+                  <ModalEdit title={item.title} v={item.v} getAllSavedMovies={getAllSavedMovies}></ModalEdit>
+                  <div style={{ width: "5%" }}></div>
+                  <ListItemText style={{ width: "95%" }} className="movielist" id={`text-${index}`} primary={`${item.title}`} onClick={() => handleClickToSelectMovie(item.v)} />
+                </ListItemButton>
+                <Divider style={{ "height": "10", backgroundColor: "currentColor", margin: "3px 0" }} />
+              </li>
+            ))}
+          </List>
         </Col>
       </Row>
     </div>

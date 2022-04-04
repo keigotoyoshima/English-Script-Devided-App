@@ -1,20 +1,20 @@
 from rest_framework import serializers
-from .models import Movie, Word, User
+from .models import MovieModel, WordModel, UserModel
 
 
 class UserSerializer(serializers.ModelSerializer):
   class Meta:
-    model = User
+    model = UserModel
     fields = ('__all__')
 
 
 class MovieSerializer(serializers.ModelSerializer):
   class Meta:
-    model = Movie
+    model = MovieModel
     fields = ('__all__')
 
 class WordSerializer(serializers.ModelSerializer):
   class Meta:
-    model = Word
+    model = WordModel
     fields = ('__all__')
 

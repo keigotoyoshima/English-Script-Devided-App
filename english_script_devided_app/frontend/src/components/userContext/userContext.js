@@ -6,6 +6,7 @@ import {
   signOut,
   updateProfile,
   sendPasswordResetEmail,
+  deleteUser
 } from "firebase/auth";
 import React from "react";
 import { auth } from "../../firebase";
@@ -56,14 +57,24 @@ export const UserContextProvider = ({ children }) => {
     let response = await getUserTask(name);
     if (response.data != "Success find User in user_api_view"){
       createUserWithEmailAndPassword(auth, email, password)
-        .then(() => {
+        .then(async () => {
           // django-dbにユーザー情報登録を先に行う
-          postUserTask({ displayName: name, email: email })
-          updateProfile(auth.currentUser, {
-            displayName: name,
-          })
-          // app.js用
-          setDisplayName(name)
+          let res =  await postUserTask({ displayName: name, email: email, password: password })
+          console.log(res, 'res');
+          // django側で登録がうまくいかなかった時，firebaseの登録取り消す．
+          if (res == "Fail post user"){
+            deleteUser(auth.currentUser).then(() => {
+              console.log("success firebase register but fail backend register");
+            }).catch((error) => {
+              console.log(error, 'error');
+            });
+          }else{
+            updateProfile(auth.currentUser, {
+              displayName: name,
+            })
+            // app.js用
+            setDisplayName(name)
+          }
         }
         )
         .catch((err) => {

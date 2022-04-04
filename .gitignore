@@ -21,3 +21,5 @@ yarn.lock
 staticfiles/
 
 connection.txt
+
+settings.py

@@ -177,6 +177,7 @@ const YoutubePage = () => {
         setTranscription_list([])
         console.log(error, 'error in getYoutubeTranscript');
         setLabelURL("No transcript for this video.")
+        setIsloadingTranscript(false);
         // makeRefList([{ "startText": "", "start": "Sorry,", "text": " No transcript for this video." },]);
       }
       );

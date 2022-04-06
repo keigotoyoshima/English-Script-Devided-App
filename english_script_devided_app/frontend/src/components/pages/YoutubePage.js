@@ -72,6 +72,7 @@ const YoutubePage = () => {
     if (video_id != "") {
       loadVideo(video_id)
       getYoutubeTranscript(video_id)
+      getAllSavedWords(video_id)
     }
   }, [video_id]);
 
@@ -109,10 +110,7 @@ const YoutubePage = () => {
     return ok
   }
 
-  const methodAtSameTime = (v) => {
-    getAllSavedWords(v)
-    getYoutubeTranscript(v)
-  }
+
 
 
   const saveWordAndTime = async () => {

@@ -94,7 +94,7 @@ def movie_api_view(request, displayName, v=""):
         # pk渡さないといけない
         data["user"] = user.pk
         try:
-            movies = MovieModel.objects.filter(v=v)
+            movies = MovieModel.objects.filter(v=v, user=user)
             if len(movies) == 0:
                 # 存在しない場合に追加する
                 serializer = MovieSerializer(data=data)

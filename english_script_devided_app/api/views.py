@@ -27,8 +27,8 @@ def user_api_view(request, displayName=""):
         try:
             user = UserModel.objects.get(displayName=displayName)
         except UserModel.DoesNotExist:
-            return HttpResponse("Not found User in user_api_view")
-        return HttpResponse("Success find User in user_api_view")
+            return HttpResponse("Not found User in user_api_view", status=404)
+        return HttpResponse("Success find User in user_api_view", status=200)
         
     elif request.method == "POST":
         data = JSONParser().parse(request)
@@ -80,10 +80,10 @@ def movie_api_view(request, displayName, v=""):
         try:
             movies = user.moviemodel_set.all().order_by('created')
         except MovieModel.DoesNotExist:
-            return HttpResponse("Not found Movies in movie_api_view")
+            return HttpResponse("Not found Movies in movie_api_view",status=404)
         
         serializer = MovieSerializer(movies, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        return JsonResponse(serializer.data, safe=False, status=200)
 
     elif request.method == "POST":
         data = JSONParser().parse(request)
@@ -98,7 +98,7 @@ def movie_api_view(request, displayName, v=""):
                 if serializer.is_valid():
                     serializer.save()
                     return JsonResponse(serializer.data)
-                return JsonResponse(serializer.errors, status=400)
+                return JsonResponse(serializer.errors, status=404)
             else:
                 # 存在した場合はGetと同様に値を返す
                serializer = MovieSerializer(movies, many=True)
@@ -109,9 +109,8 @@ def movie_api_view(request, displayName, v=""):
             if serializer.is_valid():
                 serializer.save()
                 return JsonResponse(serializer.data)
-            return JsonResponse(serializer.errors, status=400)
-        
-        return JsonResponse(serializer.data, safe=False)
+            return JsonResponse(serializer.errors, status=200)
+
     
     elif request.method == "PUT":
         data = JSONParser().parse(request)
@@ -123,20 +122,19 @@ def movie_api_view(request, displayName, v=""):
             serializer = MovieSerializer(movieModel,data=data)
             if serializer.is_valid():
                 serializer.save()
-                return JsonResponse(serializer.data)
+                return JsonResponse(serializer.data, status=200)
             return JsonResponse(serializer.errors, status=400)
 
         except MovieModel.DoesNotExist:
             # 初めてのmovieの場合の追加
-            serializer = MovieSerializer(data=data)
-            return JsonResponse(serializer.errors, status=400)
+            return HttpResponse("Not found Movies in movie_api_view", status=404)
             
 
     elif request.method == "DELETE":
         try:
             movie = user.moviemodel_set.all().get(v=v)
         except MovieModel.DoesNotExist:
-            return HttpResponse("Not found Movies in movie_api_view")
+            return HttpResponse("Not found Movies in movie_api_view", status=404)
         serializer = MovieSerializer(movie)
         movie.delete()
         return JsonResponse(serializer.data, safe=False)
@@ -151,22 +149,22 @@ def word_api_view(request, displayName, v=""):
     try:
         user = UserModel.objects.get(displayName=displayName)
     except UserModel.DoesNotExist:   
-        return HttpResponse("Not found User in word_api_view")
+        return HttpResponse("Not found User in word_api_view", status=404)
     try:
         movie = MovieModel.objects.get(user=user, v=v)
     except MovieModel.DoesNotExist:
         # Wordに関してのみ，movieが存在しない場合があるので，返り値の文字列で，一旦条件分岐
-        return HttpResponse("Not found Movie in word_api_view")
+        return HttpResponse("Not found Movie in word_api_view", status=404)
     
 
     if request.method == "GET":
         try:
             words = movie.wordmodel_set.all().order_by('created')
         except WordModel.DoesNotExist:
-            return HttpResponse("Not found Word in word_api_view")
+            return HttpResponse("Not found Word in word_api_view", status=404)
             
         serializer = WordSerializer(words, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        return JsonResponse(serializer.data, safe=False, status=200)
 
     elif request.method == "POST":
         data = JSONParser().parse(request)
@@ -175,8 +173,8 @@ def word_api_view(request, displayName, v=""):
         serializer = WordSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
+            return JsonResponse(serializer.data, status=200)
+        return JsonResponse(serializer.errors, status=404)
     # elif request.method == "DELETE":
     #     movie.delete()
     #     return Response(status=status.HTTP_204_NO_CONTENT)

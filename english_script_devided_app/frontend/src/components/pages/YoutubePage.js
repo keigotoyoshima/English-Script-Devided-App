@@ -325,7 +325,7 @@ const YoutubePage = () => {
             <form onSubmit={onSubmit}>
               <Row>
                 <Col xs={11}>
-                  <CssTextField style={{ margin: "auto auto" }} id="outlined-basic" style={{ width: '100%' }} label={labelURL} error={labelURL != "URL"} variant="outlined" size='small' value={inputURL} onChange={e => updateInputValue(e)} />
+                  <CssTextField id="outlined-basic" style={{ width: '100%' }} label={labelURL} error={labelURL != "URL"} variant="outlined" size='small' value={inputURL} onChange={e => updateInputValue(e)} />
                 </Col>
                 <Col xs={1}>
                   <Button style={{ margin: "auto auto", width: "100%" }} className="react-button" variant="outlined" type="submit" margin="normal">

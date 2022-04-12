@@ -60,7 +60,7 @@ export const UserContextProvider = ({ children }) => {
         .then(async () => {
           // django-dbにユーザー情報登録を先に行う
           let res =  await postUserTask({ displayName: name, email: email, password: password })
-          console.log(res, 'res');
+          // console.log(res, 'res');
           // django側で登録がうまくいかなかった時，firebaseの登録取り消す．
           if (res == "Fail post user"){
             deleteUser(auth.currentUser).then(() => {

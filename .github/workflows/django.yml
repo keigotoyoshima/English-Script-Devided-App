@@ -11,13 +11,21 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST: localhost
+      POSTGRES_DB: postgres
+      POSTGRES_PORT: 5432
+      DJANGO_SECRET_KEY: ${{ secrets.SECRET_KEY }}
+    
     services:
       postgres:
         image: postgres:13.4
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres1
-          POSTGRES_DB: postgres
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
         ports:
         - 5432:5432
         # needed because the postgres container does not provide a healthcheck
@@ -40,11 +48,9 @@ jobs:
         pip install -r requirements.txt
     - name: Run Tests
       env:
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        SECRET_KEY: ${{ env.DJANGO_SECRET_KEY }}
         DEBUG: ${{ secrets.DEBUG }}
         ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
-      run: |
-        echo os.environ.get('GITHUB_ACTIONS') $os.environ.get('GITHUB_ACTIONS')
-        echo os.environ.get('GITHUB_WORKFLOW') $os.environ.get('GITHUB_WORKFLOW')
-        echo psql --version 
+      run: |  
+        psql --version 
         python english_script_devided_app/manage.py test

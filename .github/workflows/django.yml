@@ -50,4 +50,4 @@ jobs:
           DB_PORT: ${{ env.POSTGRES_PORT }}
       run: |  
         psql --version 
-        python english_script_devided_app/manage.py test
+        python english_script_devided_app/manage.py test　

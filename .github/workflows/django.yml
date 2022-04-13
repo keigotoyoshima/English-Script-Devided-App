@@ -50,8 +50,9 @@ jobs:
         pip install -r requirements.txt
     - name: Run Tests
       env:
-          DEBUG: "0"
           SECRET_KEY: ${{ env.DJANGO_SECRET_KEY }}
+          DEBUG: ${{ secrets.DEBUG }}
+          ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
           DB_USERNAME: ${{ env.POSTGRES_USER }}
           DB_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
           DB_HOST: ${{ env.POSTGRES_HOST }}

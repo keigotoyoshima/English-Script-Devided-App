@@ -16,7 +16,7 @@ jobs:
         image: postgres:13.4
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: postgres1
           POSTGRES_DB: postgres
         ports:
         - 5432:5432
@@ -44,4 +44,7 @@ jobs:
         DEBUG: ${{ secrets.DEBUG }}
         ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
       run: |
+        echo os.environ.get('GITHUB_ACTIONS') $os.environ.get('GITHUB_ACTIONS')
+        echo os.environ.get('GITHUB_WORKFLOW') $os.environ.get('GITHUB_WORKFLOW')
+        echo psql --version 
         python english_script_devided_app/manage.py test

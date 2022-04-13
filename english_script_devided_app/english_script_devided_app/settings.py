@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
-if os.environ.get('GITHUB_WORKFLOW'):
+if os.environ.get('GITHUB_ACTIONS'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',

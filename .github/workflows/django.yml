@@ -45,7 +45,4 @@ jobs:
         ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
         GITHUB_ACTIONS: os.environ.get('GITHUB_ACTIONS')
       run: |
-        echo "$GITHUB_ACTIONS" 
-        psql --version 
-        psql -l
         python english_script_devided_app/manage.py test

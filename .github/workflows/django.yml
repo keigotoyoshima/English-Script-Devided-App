@@ -43,8 +43,8 @@ jobs:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
         DEBUG: ${{ secrets.DEBUG }}
         ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+        GITHUB_ACTIONS: os.environ.get('GITHUB_ACTIONS')
       run: |
-        echo os.environ.get('GITHUB_ACTIONS') $os.environ.get('GITHUB_ACTIONS')
-        echo os.environ.get('GITHUB_WORKFLOW') $os.environ.get('GITHUB_WORKFLOW')
+        echo "$GITHUB_ACTIONS" 
         psql --version 
         python english_script_devided_app/manage.py test

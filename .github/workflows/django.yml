@@ -60,6 +60,4 @@ jobs:
           DB_PORT: ${{ env.POSTGRES_PORT }}
       run: |  
         psql --version 
-        python english_script_devided_app/manage.py makemigrations
-        python english_script_devided_app/manage.py migrate
         python english_script_devided_app/manage.py test api -v 2

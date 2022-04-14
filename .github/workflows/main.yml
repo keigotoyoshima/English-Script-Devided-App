@@ -74,7 +74,9 @@ jobs:
         git config pull.rebase false
         git branch
         git pull
-        git push origin bundle
+        git checkout bundle
+        git pull origin main
+        git push
 
 
 

@@ -72,7 +72,7 @@ jobs:
          EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        git remote set-url origin https://github-actions:${GITHUB_TOKEN}@github.com/English-Script-Devided-App
+        git remote set-url origin https://github-actions:${GITHUB_TOKEN}@github.com/keigotoyoshima/English-Script-Devided-App
         git config --global user.email "keigo.work199987s@gmail.com"
         git config --global user.name "keigotoyoshima"
         git status

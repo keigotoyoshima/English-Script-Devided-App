@@ -63,7 +63,7 @@ jobs:
         python english_script_devided_app/manage.py test api -v 2
         
 
-        
+    - uses: actions/checkout@bundle
     - name: deploy
       env:
          EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
@@ -74,9 +74,7 @@ jobs:
         git config pull.rebase false
         git branch
         git pull
-        git checkout bundle
         git pull origin main
-        git push
 
 
 

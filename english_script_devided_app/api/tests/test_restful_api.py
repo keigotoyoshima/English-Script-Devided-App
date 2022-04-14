@@ -132,7 +132,6 @@ class RestfulApiTests(APITestCase):
         url = "/api/word-get/testUser/testVideoId/"
         response = self.client.get(url)
         json_data = response.json()
-        print(f'{json_data} json_data')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json_data[0]["word"], "testWord")
         self.assertEqual(json_data[0]["list_id"], "2")

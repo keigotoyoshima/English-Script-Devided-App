@@ -76,6 +76,7 @@ jobs:
         git config --global user.email "keigo.work199987s@gmail.com"
         git config --global user.name "keigotoyoshima"
         git status
+        git config pull.rebase false
         git pull origin main
         cd english_script_devided_app/frontend
         yarn run dev

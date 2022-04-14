@@ -61,16 +61,18 @@ jobs:
       run: |  
         psql --version 
         python english_script_devided_app/manage.py test api -v 2
+        
+    - name: checkout bundle
+    - uses: actions/checkout@v3
+      with:
+        ref: bundle
+        
     - name: deploy
       env:
          EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        git remote set-url origin https://github-actions:${GITHUB_TOKEN}@github.com/English-Script-Devided-App
-        git config --global user.email "keigo.work199987s@gmail.com"
-        git config --global user.name "keigotoyoshima"
-        git branch
-        git checkout bundle
+        git status
         git pull origin main
         cd english_script_devided_app/frontend
         yarn run dev

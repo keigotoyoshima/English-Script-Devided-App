@@ -63,7 +63,6 @@ jobs:
         python english_script_devided_app/manage.py test api -v 2
         
 
-    - uses: actions/checkout@bundle
     - name: deploy
       env:
          EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
@@ -71,10 +70,12 @@ jobs:
       run: |
         git config --local user.email "keigo.work199987s@gmail.com"
         git config --local user.name "keigotoyoshima"
+        git remote set-url origin git@github.com:${GITHUB_REPOSITORY}.git
         git config pull.rebase false
         git branch
+        git checkout bundle
         git pull
-        git pull origin main
+        git push origin main
 
 
 

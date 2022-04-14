@@ -63,7 +63,7 @@ jobs:
         python english_script_devided_app/manage.py test api -v 2
         
     - name: checkout bundle
-    - uses: actions/checkout@v3
+      uses: actions/checkout@v3
       with:
         ref: bundle
         

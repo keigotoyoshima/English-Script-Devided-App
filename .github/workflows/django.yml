@@ -61,5 +61,19 @@ jobs:
       run: |  
         psql --version 
         python english_script_devided_app/manage.py test api -v 2
-        psql -d test_postgres
-        SHOW server_version;
+    - name: deploy
+      env:
+         EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+      run: |
+        git config --global user.email "keigo.work199987s@gmail.com"
+        git config --global user.name "keigotoyoshima"
+        git branch
+        git checkout bundle
+        git pull origin main
+        cd english_script_devided_app/frontend
+        yarn run dev
+        git add static/frontend
+        git push
+        git status
+
+

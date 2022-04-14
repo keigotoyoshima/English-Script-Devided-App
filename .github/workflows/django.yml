@@ -76,8 +76,11 @@ jobs:
         git pull origin main
         cd english_script_devided_app/frontend
         yarn run dev
-        git add static/frontend
-        git push
+        if ( git status | grep "modified ); then \
+            git add static/frontend; \
+            git commit -m "Fixed main.js"; \
+            git push; \
+        fi
         git status
 
 

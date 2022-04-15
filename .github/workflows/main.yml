@@ -70,11 +70,11 @@ jobs:
       run: |
         git config --local user.email "keigo.work199987s@gmail.com"
         git config --local user.name "keigotoyoshima"
-        git remote set-url origin git@github.com:${GITHUB_REPOSITORY}.git
+        git remote set-url origin https://github-actions:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}
         git config pull.rebase false
         git pull
         git checkout bundle
-        git push origin main
+        git push origin bundle
 
 
 

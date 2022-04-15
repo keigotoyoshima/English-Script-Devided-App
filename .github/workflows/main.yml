@@ -76,6 +76,6 @@ jobs:
         git checkout bundle
         git fetch origin main
         git reset --hard origin/main
-        git push -f origin bundle
+        git push  origin bundle
 
 

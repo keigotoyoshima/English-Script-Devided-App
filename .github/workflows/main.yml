@@ -72,9 +72,8 @@ jobs:
         git config --local user.name "keigotoyoshima"
         git remote set-url origin git@github.com:${GITHUB_REPOSITORY}.git
         git config pull.rebase false
-        git branch
-        git checkout bundle
         git pull
+        git checkout bundle
         git push origin main
 
 

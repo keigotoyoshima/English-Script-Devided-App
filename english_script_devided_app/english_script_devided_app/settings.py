@@ -1,3 +1,4 @@
+
 """
 Django settings for english_script_devided_app project.
 
@@ -15,6 +16,7 @@ from dotenv import (
     load_dotenv,
 )
 import dj_database_url
+
 import os
 from pathlib import Path
 import environ
@@ -25,8 +27,9 @@ env.read_env('.env')
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = env('SECRET_KEY')
-DEBUG = env('DEBUG')
+DEBUG = env.get_value('DEBUG', bool)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
+
 
 DB_USERNAME = os.environ.get("DB_USERNAME")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
@@ -79,7 +82,6 @@ else:
 
 
 
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -124,8 +126,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'english_script_devided_app.wsgi.application'
 
 
-
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -156,24 +156,14 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
-
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
+# https: // github.com/jschneier/django-storages/blob/c3fc7cb915ac226d8a4a5b65a99892967515ab6a/docs/backends/amazon-S3.rst
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-if DEBUG:
-    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-    STATIC_URL = '/static/'
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-else:
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiless')
+if not DEBUG:
     AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
     AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
-    
-    DEFAULT_FILE_STORAGE = env('DEFAULT_FILE_STORAGE')
-    STATICFILES_STORAGE = env('STATICFILES_STORAGE')
-    
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

@@ -31,12 +31,15 @@ def user_api_view(request, displayName=""):
             "message": "User not found",
         }}
     if request.method == "GET":
+        print("start get")
         try:
             user = UserModel.objects.get(displayName=displayName)
+            print(f'{user} user')
         except UserModel.DoesNotExist:
             # ここはいなくても問題ないため204
             return HttpResponse(status=204)
         return HttpResponse(status=200)
+
         
     elif request.method == "POST":
         data = JSONParser().parse(request)

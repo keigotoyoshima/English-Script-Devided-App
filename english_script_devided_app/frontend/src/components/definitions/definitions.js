@@ -38,7 +38,7 @@ const Definitions = (props) =>{
 
                   <Row>
                     <Col>
-                    <CssTextField style={{ margin: "auto 0" }} id="outlined-basic" style={{ width: "100%" }} label={props.addError ? "Not found" : "Time"} value={props.startText} 
+                    <CssTextField id="outlined-basic" style={{ width: "100%" }} label={props.addError ? "Not found" : "Time"} value={props.startText} 
                     size='small' onChange={e => updateInputValue(e)} error={props.addError}
                    />
                     </Col>

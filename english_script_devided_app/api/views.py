@@ -14,6 +14,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 
+# http status code 定義
+
+# 200(OK):特定できた時，dataに誤りがなかった時
+# 204(No Content):特定できなかった時
+# 400(Bad request):dataに誤りがあった時
+# 404(Not Found):特定できないことがあってはならない時
+
 
 
 @csrf_exempt
@@ -27,8 +34,9 @@ def user_api_view(request, displayName=""):
         try:
             user = UserModel.objects.get(displayName=displayName)
         except UserModel.DoesNotExist:
-            return HttpResponse("Not found User in user_api_view", status=404)
-        return HttpResponse("Success find User in user_api_view", status=200)
+            # ここはいなくても問題ないため204
+            return HttpResponse(status=204)
+        return HttpResponse(status=200)
         
     elif request.method == "POST":
         data = JSONParser().parse(request)
@@ -74,13 +82,15 @@ def movie_api_view(request, displayName, v=""):
         user = UserModel.objects.get(displayName=displayName)
 
     except UserModel.DoesNotExist:
-        return HttpResponse("Not found User in movie_api_view")
+        # いないことはあり得ないため，404
+        return HttpResponse(status=404)
 
     if request.method == "GET":
         try:
             movies = user.moviemodel_set.all().order_by('created')
         except MovieModel.DoesNotExist:
-            return HttpResponse("Not found Movies in movie_api_view",status=404)
+            # なくても，空で取得するため必要ない
+            return HttpResponse(status=204)
         
         serializer = MovieSerializer(movies, many=True)
         return JsonResponse(serializer.data, safe=False, status=200)
@@ -91,25 +101,26 @@ def movie_api_view(request, displayName, v=""):
         # pk渡さないといけない
         data["user"] = user.pk
         try:
+            # movie追加が初めてじゃない場合
             movies = MovieModel.objects.filter(v=v, user=user)
             if len(movies) == 0:
                 # 存在しない場合に追加する
                 serializer = MovieSerializer(data=data)
                 if serializer.is_valid():
                     serializer.save()
-                    return JsonResponse(serializer.data)
-                return JsonResponse(serializer.errors, status=404)
+                    return JsonResponse(serializer.data, status=200)
+                return JsonResponse(serializer.errors, status=400)
             else:
                 # 存在した場合はGetと同様に値を返す
                serializer = MovieSerializer(movies, many=True)
             
         except MovieModel.DoesNotExist:
-            # 初めてのmovieの場合の追加
+            # movie追加が初めての場合に追加する
             serializer = MovieSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
-                return JsonResponse(serializer.data)
-            return JsonResponse(serializer.errors, status=200)
+                return JsonResponse(serializer.data, status=200)
+            return JsonResponse(serializer.errors, status=400)
 
     
     elif request.method == "PUT":
@@ -126,15 +137,16 @@ def movie_api_view(request, displayName, v=""):
             return JsonResponse(serializer.errors, status=400)
 
         except MovieModel.DoesNotExist:
-            # 初めてのmovieの場合の追加
-            return HttpResponse("Not found Movies in movie_api_view", status=404)
+            # あり得ないため，404
+            return HttpResponse(status=404)
             
 
     elif request.method == "DELETE":
         try:
             movie = user.moviemodel_set.all().get(v=v)
         except MovieModel.DoesNotExist:
-            return HttpResponse("Not found Movies in movie_api_view", status=404)
+            # 不特定はあり得ないため，404
+            return HttpResponse(status=404)
         serializer = MovieSerializer(movie)
         movie.delete()
         return JsonResponse(serializer.data, safe=False)
@@ -149,19 +161,21 @@ def word_api_view(request, displayName, v=""):
     try:
         user = UserModel.objects.get(displayName=displayName)
     except UserModel.DoesNotExist:   
-        return HttpResponse("Not found User in word_api_view", status=404)
+        # 不特定はあり得ないため，404
+        return HttpResponse(status=404)
     try:
         movie = MovieModel.objects.get(user=user, v=v)
     except MovieModel.DoesNotExist:
-        # Wordに関してのみ，movieが存在しない場合があるので，返り値の文字列で，一旦条件分岐
-        return HttpResponse("Not found Movie in word_api_view", status=404)
+        # 不特定はあり得ないため，404
+        return HttpResponse(status=404)
     
 
     if request.method == "GET":
         try:
             words = movie.wordmodel_set.all().order_by('created')
         except WordModel.DoesNotExist:
-            return HttpResponse("Not found Word in word_api_view", status=404)
+            # 必要ない
+            return HttpResponse(status=204)
             
         serializer = WordSerializer(words, many=True)
         return JsonResponse(serializer.data, safe=False, status=200)
@@ -174,7 +188,7 @@ def word_api_view(request, displayName, v=""):
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data, status=200)
-        return JsonResponse(serializer.errors, status=404)
+        return JsonResponse(serializer.errors, status=400)
     # elif request.method == "DELETE":
     #     movie.delete()
     #     return Response(status=status.HTTP_204_NO_CONTENT)

@@ -1,0 +1,80 @@
+name: Django CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+
+    env:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST: localhost
+      POSTGRES_DB: postgres
+      POSTGRES_PORT: 5432
+      DJANGO_SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      
+    services:
+      postgres:
+        image: postgres:13.4
+        env:
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+        ports:
+        - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.9]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Run Tests
+      env:
+          SECRET_KEY: ${{ env.DJANGO_SECRET_KEY }}
+          DEBUG: ${{ secrets.DEBUG }}
+          ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+          DB_USERNAME: ${{ env.POSTGRES_USER }}
+          DB_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          DB_HOST: ${{ env.POSTGRES_HOST }}
+          DB_DATABASE: ${{ env.POSTGRES_DB }}
+          DB_PORT: ${{ env.POSTGRES_PORT }}
+      run: |  
+        psql --version 
+        python english_script_devided_app/manage.py test api -v 2
+        
+
+    - name: deploy
+      env:
+         EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git config --local user.email "keigo.work199987s@gmail.com"
+        git config --local user.name "keigotoyoshima"
+        git remote set-url origin https://github-actions:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}
+        git config pull.rebase false
+        git pull
+        git checkout bundle
+        git pull origin main
+        git push origin bundle
+
+

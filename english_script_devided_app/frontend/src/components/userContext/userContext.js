@@ -55,7 +55,8 @@ export const UserContextProvider = ({ children }) => {
     setLoading(true);
     // nameが一意に定まるか判定
     let response = await getUserTask(name);
-    if (response.data != "Success find User in user_api_view"){
+
+    if (response.status == 204){
       createUserWithEmailAndPassword(auth, email, password)
         .then(async () => {
           // django-dbにユーザー情報登録を先に行う

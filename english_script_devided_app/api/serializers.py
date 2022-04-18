@@ -13,6 +13,7 @@ class MovieSerializer(serializers.ModelSerializer):
     model = MovieModel
     fields = ('__all__')
 
+
 class WordSerializer(serializers.ModelSerializer):
   class Meta:
     model = WordModel

@@ -58,7 +58,7 @@ export const DjangoApiContextProvider = ({ children }) => {
 
   const deleteMovieTask = (v) => {
     let response = client.delete(`/api/movie-delete/${displayName}/${v}/`);
-    console.log(response, 'response in deleteMovieTask');
+    // console.log(response, 'response in deleteMovieTask');
     return response;
   }
 

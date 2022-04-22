@@ -67,8 +67,8 @@ def user_api_view(request, displayName=""):
                 u.user_permissions.add(perm)
             # userModel作成
             serializer.save()
-            return JsonResponse(serializer.data)
-        return HttpResponse("Fail post user")
+            return JsonResponse(serializer.data, status=200)
+        return HttpResponse(status=400)
 
 
 @csrf_exempt
@@ -86,11 +86,7 @@ def movie_api_view(request, displayName, v=""):
         return HttpResponse(status=404)
 
     if request.method == "GET":
-        try:
-            movies = user.moviemodel_set.all().order_by('created')
-        except MovieModel.DoesNotExist:
-            # なくても，空で取得するため必要ない
-            return HttpResponse(status=204)
+        movies = user.moviemodel_set.all().order_by('created')
         
         serializer = MovieSerializer(movies, many=True)
         return JsonResponse(serializer.data, safe=False, status=200)
@@ -100,27 +96,29 @@ def movie_api_view(request, displayName, v=""):
         v = data["v"]
         # pk渡さないといけない
         data["user"] = user.pk
-        try:
-            # movie追加が初めてじゃない場合
-            movies = MovieModel.objects.filter(v=v, user=user)
-            if len(movies) == 0:
-                # 存在しない場合に追加する
-                serializer = MovieSerializer(data=data)
-                if serializer.is_valid():
-                    serializer.save()
-                    return JsonResponse(serializer.data, status=200)
-                return JsonResponse(serializer.errors, status=400)
-            else:
-                # 存在した場合はGetと同様に値を返す
-               serializer = MovieSerializer(movies, many=True)
-            
-        except MovieModel.DoesNotExist:
-            # movie追加が初めての場合に追加する
+        # try:
+        # movie追加が初めてじゃない場合
+        movies = MovieModel.objects.filter(v=v, user=user)
+        if len(movies) == 0:
+            # 同一movieが存在しない場合に追加する
             serializer = MovieSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
                 return JsonResponse(serializer.data, status=200)
             return JsonResponse(serializer.errors, status=400)
+        else:
+            # 同一mvoieが存在した場合はGetと同様に値を返す
+            serializer = MovieSerializer(movies, many=True)
+            return JsonResponse(serializer.data, safe=False, status=200)
+               
+            
+        # except MovieModel.DoesNotExist:
+        #     # movie追加が初めての場合に追加する
+        #     serializer = MovieSerializer(data=data)
+        #     if serializer.is_valid():
+        #         serializer.save()
+        #         return JsonResponse(serializer.data, status=200)
+        #     return JsonResponse(serializer.errors, status=400)
 
     
     elif request.method == "PUT":
@@ -149,7 +147,7 @@ def movie_api_view(request, displayName, v=""):
             return HttpResponse(status=404)
         serializer = MovieSerializer(movie)
         movie.delete()
-        return JsonResponse(serializer.data, safe=False)
+        return JsonResponse(serializer.data, safe=False, status=200)
 
 @csrf_exempt
 def word_api_view(request, displayName, v=""):
@@ -171,11 +169,7 @@ def word_api_view(request, displayName, v=""):
     
 
     if request.method == "GET":
-        try:
-            words = movie.wordmodel_set.all().order_by('created')
-        except WordModel.DoesNotExist:
-            # 必要ない
-            return HttpResponse(status=204)
+        words = movie.wordmodel_set.all().order_by('created')
             
         serializer = WordSerializer(words, many=True)
         return JsonResponse(serializer.data, safe=False, status=200)
@@ -189,9 +183,6 @@ def word_api_view(request, displayName, v=""):
             serializer.save()
             return JsonResponse(serializer.data, status=200)
         return JsonResponse(serializer.errors, status=400)
-    # elif request.method == "DELETE":
-    #     movie.delete()
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
         
 
 class GetYoutubeTranscript(APIView):

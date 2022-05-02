@@ -55,10 +55,20 @@ if os.environ.get('GITHUB_ACTIONS'):
             "PORT": DB_PORT,
         }
     }
-elif DEBUG:
-    load_dotenv(find_dotenv())
+elif DEBUG: 
+    # load_dotenv(find_dotenv())
+    # DATABASES = {
+    #     'default': dj_database_url.config(conn_max_age=600),
+    # }
     DATABASES = {
-        'default': dj_database_url.config(conn_max_age=600),
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'postgres',
+            'USER': 'postgres',
+            'PASSWORD': 'postgres',
+            'HOST': 'db',
+            'PORT': 5432,
+        }
     }
 else:
     ENGINE = env('ENGINE')

@@ -95,8 +95,16 @@ export const UserContextProvider = ({ children }) => {
   const signInUser = (email, password) => {
     setLoading(true);
     signInWithEmailAndPassword(auth, email, password)
-      .then((res) => {
-        setDisplayName(res.user.displayName)
+      .then(async (res) => {
+        let response = await getUserTask(res.user.displayName);
+        console.log(response.status, 'response.status');
+        if (response.status != 204) {
+          // 既に登録積みの場合
+          setDisplayName(res.user.displayName)
+        }else{
+          // firebase上に存在するが，db上に存在しない場合(dev用)
+          setError('Not found user infomation!')
+        }
       })
       .catch((err) => {
         switch (err.code) {

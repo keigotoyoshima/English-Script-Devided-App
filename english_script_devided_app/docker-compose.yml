@@ -27,8 +27,6 @@ services:
       - ./gunicorn:/run/gunicorn
       - /etc/nginx/ssl:/etc/nginx/ssl
       - /etc/letsencrypt:/etc/letsencrypt
-      # - /etc/letsencrypt/live/youtubelanguage.com/fullchain.pem:/etc/letsencrypt/live/youtubelanguage.com/fullchain.pem
-      # - /etc/letsencrypt/live/youtubelanguage.com/privkey.pem:/etc/letsencrypt/live/youtubelanguage.com/privkey.pem
       - /home/www/letsencrypt:/home/www/letsencrypt
 
     depends_on:

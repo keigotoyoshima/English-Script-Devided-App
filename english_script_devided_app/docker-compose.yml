@@ -21,12 +21,14 @@ services:
     image: nginx:1.21-alpine
     ports:
       - 80:80
+      - 443:443
     volumes:
       - /etc/nginx/sites-enabled/English-Script-Devided-App:/etc/nginx/conf.d/default.conf
       - ./gunicorn:/run/gunicorn
       - /etc/nginx/ssl/dhparam.pem:/etc/nginx/ssl/dhparam.pem
-      - /etc/letsencrypt/live/youtubelanguage.com/fullchain.pem:/etc/letsencrypt/live/youtubelanguage.com/fullchain.pem
-      - /etc/letsencrypt/live/youtubelanguage.com/privkey.pem:/etc/letsencrypt/live/youtubelanguage.com/privkey.pem
+      - /etc/letsencrypt:/etc/letsencrypt
+      # - /etc/letsencrypt/live/youtubelanguage.com/fullchain.pem:/etc/letsencrypt/live/youtubelanguage.com/fullchain.pem
+      # - /etc/letsencrypt/live/youtubelanguage.com/privkey.pem:/etc/letsencrypt/live/youtubelanguage.com/privkey.pem
       - /home/www/letsencrypt:/home/www/letsencrypt
 
     depends_on:

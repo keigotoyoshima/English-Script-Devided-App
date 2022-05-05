@@ -85,7 +85,10 @@ jobs:
         ls -al
         chmod 400 secret_key
         ssh -oStrictHostKeyChecking=no -i secret_key  ${EC2_USER}@${EC2_STG_HOST} -tt
-        && ls
+        "ls \
+        && cd English-Script-Devided-App/english_script_devided_app/
+        && ls"
+
 
 
 

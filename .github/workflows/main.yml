@@ -71,10 +71,13 @@ jobs:
           ALLOWED_HOSTS: localhost
       run: |  
         python manage.py test api -v 2
-  
+
+    - uses: actions/checkout@v3
     - name: Build the images and start the containers
+
       working-directory: ./english_script_devided_app
       run: |
+        export GITHUB_WORKFLOW=False
         docker-compose -f docker-compose.yml up -d
     - name: Stop containers
       if: always()

@@ -31,7 +31,7 @@ DEBUG = env.get_value('DEBUG', bool)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
 
-if os.environ.get('GITHUB_ACTIONS'):
+if os.environ.get('GITHUB_WORKFLOW'):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -39,7 +39,7 @@ if os.environ.get('GITHUB_ACTIONS'):
             "USER": "postgres",
             "PASSWORD": "postgres",
             'HOST': "localhost",
-            "PORT": "5432",
+            "PORT": "5431",
         }
     }
 elif DEBUG: 

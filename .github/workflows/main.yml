@@ -82,6 +82,7 @@ jobs:
         #  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo "$EC2_STG_PRIVATE_KEY" > secret_key
+        ls -al
         chmod 400 secret_key
         ssh -oStrictHostKeyChecking=no -i secret_key  ${EC2_USER}@${EC2_STG_HOST} -tt
         && ls

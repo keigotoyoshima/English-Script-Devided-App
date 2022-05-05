@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
@@ -31,7 +30,7 @@ jobs:
           POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
         ports:
-        - 5431:5432
+        - 5432:5431
         # needed because the postgres container does not provide a healthcheck
         options: 
           --health-cmd pg_isready 
@@ -63,7 +62,6 @@ jobs:
       run: |
         python manage.py makemigrations
         python manage.py migrate
-        psql --version 
 
     - name: Run Tests
       working-directory: ./english_script_devided_app
@@ -72,7 +70,6 @@ jobs:
           DEBUG: 1
           ALLOWED_HOSTS: localhost
       run: |  
-        psql --version 
         python manage.py test api -v 2
   
     - name: Build the images and start the containers

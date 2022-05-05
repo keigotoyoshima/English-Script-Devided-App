@@ -74,11 +74,19 @@ jobs:
 
         
 
-    # - name: deploy
-    #   env:
-    #      EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
-    #      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   run: |
+    - name: deploy
+      env:
+        EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+        EC2_STG_PRIVATE_KEY: ${{ secrets.EC2_STG_PRIVATE_KEY }}
+        EC2_USER: ${{ secrets.EC2_USER }}
+        EC2_STG_HOST: ${{ secrets.EC2_STG_HOST }}
+        #  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        ssh -i ${EC2_STG_PRIVATE_KEY}  ${EC2_USER}@${EC2_STG_HOST} 
+        && ls
+
+
+
     #     git config --local user.email "keigo.work199987s@gmail.com"
     #     git config --local user.name "keigotoyoshima"
     #     git remote set-url origin https://github-actions:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}

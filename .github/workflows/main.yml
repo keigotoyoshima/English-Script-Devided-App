@@ -88,18 +88,10 @@ jobs:
         "ls \
         && cd English-Script-Devided-App/english_script_devided_app/
         && ls"
+        ls -al
 
 
-
-
-    #     git config --local user.email "keigo.work199987s@gmail.com"
-    #     git config --local user.name "keigotoyoshima"
-    #     git remote set-url origin https://github-actions:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}
-    #     git config pull.rebase false
-    #     git pull
-    #     git checkout bundle
-    #     git pull origin main
-    #     git push origin bundle
+      
 
 
 

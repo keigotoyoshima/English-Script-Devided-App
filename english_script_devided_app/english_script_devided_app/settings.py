@@ -39,7 +39,7 @@ if os.environ.get('GITHUB_WORKFLOW'):
             "USER": "postgres",
             "PASSWORD": "postgres",
             'HOST': "localhost",
-            "PORT": "5431",
+            "PORT": "5433",
         }
     }
 elif DEBUG: 

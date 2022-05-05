@@ -83,7 +83,7 @@ jobs:
       run: |
         echo ${EC2_STG_PRIVATE_KEY} > secret_key
         chmod 600 secret_key
-        ssh -i secret_key  ${EC2_USER}@${EC2_STG_HOST} 
+        ssh -i secret_key  ${EC2_USER}@${EC2_STG_HOST} -t
         && ls
 
 

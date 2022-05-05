@@ -31,19 +31,6 @@ DEBUG = env.get_value('DEBUG', bool)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
 
-# DB_USERNAME = os.environ.get("DB_USERNAME")
-# DB_PASSWORD = os.environ.get("DB_PASSWORD")
-# DB_HOST = os.environ.get("DB_HOST")
-# DB_PORT = os.environ.get("DB_PORT")
-# DB_DATABASE = os.environ.get("DB_DATABASE")
-# DB_IS_AVAIL = all([
-#     DB_USERNAME,
-#     DB_PASSWORD,
-#     DB_HOST,
-#     DB_PORT,
-#     DB_DATABASE
-# ])
-
 if os.environ.get('GITHUB_ACTIONS'):
     DATABASES = {
         "default": {
@@ -56,20 +43,23 @@ if os.environ.get('GITHUB_ACTIONS'):
         }
     }
 elif DEBUG: 
-    load_dotenv(find_dotenv())
-    DATABASES = {
-        'default': dj_database_url.config(conn_max_age=600),
-    }
+    # local-runserver用
+    # load_dotenv(find_dotenv())
     # DATABASES = {
-    #     'default': {
-    #         'ENGINE': 'django.db.backends.postgresql',
-    #         'NAME': 'postgres',
-    #         'USER': 'postgres',
-    #         'PASSWORD': 'postgres',
-    #         'HOST': 'db',
-    #         'PORT': 5432,
-    #     }
+    #     'default': dj_database_url.config(conn_max_age=600),
     # }
+    
+    # local-docker用
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'postgres',
+            'USER': 'postgres',
+            'PASSWORD': 'postgres',
+            'HOST': 'db',
+            'PORT': 5432,
+        }
+    }
 else:
     ENGINE = env('ENGINE')
     NAME = env('NAME')

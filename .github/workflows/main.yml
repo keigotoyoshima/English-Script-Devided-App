@@ -68,6 +68,7 @@ jobs:
       run: |
         python manage.py makemigrations
         python manage.py migrate
+        psql --version 
 
     - name: Run Tests
       working-directory: ./english_script_devided_app
@@ -83,6 +84,15 @@ jobs:
       run: |  
         psql --version 
         python manage.py test api -v 2
+  
+    - name: Build the images and start the containers
+      working-directory: ./english_script_devided_app
+      run: |
+        docker-compose -f docker-compose.yml up -d
+    - name: Stop containers
+      if: always()
+      run: docker-compose -f "docker-compose.yml" down
+
 
         
 

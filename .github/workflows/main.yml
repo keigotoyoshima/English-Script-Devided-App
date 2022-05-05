@@ -19,7 +19,6 @@ jobs:
       POSTGRES_PASSWORD: postgres
       POSTGRES_HOST: localhost
       POSTGRES_DB: github_actions
-      POSTGRES_PORT: 5433
       DJANGO_SECRET_KEY: ${{ secrets.SECRET_KEY }}
       
     services:

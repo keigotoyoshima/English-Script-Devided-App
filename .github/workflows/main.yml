@@ -84,8 +84,7 @@ jobs:
         echo "$EC2_STG_PRIVATE_KEY" > secret_key
         ls -al
         chmod 400 secret_key
-        ssh -oStrictHostKeyChecking=no -i secret_key  ${EC2_USER}@${EC2_STG_HOST} -tt
-        "ls \
+        ssh -oStrictHostKeyChecking=no ${EC2_USER}@${EC2_STG_HOST} -i secret_key  "ls \
         && cd English-Script-Devided-App/english_script_devided_app \
         && ls"
         ls -al

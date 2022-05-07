@@ -89,7 +89,7 @@ class RestfulApiTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(UserModel.objects.count(), 1)
         self.assertEqual(UserModel.objects.get().displayName, 'testUser')
-        self.assertEqual(UserModel.objects.get().email, 'testUser@example.com')
+        # self.assertEqual(UserModel.objects.get().email, 'testUser@example.com')
         
         # response = self.client.post(url)
         # self.assertEqual(response.status_code, 400)

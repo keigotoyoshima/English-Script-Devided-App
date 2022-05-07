@@ -9,7 +9,7 @@ class UserModelTests(TestCase):
 
   def test_get_fields(self):
     # < ManyToOneRel: api.moviemodel > , < django.db.models.fields.BigAutoField: id > , < django.db.models.fields.DateTimeField: created > , < django.db.models.fields.DateTimeField: updated > , < django.db.models.fields.CharField: displayName > , < django.db.models.fields.CharField: email > 
-    self.assertEqual(len(UserModel._meta.get_fields()), 6)
+    self.assertEqual(len(UserModel._meta.get_fields()), 5)
     
 
 class MovieModelTests(TestCase):

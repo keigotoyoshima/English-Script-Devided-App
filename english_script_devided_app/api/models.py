@@ -23,12 +23,6 @@ class UserModel(models.Model):
         null=True,
     )
 
-    email = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True,
-    )
-
     def __str__(self):
         return self.displayName
 

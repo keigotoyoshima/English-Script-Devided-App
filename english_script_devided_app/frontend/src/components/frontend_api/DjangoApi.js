@@ -4,7 +4,6 @@ import { createContext,useContext } from 'react';
 import React from 'react';
 
 export const IP_AND_PORT = process.env.REACT_APP_DJANGO_DATA_API_IP_PORT; 
-// export const IP_AND_PORT = process.env.REACT_APP_DJANGO_DATA_API_IP_PORT_LOCAL; 
 
 const client = axios.create({
   baseURL: IP_AND_PORT,

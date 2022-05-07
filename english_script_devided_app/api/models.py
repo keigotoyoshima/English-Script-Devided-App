@@ -42,20 +42,26 @@ class MovieModel(models.Model):
         null=False,
     )
     
-    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(
+        UserModel, 
+        on_delete=models.CASCADE, 
+        null=True
+    )
     
     # version1ではvを格納
     title = models.CharField(
+        default="default",
         max_length=255,
-        blank=True,
-        null=True,
+        blank=False,
+        null=False,
     )
     
     # youtube-API用key
     v = models.CharField(
+        default="default",
         max_length=255,
-        blank=True,
-        null=True,
+        blank=False,
+        null=False,
     )
     
     
@@ -77,18 +83,24 @@ class WordModel(models.Model):
         null=False,
     )
     
-    movie = models.ForeignKey(MovieModel, on_delete=models.CASCADE, null=True)
+    movie = models.ForeignKey(
+        MovieModel, 
+        on_delete=models.CASCADE, 
+        null=True
+    )
     
     list_id = models.CharField(
+        default="default",
         max_length=255,
-        blank=True,
-        null=True,
+        blank=False,
+        null=False,
     )
     
     word = models.CharField(    
+        default="default",
         max_length=255,
-        blank=True,
-        null=True,
+        blank=False,
+        null=False,
     )
 
     def __str__(self):

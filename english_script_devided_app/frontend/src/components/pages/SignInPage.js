@@ -71,7 +71,7 @@ export default function SignInPage(props) {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in 3
+            Sign in
           </Typography>
           <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
@@ -100,7 +100,7 @@ export default function SignInPage(props) {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In 5
+              Sign In
             </Button>
           </Box>
         </Box>

@@ -18,9 +18,10 @@ class UserModel(models.Model):
     )
     
     displayName = models.CharField(
+        default="default",
         max_length=255,
-        blank=True,
-        null=True,
+        blank=False,
+        null=False,
     )
 
     def __str__(self):

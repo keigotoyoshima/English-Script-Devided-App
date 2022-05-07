@@ -89,7 +89,8 @@ jobs:
         && cd frontend \
         && yarn run dev \
         && cd - \
-        && python manage.py collectstatic"
+        && docker exec -it english_script_devided_app_app_1 sh \
+        && python manage.py collectstatic --noinput"
 
 
 

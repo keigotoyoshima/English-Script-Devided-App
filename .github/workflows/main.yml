@@ -87,7 +87,7 @@ jobs:
         ssh -oStrictHostKeyChecking=no ${EC2_USER}@${EC2_STG_HOST} -i secret_key  "cd English-Script-Devided-App/english_script_devided_app \
         && git pull \
         && cd frontend \
-        && yarn run dev \
+        && yarn run build \
         && cd - \
         && docker exec -it english_script_devided_app_app_1 sh \
         && python manage.py collectstatic --noinput"

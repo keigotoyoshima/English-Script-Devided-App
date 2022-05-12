@@ -43,7 +43,6 @@ if os.environ.get('GITHUB_WORKFLOW'):
         }
     }
 elif DEBUG: 
-    # local-runserver用(manage.py runserver 8080)
     # load_dotenv(find_dotenv())
     # DATABASES = {
     #     'default': dj_database_url.config(conn_max_age=600),

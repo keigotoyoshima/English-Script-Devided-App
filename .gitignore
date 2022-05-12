@@ -22,3 +22,6 @@ staticfiles/
 
 connection.txt
 
+
+# postgres volume
+postgres_data/

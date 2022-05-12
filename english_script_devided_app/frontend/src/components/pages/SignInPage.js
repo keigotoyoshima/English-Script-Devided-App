@@ -100,7 +100,7 @@ export default function SignInPage(props) {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Sign in
             </Button>
           </Box>
         </Box>

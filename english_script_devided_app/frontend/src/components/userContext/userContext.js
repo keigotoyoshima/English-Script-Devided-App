@@ -97,7 +97,7 @@ export const UserContextProvider = ({ children }) => {
     signInWithEmailAndPassword(auth, email, password)
       .then(async (res) => {
         let response = await getUserTask(res.user.displayName);
-        console.log(response.status, 'response.status');
+        // console.log(response.status, 'response.status');
         if (response.status != 204) {
           // 既に登録積みの場合
           setDisplayName(res.user.displayName)

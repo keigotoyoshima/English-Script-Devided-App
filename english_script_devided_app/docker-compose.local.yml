@@ -17,7 +17,7 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - ./frontend/static:/usr/src/app/frontend/static
+      - .:/usr/src/app
     depends_on:
       - db
 
@@ -45,7 +45,13 @@ services:
   #     - app
 
 # docker-composeをlocalと本番で分ける理由
+
+# サーバーについて
 # 本番では，nginxを動かし，localでは静的ファイルの自動反映をしながら開発したいので，開発用サーバー（runserver)を使用する．
+
+# ssl証明について
 # 本番では，ssl化のためにec2内にあるSSL証明書をマウントする必要がある．
+
+# webpackについて
 # localでは，docker-compse upの時にyarnをdevelopモードで実行して，本番ではCICDの時にyarnをproductionモードで実行するように分ける必要がある．
 

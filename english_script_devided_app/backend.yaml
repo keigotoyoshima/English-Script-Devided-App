@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: webapp-deployment
+  name: backend-deployment
   labels:
-    app: webapp
+    app: backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: webapp
+      app: backend
   template:
     metadata:
       labels:
-        app: webapp
+        app: backend
     spec:
       containers:
-      - name: webapp
-        image: nanajanashia/k8s-demo-app:v1.0
+      - name: backend
+        image: backend:v1.0
         ports:
         - containerPort: 3000
         env:
@@ -39,11 +39,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: webapp-service
+  name: backend-service
 spec:
   type: NodePort
   selector:
-    app: webapp
+    app: backend
   ports:
     - protocol: TCP
       port: 3000

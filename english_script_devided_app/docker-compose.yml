@@ -43,4 +43,4 @@ services:
       - /home/www/letsencrypt:/home/www/letsencrypt
 
     depends_on:
-      - app
+      - backend

@@ -1,11 +1,7 @@
 
 import React, { useCallback } from "react";
 import "../../../static/css/header.css";
-import MenuItem from "@material-ui/core/MenuItem";
-import languages from "../data/language";
-// import language from "../data/language"
-import { debounce } from "lodash";
-import CssTextField from "../theme/MuiThemeTextField";
+import { TextField } from "@mui/material";
 
 const Header = ({
   word,
@@ -15,14 +11,15 @@ const Header = ({
   return (
     <div className="header">
       <div className="inputs">
-        <CssTextField
-          error={headerError}
-          helperText={headerError ? "Incorrect word, please search correct word." : ""}
-          className="search"
-          id="outlined-basic"
-          label={headerError ? "" : "Word"}
-          value={word != "" ? word : ""}
-        />
+        <TextField sx={{
+          width: "50%",
+          "& .MuiInput-underline:before": {
+            borderBottomColor: "#888888"
+          },
+          "& .MuiInput-underline:after": {
+            borderBottomColor: "#FAFAFA"
+          }
+        }} error={headerError} helperText={headerError ? "Incorrect word, please search correct word." : ""} className="search" label={headerError ? "" : "Click a word in transcript."} value={word != "" ? word : ""} variant="standard" inputProps={{ style: { fontSize: 15, color: "#FAFAFA"} }} InputLabelProps={{ style: { fontSize: 15, color: "#888888", padding: "0", margin: "0", height: "100%", width:"100%", textAlign:"center", lineHeight: "1" } }} />
       </div>
     </div>
   );

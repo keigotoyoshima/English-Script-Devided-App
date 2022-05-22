@@ -3,7 +3,7 @@ import "../../../static/css/definitions.css";
 import { Container } from "@material-ui/core";
 import { Row, Col } from "react-bootstrap";
 import { Button } from "@material-ui/core";
-import CssTextField from "../theme/MuiThemeTextField";
+import { TextField } from "@mui/material";
 import { useState } from "react";
 
 const Definitions = (props) =>{
@@ -21,12 +21,12 @@ const Definitions = (props) =>{
             <Row>
               <Col>
                 <Row>
-                  <span>Pronunciation: {props.meaning_list[0].phonetics[0] ? props.meaning_list[0].phonetics[0].text: ""}</span>
+                  <span style={{ color: "#FAFAFA", fontWeight: "100"}}>Pronunciation: {props.meaning_list[0].phonetics[0] ? props.meaning_list[0].phonetics[0].text: ""}</span>
                 </Row>
                 <Row>
                   <audio
                     className="padding-left-release"
-                    style={{ backgroundColor: "#fff", borderRadius: 10 }}
+                    style={{ color: "#313131", borderRadius: 10 }}
                     src={props.meaning_list[0].phonetics[0] && props.meaning_list[0].phonetics[0].audio}
                     controls
                   >
@@ -38,14 +38,21 @@ const Definitions = (props) =>{
 
                   <Row>
                     <Col>
-                    <CssTextField id="outlined-basic" style={{ width: "100%" }} label={props.addError ? "Not found" : "Time"} value={props.startText} 
-                    size='small' onChange={e => updateInputValue(e)} error={props.addError}
-                   />
+                    <TextField sx={{
+                      width: "100%",
+                      "& .MuiInput-underline:before": {
+                        borderBottomColor: "#888888"
+                      },
+                      "& .MuiInput-underline:after": {
+                        borderBottomColor: "#FAFAFA"
+                      }
+                    }} label={props.addError ? "Not found" : "Time"} value={props.startText}
+                      size='small' onChange={e => updateInputValue(e)} error={props.addError} variant="standard" inputProps={{ style: { fontSize: 15, color: "#FAFAFA", textAlign:"center " } }} InputLabelProps={{ style: { fontSize: 15, color: "#888888", padding: "0", margin: "0", height: "100%", lineHeight: "1" } }} />
                     </Col>
                     <Col>
                       <Container style={{ display: "flex", justifyContent: 'end', alignItems: 'end', 
                         height: "100%", width: "100%", margin: 0, padding: 0 }}>
-                        <Button style={{ width: "100%", height: 25}} className="react-button" variant="outlined" margin="normal" onClick={onClick} >
+                      <Button style={{ width: "100%", height: 25, backgroundColor: "#313131", color: "#FAFAFA"}} className="react-button" variant="outlined" margin="normal" onClick={onClick} >
                           Add
                         </Button>
                       </Container>
@@ -71,8 +78,8 @@ const Definitions = (props) =>{
                     key={`section-definition-${index}`}
                     className="singleMean"
                     style={{
-                      backgroundColor: "white",
-                      color: "black",
+                      color: "#FAFAFA",
+                      fontWeight: "100",
                     }}
                   >
                     <b>Definition : {def.definition}</b>
@@ -89,7 +96,7 @@ const Definitions = (props) =>{
                         <b>Synonyms :</b> {def.synonyms.map((s) => `${s}, `)}
                       </span>
                     )}
-                    <hr style={{ backgroundColor: "black", width: "100%" }} />
+                    <hr style={{ backgroundColor: "white", width: "100%" }} />
                   </div>
                 ))
               )

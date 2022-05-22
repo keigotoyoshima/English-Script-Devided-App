@@ -25,3 +25,6 @@ connection.txt
 
 # postgres volume
 postgres_data/
+
+# kubernetes secret
+postgres-secret.yaml

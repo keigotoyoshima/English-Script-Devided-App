@@ -5,28 +5,29 @@ import { color } from "@mui/system";
 
 const CssTextField = withStyles({
   root: {
-    // フォーカス時のlabel-color
+    background: '#202020',
+    width:"100%",
+    '& label': {
+      color: '#888888'
+    },
     '& label.Mui-focused': {
-      color: 'black',
-      padding: '1ch',
+      color: 'white'
     },
-    // '& .MuiInput-underline:after': {
-    //   borderBottomColor: 'red',
-    // },
+    '& .MuiInput-underline:after': {
+      borderBottomColor: 'white'
+    },
     '& .MuiOutlinedInput-root': {
-      // '& fieldset': {
-      //   borderColor: 'red',
-      // },
-      // '&:hover fieldset': {
-      //   borderColor: 'red',
-      // },
-
-      // フォーカス時のoutline-color
-      '&.Mui-focused fieldset': {
-        borderColor: 'black',
+      '& fieldset': {
+        borderColor: 'white'
       },
+      '&:hover fieldset': {
+        borderColor: 'white'
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: 'white'
+      }
     },
-  },
+  }
 })(TextField);
 
 

@@ -93,6 +93,8 @@ export const UserContextProvider = ({ children }) => {
   };
 
   const signInUser = (email, password) => {
+    // dev開発用
+    // setDisplayName("docker");
     setLoading(true);
     signInWithEmailAndPassword(auth, email, password)
       .then(async (res) => {

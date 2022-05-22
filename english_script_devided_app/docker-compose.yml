@@ -5,7 +5,7 @@ services:
       context: ./frontend
       dockerfile: ./Dockerfile
     container_name: frontend
-    command: yarn run dev
+    command: yarn run build
     volumes:
       -  ./frontend:/usr/src/app/frontend
 

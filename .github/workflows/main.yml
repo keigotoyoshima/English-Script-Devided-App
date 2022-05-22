@@ -83,8 +83,9 @@ jobs:
         chmod 400 secret_key
         ssh -oStrictHostKeyChecking=no ${EC2_USER}@${EC2_STG_HOST} -i secret_key  "cd English-Script-Devided-App/english_script_devided_app \
         && git pull \
-        && cd frontend \
-        && yarn run build \
+        # && cd frontend \
+        # && yarn run build \
+        && docker exec frontend yarn run build \
         && cd - \
         && docker exec app python manage.py collectstatic --noinput \
         && docker exec app python manage.py migrate"

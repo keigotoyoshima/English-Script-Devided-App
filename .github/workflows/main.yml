@@ -86,9 +86,9 @@ jobs:
         # && cd frontend \
         # && yarn run build \
         && docker exec frontend yarn run build \
-        && cd - \
-        && docker exec app python manage.py collectstatic --noinput \
-        && docker exec app python manage.py migrate"
+        # && cd - \
+        && docker exec backend python manage.py collectstatic --noinput \
+        && docker exec backend python manage.py migrate"
 
 
 

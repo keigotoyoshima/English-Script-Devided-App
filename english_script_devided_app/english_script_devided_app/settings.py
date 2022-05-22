@@ -156,7 +156,7 @@ USE_TZ = True
 # https: // github.com/jschneier/django-storages/blob/c3fc7cb915ac226d8a4a5b65a99892967515ab6a/docs/backends/amazon-S3.rst
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 if not DEBUG:

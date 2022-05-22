@@ -10,7 +10,6 @@
 .title {
   font-size: 10;
   text-transform: uppercase;
-  font-family: "Montserrat", sans-serif;
 } 
 
 @media (max-width: 900px) {

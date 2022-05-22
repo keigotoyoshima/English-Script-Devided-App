@@ -27,15 +27,34 @@ export const YoutubeIframeApiContextProvider = ({ children }) => {
       width: '100%',
       videoId: 'gp57PcA7YVQ',
       events: {
-        // 'onReady': onPlayerReady,
-        'onStateChange': onPlayerStateChange
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange,
+        'onError': onPlayerError,
       }
     });
   }
 
-  const onPlayerReady = (event) => {
-    event.target.playVideo();
-    player.stopVideo();
+  const onPlayerError = () => {
+    console.log("Error happens in onYouTubeIframeAPIReady")
+  }
+
+  function onPlayerReady(event) {
+    var lastTime = -1;
+    var interval = 100;
+    // 0.5秒ごとに動画時間の差分をチェックし，差分が1秒以上あれば，字幕移動をトリガーする．
+    var checkPlayerTime = function () {
+      if (lastTime != -1) {
+        var t = player.getCurrentTime();
+        // console.log(t, 't');
+        // if (Math.abs(t - lastTime) >= 1.0) {
+        //   setCurrentTime(t);
+        // }
+        setCurrentTime(t);
+      }
+      lastTime = player.getCurrentTime();
+      setTimeout(checkPlayerTime, interval); /// repeat function call in 1 second
+    }
+    setTimeout(checkPlayerTime, interval); /// initial call delayed 
   }
 
   // const onPlayerReady = (event) => {

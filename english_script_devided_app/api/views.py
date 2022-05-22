@@ -25,11 +25,6 @@ from django.contrib.contenttypes.models import ContentType
 
 @csrf_exempt
 def user_api_view(request, displayName=""):
-    err_msg = {
-        "error": {
-            "code": 404,
-            "message": "User not found",
-        }}
     if request.method == "GET":
         try:
             user = UserModel.objects.get(displayName=displayName)
@@ -73,11 +68,6 @@ def user_api_view(request, displayName=""):
 
 @csrf_exempt
 def movie_api_view(request, displayName, v=""):
-    err_msg = {
-        "error": {  
-            "code": 404,
-            "message": "Movie not found",
-        }}
     try:
         user = UserModel.objects.get(displayName=displayName)
 
@@ -111,14 +101,6 @@ def movie_api_view(request, displayName, v=""):
             serializer = MovieSerializer(movies, many=True)
             return JsonResponse(serializer.data, safe=False, status=200)
                
-            
-        # except MovieModel.DoesNotExist:
-        #     # movie追加が初めての場合に追加する
-        #     serializer = MovieSerializer(data=data)
-        #     if serializer.is_valid():
-        #         serializer.save()
-        #         return JsonResponse(serializer.data, status=200)
-        #     return JsonResponse(serializer.errors, status=400)
 
     
     elif request.method == "PUT":
@@ -151,11 +133,6 @@ def movie_api_view(request, displayName, v=""):
 
 @csrf_exempt
 def word_api_view(request, displayName, v=""):
-    err_msg = {
-        "error": {
-            "code": 404,
-            "message": "Movie not found",
-        }}
     try:
         user = UserModel.objects.get(displayName=displayName)
     except UserModel.DoesNotExist:   

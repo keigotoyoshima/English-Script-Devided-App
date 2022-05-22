@@ -1,23 +1,33 @@
 version: '3'
 services:
-  app:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    container_name: frontend
+    command: yarn run dev
+    volumes:
+      -  ./frontend:/usr/src/app/frontend
+
+  backend:
     build: .
-    container_name: app
+    container_name: backend
     command: gunicorn --access-logfile - --workers 3 --bind unix:/run/gunicorn/socket english_script_devided_app.wsgi:application
     volumes:
       - .:/usr/src/app
       - ./gunicorn:/run/gunicorn
-    depends_on:
-      - db
+    # depends_on:
+    #   - db
 
-  db:
-    image: postgres:14.2
-    container_name: db
-    environment:
-      - "POSTGRES_USER=postgres"
-      - "POSTGRES_PASSWORD=postgres"
-    ports:
-      - 5432:5432
+  # RDSを使用，コンテナいらない
+  # db:
+  #   image: postgres:14.2
+  #   container_name: db
+  #   environment:
+  #     - "POSTGRES_USER=postgres"
+  #     - "POSTGRES_PASSWORD=postgres"
+  #   ports:
+  #     - 5432:5432
 
   web:
     image: nginx:1.21-alpine

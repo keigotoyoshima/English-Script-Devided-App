@@ -83,11 +83,7 @@ jobs:
         chmod 400 secret_key
         ssh -oStrictHostKeyChecking=no ${EC2_USER}@${EC2_STG_HOST} -i secret_key  "cd English-Script-Devided-App/english_script_devided_app \
         && git pull \
-        # && cd frontend \
-        # && yarn run build \
-        # frontendのコンテナだけプロセス続いていないため,その都度起動する.
         && docker-compose up frontend \
-        # && cd - \
         && docker exec backend python manage.py collectstatic --noinput \
         && docker exec backend python manage.py migrate"
 

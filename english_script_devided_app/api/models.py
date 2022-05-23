@@ -45,7 +45,8 @@ class MovieModel(models.Model):
     user = models.ForeignKey(
         UserModel, 
         on_delete=models.CASCADE, 
-        null=True
+        default=0,
+        null=False,
     )
     
     # version1ではvを格納

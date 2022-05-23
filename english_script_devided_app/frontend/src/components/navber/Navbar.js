@@ -36,7 +36,7 @@ const AppNavBar = ({
       <Row>
         <Col xs={2} >
           <Navbar.Brand href="#home" style={{ fontSize: "1.2vw", height: "80%", marginLeft: "2rem", padding: "0.3rem", display: "flex", alignItems: "center",  color: "#FAFAFA", borderRadius: "10px", backgroundColor: "#0F80D7",  
-          position: "absolute", top:"50%", transform:"translate(0, -50%)" }}>Youtube Language</Navbar.Brand>
+          position: "absolute", top:"50%", transform:"translate(0, -50%)" }}>Youtube Language v2</Navbar.Brand>
         </Col>
         <Col xs={7} >
           <form onSubmit={onSubmit}>

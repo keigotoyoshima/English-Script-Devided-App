@@ -74,7 +74,7 @@ const AppNavBar = ({
             </Col>
             <Col xs={2} style={{ justifyContent: "end", alignItems:"center",  display: "flex" }}>
               <NavDropdown title="Options" id="basic-nav-dropdown" style={{ fontSize: "medium" }}>
-                <NavDropdown.Item onClick={onClickForManagePage}>Manage Page</NavDropdown.Item>
+                {/* <NavDropdown.Item onClick={onClickForManagePage}>Manage Page</NavDropdown.Item> */}
                 <NavDropdown.Item onClick={onClickForLogout}>Logout</NavDropdown.Item>
                 <NavDropdown.Item>Cancel</NavDropdown.Item>
               </NavDropdown>

@@ -92,7 +92,7 @@ const YoutubePage = () => {
       // indexに-1が入るパターンある
       if (index < 0) index = 0;
 
-      handleClickToScroll(index);
+      handleScrollTranscript(index);
     }
   }, [currentTime]);
 
@@ -211,7 +211,7 @@ const YoutubePage = () => {
     // makeMarginToTranscription2(twoDimensionalArray)
   }
 
-  const handleClickToScroll = (id) => {
+  const handleScrollTranscript = (id) => {
     // あえて字幕の上に余白を作る（過ぎた字幕も見れるため）
     // 最初の２行だけは動かさない．
     let start;
@@ -229,12 +229,7 @@ const YoutubePage = () => {
     setActiveIndex(id);
   }
 
-  const handleClickToScrollForWord = (id) => {
-    id = Number(id)
-    refs[id].current.scrollIntoView({
-      behavior: 'auto',
-      block: 'start',
-    });
+  const changeCurrentTime = (id) => {
     seekVideo(transcription_list[id].start)
   }
   const handleClickToMoveMovie = (startTime) => {
@@ -308,7 +303,7 @@ const YoutubePage = () => {
                     <Checkbox style={{ width: "100%", color: "#FAFAFA" }} ></Checkbox>
                     {/* ここにオンクリック */}
                     <ListItemButton>
-                      <ListItemText style={{ width: "100%", color: "#FAFAFA" }} className="wordlist" id={`text-${item.list_id}`} primary={`${item.word}`} primaryTypographyProps={{ fontSize: '25px' }} onClick={() => handleClickToScrollForWord(item.list_id)} />
+                      <ListItemText style={{ width: "100%", color: "#FAFAFA" }} className="wordlist" id={`text-${item.list_id}`} primary={`${item.word}`} primaryTypographyProps={{ fontSize: '25px' }} onClick={() => changeCurrentTime(item.list_id)} />
                     </ListItemButton>
                   </ListItem>
                 </li>

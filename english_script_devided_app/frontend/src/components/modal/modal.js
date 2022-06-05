@@ -8,6 +8,7 @@ import { useDjangoApiContext } from "../frontend_api/DjangoApi";
 import { useUserContext } from "../userContext/userContext";
 import { Row, Col } from "react-bootstrap";
 import CssTextField from "../theme/MuiThemeTextField";
+import { TextField } from "@mui/material";
 const style = {
   position: 'absolute',
   top: '30%',
@@ -102,7 +103,9 @@ const ModalEdit = ({ title, v, getAllSavedMovies }) => {
       >
         <Box sx={style}>
           <Row style={{ alignItems: "center", height: "50%" }}>
-            <CssTextField defaultValue={title} id="outlined-basic" variant="outlined" size='small' onChange={e => updateInputValue(e)} />
+            <CssTextField style={{ color:"#FAFAFA"}} defaultValue={title} id="outlined-basic" variant="outlined" size='small' onChange={e => updateInputValue(e)} 
+              inputProps={{ style: {color: "#FAFAFA" } }} InputLabelProps={{ style: { color: "#888888"} }}
+            />
           </Row>
           <Row style={{ justifyContent: "space-evenly", alignItems: "center", height: "50%", }}>
             <Button style={{ width: "20%", elevation: "0", fontSize: "0.6rem", minWidth: "50px", boxShadow: "none", backgroundColor: "#00CCFF" }} size="small" variant="contained" elevation={0} onClick={() => putMovie()}>

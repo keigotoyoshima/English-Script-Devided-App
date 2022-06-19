@@ -17,7 +17,7 @@ import { useDjangoApiContext } from "../frontend_api/DjangoApi";
 import youtubeDataApi from "../frontend_api/YoutubeDataApi";
 import { useYoutubeIframeApiContext } from "../frontend_api/YoutubeIframeApi";
 import ModalEdit from "../modal/modal";
-
+import axios from "axios";
 
 const base_url = "https://www.youtube.com/embed/"
 
@@ -58,11 +58,23 @@ const YoutubePage = () => {
   }, []);
 
   const callYoutubeDataApi = async (v) => {
-    let data = await youtubeDataApi(v)
-    let givenTitle = data.items[0].snippet.localized.title;
-    postMovie(givenTitle, v)
+    const api_endpoint = `https://vw0sqj3qmc.execute-api.us-east-1.amazonaws.com/stage_api?v=${v}`;
+
+    axios.get(api_endpoint)
+      .then((response) => {
+        if (response.data.body.error) {
+          console.log("error: ", response.data.body.message);
+        } else {
+          let title = response.data.body.title;
+          postMovie(title, v);
+        }
+      })
+      .catch((error) => {
+        console.log("error: ", error);
+      })
   }
 
+  // video_idが更新されたタイミングで呼ぶ．callYoutubeDataApiに関しては，URLSet時のみで良いため，ここでは呼ばない．
   useEffect(() => {
     setInputURL("")
     setLabelURL("URL")
@@ -271,14 +283,14 @@ const YoutubePage = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    setIsLoadingVideo(true)
+    setIsLoadingVideo(true);
     const url = new URL(inputURL);
     const params = new URLSearchParams(url.search);
     for (let param of params) {
       if (param[0] == "v") {
-        setVideo_id(param[1])
-        await callYoutubeDataApi(param[1])
-        setIsLoadingVideo(false)
+        setVideo_id(param[1]);
+        await callYoutubeDataApi(param[1]);
+        setIsLoadingVideo(false);
       }
     }
   }

@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { useDjangoApiContext } from "../frontend_api/DjangoApi";
-import { useUserContext } from "../userContext/userContext";
+import { UserContext, useUserContext } from "../userContext/userContext";
 import { Row, Col } from "react-bootstrap";
 import CssTextField from "../theme/MuiThemeTextField";
 import { TextField } from "@mui/material";
@@ -16,7 +16,7 @@ const style = {
   transform: 'translate(-50%, -50%)',
   width: 400,
   height: 200,
-  bgcolor: 'background.paper',
+  bgcolor: '#202020',
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
@@ -71,12 +71,13 @@ const ChildModal = ({ handleWholeClose, v, getAllSavedMovies }) => {
 }
 
 
-const ModalEdit = ({ title, v, getAllSavedMovies }) => {
+const ModalEdit = ({ title, v, getAllSavedMovies, putUnSavedMovie}) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const { putMovieTask } = useDjangoApiContext()
   const [editValue, setEditValue] = useState("")
+  const { user } = useUserContext()
 
   const updateInputValue = (evt) => {
     const val = evt.target.value;
@@ -103,7 +104,7 @@ const ModalEdit = ({ title, v, getAllSavedMovies }) => {
       >
         <Box sx={style}>
           <Row style={{ alignItems: "center", height: "50%" }}>
-            <CssTextField style={{ color:"#FAFAFA"}} defaultValue={title} id="outlined-basic" variant="outlined" size='small' onChange={e => updateInputValue(e)} 
+            <CssTextField style={{ color:"#202020"}} defaultValue={title} id="outlined-basic" variant="outlined" size='small' onChange={e => updateInputValue(e)} 
               inputProps={{ style: {color: "#FAFAFA" } }} InputLabelProps={{ style: { color: "#888888"} }}
             />
           </Row>

@@ -43,18 +43,33 @@ const YoutubePage = () => {
 
   const [activeIndex, setActiveIndex] = useState(-1)
 
-  const { getAllMoviesTask, postMovieTask, getAllWordsTask, postWordTask } = useDjangoApiContext()
+  const { getAllMoviesTask: getMoviesTask, postMovieTask, getAllWordsTask: getWordsTask, postWordTask } = useDjangoApiContext()
 
   const { onYouTubeIframeAPIReady, onPlayerStateChange, seekVideo, loadVideo, currentTime } = useYoutubeIframeApiContext()
 
   const { user } = useUserContext()
 
+  // json(title, v) 一次元配列
+  const [movie_list_unregisterd, setMovie_list_unregisterd] = useState([]);
+  // json(list_id, word) 二次元配列
+  const [word_list_unregisterd, setWord_list_unregisterd] = useState([]);
+  // 連想配列でmovieのidから上記二つの配列のindexを検索
+  const [mapping, setMapping] = useState({});
 
   useEffect(() => {
     onYouTubeIframeAPIReady();
     // アカウント別のmovieをリロード時に取得
-    getAllSavedMovies();
+    getSavedMovies();
   }, []);
+
+  // とりあえずここにおく
+  const putHeapSavedMovie = (editValue, v) => {
+    let index = mapping[v];
+    let data = {title:editValue, v: v};
+    movie_list_unregisterd[index] = data;
+    let list = movie_list_unregisterd.slice();
+    setMovie_list(list); 
+  }
 
   const callYoutubeDataApi = async (v) => {
     const api_endpoint = `https://vw0sqj3qmc.execute-api.us-east-1.amazonaws.com/stage_api?v=${v}`;
@@ -82,9 +97,9 @@ const YoutubePage = () => {
     setTwoDimensionalArray([[]])
     setTranscription_list([])
     if (video_id != "") {
-      loadVideo(video_id)
-      getYoutubeTranscript(video_id)
-      getAllSavedWords(video_id)
+      loadVideo(video_id);
+      getYoutubeTranscript(video_id);
+      getSavedWords(video_id);
     }
   }, [video_id]);
 
@@ -124,15 +139,26 @@ const YoutubePage = () => {
   }
 
 
-
+  // ヒープ領域
+  const heapPostWord = () => {
+    let data = { word: word, list_id: list_id, v: video_id };
+    let index = mapping[video_id];
+    word_list_unregisterd[index].push(data);
+    let list = word_list_unregisterd[index];
+    setVocabulary_list(list); 
+  }
 
   const saveWordAndTime = async () => {
     if (list_id == "") {
       setAddError(true)
     } else {
       setAddError(false)
-      await postWordTask(video_id, { word: word, list_id: list_id, v: video_id });
-      getAllSavedWords(video_id);
+      if(user.displayName == "localhost"){
+        heapPostWord();
+      }else{
+        await postWordTask(video_id, { word: word, list_id: list_id, v: video_id });
+      }
+      getSavedWords(video_id);
     }
   }
   const callDictionaryApi = async (word) => {
@@ -149,10 +175,25 @@ const YoutubePage = () => {
     }
   }
 
-  const getAllSavedWords = async (v) => {
-    const all_words = await getAllWordsTask(v);
-    setVocabulary_list(all_words.data)
+  // ヒープ領域
+  const getUnSavedWords = (v) => {
+    let list = [];
+    if(v in mapping){
+      let index = mapping[v];
+      list = word_list_unregisterd[index];
+    }
+    setVocabulary_list(list); 
+  }
 
+  const getSavedWords = async (v) => {
+    let all_words = [];
+    if(user.displayName == "localhost"){
+      getUnSavedWords(v);
+    }else{
+      const res = await getWordsTask(v);
+      all_words = res.data;
+      setVocabulary_list(all_words);
+    }
   }
 
   // URL系
@@ -262,21 +303,50 @@ const YoutubePage = () => {
     setDisplay_transcription(prev => !prev);
   }
 
-
-  const postMovie = async (title, v) => {
-
-    await postMovieTask({ title: title, v: v });
-    getAllSavedMovies();
+  // ヒープ領域
+  const heapPostMovie = (title, v) => {
+    let data = {title: title, v:v};
+    if(v in mapping){
+      // 連想配列に既に登録済みの場合
+      // 特に何もしない
+    }else{
+      // javascriptは配列を代入すると参照渡しになる．useStateしてもstateが変わってないため，意味をなさない．そこで，sliceで値渡しにしてuseStateする.
+      movie_list_unregisterd.push(data);
+      let list = movie_list_unregisterd.slice();
+      setMovie_list(list); 
+      // word_list_unregisterdにから配列を挿入
+      word_list_unregisterd.push([]);
+      // movie_list_unregisterd，word_list_unregisterdに対するmovieのindexをmappingに格納
+      mapping[v] = movie_list_unregisterd.length - 1;
+    }
   }
 
-  const getAllSavedMovies = async () => {
-    // json形式で取得
-    const all_movies = await getAllMoviesTask();
-    if (all_movies.data != "") {
-      setMovie_list(all_movies.data)
-    } else {
-      // なかった場合は，初期化
-      setMovie_list([])
+  const postMovie = async (title, v) => {
+    if(user.displayName == "localhost"){
+      heapPostMovie(title,v);
+    }else{
+      await postMovieTask({ title: title, v: v });
+    }
+    getSavedMovies();
+  }
+  
+  // ヒープ領域 
+  const getHeapSavedMovies = () => {
+    // console.log("getUnSavedMovies");
+  }
+
+  const getSavedMovies = async () => {
+    if(user.displayName == "localhost"){
+      getHeapSavedMovies();
+    }else{
+      // json形式で取得
+      const all_movies = await getMoviesTask();
+      if (all_movies.data != "") {
+        setMovie_list(all_movies.data);
+      } else {
+        // なかった場合は，初期化
+        setMovie_list([]);
+      }
     }
   }
 
@@ -409,11 +479,11 @@ const YoutubePage = () => {
                 {movie_list.map((item, index) => (
                   <li key={`section-${index}`} >
                     <ListItemButton style={{ width: "100%", backgroundColor: "#202020" }}>
-                      <ModalEdit title={item.title} v={item.v} getAllSavedMovies={getAllSavedMovies}></ModalEdit>
+                      <ModalEdit title={item.title} v={item.v} getSavedMovies={getSavedMovies} putUnSavedMovie={putHeapSavedMovie}></ModalEdit>
                       <div style={{ width: "5%" }}></div>
                       <ListItemText style={{ width: "95%", color: "#FAFAFA" }} className="movielist" id={`text-${index}`} primary={`${item.title}`} onClick={() => handleClickToSelectMovie(item.v)} />
                     </ListItemButton>
-                    <Divider style={{ height: "0.5px", width:"100%", backgroundColor: "white", }} />
+                    <Divider style={{ height: "0.5px", width: "100%", backgroundColor: "white", }} />
                   </li>
                 ))}
               </List>

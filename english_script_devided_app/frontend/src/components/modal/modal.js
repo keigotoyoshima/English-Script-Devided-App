@@ -22,7 +22,7 @@ const style = {
   p: 4,
 };
 
-const ChildModal = ({ handleWholeClose, v, getAllSavedMovies }) => {
+const ChildModal = ({ handleWholeClose, v, getSavedMovies }) => {
   const [open, setOpen] = React.useState(false);
   const { deleteMovieTask } = useDjangoApiContext()
 
@@ -31,7 +31,7 @@ const ChildModal = ({ handleWholeClose, v, getAllSavedMovies }) => {
     await deleteMovieTask(v)
     handleClose()
     handleWholeClose()
-    getAllSavedMovies()
+    getSavedMovies()
   }
 
   const handleOpen = () => {
@@ -54,7 +54,7 @@ const ChildModal = ({ handleWholeClose, v, getAllSavedMovies }) => {
       >
         <Box sx={{ ...style, width: "auto", height: "auto" }}>
 
-          <h2 id="child-modal-title" style={{height:"50%"}}>Are you sure ?</h2>
+          <h2 id="child-modal-title" style={{ height: "50%", color: "#FAFAFA"}}>Are you sure ?</h2>
           <Row style={{ justifyContent: "space-evenly", height: "50%"}}>
             <Button style={{ width: "auto", elevation: "0", fontSize: "0.6rem", minWidth: "50px", boxShadow: "none", backgroundColor: "#FF0000", height:"30%" }} size="small" variant="contained" elevation={0} onClick={() => handleDelete()}>
               Yes
@@ -71,7 +71,7 @@ const ChildModal = ({ handleWholeClose, v, getAllSavedMovies }) => {
 }
 
 
-const ModalEdit = ({ title, v, getAllSavedMovies, putUnSavedMovie}) => {
+const ModalEdit = ({ title, v, getSavedMovies, putUnSavedMovie}) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -85,8 +85,12 @@ const ModalEdit = ({ title, v, getAllSavedMovies, putUnSavedMovie}) => {
   }
 
   const putMovie = async () => {
-    await putMovieTask({ title: editValue, v: v });
-    getAllSavedMovies();
+    if(user.displayName == "localhost"){
+      putUnSavedMovie(editValue, v);
+    }else{
+      await putMovieTask({ title: editValue, v: v });
+    }
+    getSavedMovies();
     handleClose();
   }
 
@@ -115,7 +119,7 @@ const ModalEdit = ({ title, v, getAllSavedMovies, putUnSavedMovie}) => {
             <Button style={{ width: "20%", elevation: "0", fontSize: "0.6rem", minWidth: "50px", boxShadow: "none", backgroundColor: "gray" }} size="small" variant="contained" elevation={0} onClick={() => handleClose()}>
               Cancel
             </Button>
-            <ChildModal handleWholeClose={() => handleClose()} v={v} getAllSavedMovies={getAllSavedMovies} />
+            <ChildModal handleWholeClose={() => handleClose()} v={v} getSavedMovies={getSavedMovies} />
           </Row>
 
         </Box>

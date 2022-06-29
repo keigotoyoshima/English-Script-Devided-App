@@ -56,7 +56,7 @@ const YoutubePage = () => {
   // 連想配列でmovieのidから上記二つの配列のindexを検索
   const [mapping, setMapping] = useState({});
   
-  // userが非登録userであるかrender前に判定しておく．
+  // userが非登録userであるかrender前に判定しておく．useEffectでの実行だとrenderが終わった後にしか実行されないため, 適さない．
   const unregistered = (user.displayName == "Unregistered");
 
   useEffect(() => {

@@ -47,7 +47,7 @@ const YoutubePage = () => {
 
   const { onYouTubeIframeAPIReady, onPlayerStateChange, seekVideo, loadVideo, currentTime } = useYoutubeIframeApiContext()
 
-  const { user } = useUserContext()
+  const { user, displayName } = useUserContext()
 
   // json(title, v) 一次元配列
   const [movie_list_unregisterd, setMovie_list_unregisterd] = useState([]);
@@ -57,13 +57,20 @@ const YoutubePage = () => {
   const [mapping, setMapping] = useState({});
   
   // userが非登録userであるかrender前に判定しておく．useEffectでの実行だとrenderが終わった後にしか実行されないため, 適さない．
-  const unregistered = (user.displayName == "Unregistered");
+  // let unregistered = (displayName == "Unregistered");
+  const [unregistered, setUnregistered] = useState((displayName == "Unregistered"))
 
   useEffect(() => {
     onYouTubeIframeAPIReady();
     // アカウント別のmovieをリロード時に取得
     getSavedMovies();
   }, []);
+
+  useEffect(() => {
+    setUnregistered(displayName == "Unregistered");
+    setMovie_list([]);
+    setVocabulary_list([]);
+  }, [displayName]);
 
   // とりあえずここにおく
   const putHeapSavedMovie = (editValue, v) => {

@@ -8,7 +8,7 @@ function App() {
 
   return (
     <div className="App" style={{height:"100%"}}>
-      {loading ? <h2>Loading...</h2> : <> {displayName ? <YoutubePage /> : <Auth />} </>}
+      {loading ? <h2 style={{ color: "#FAFAFA" }}>Loading...</h2> : <> {displayName != "Preregistered" ? <YoutubePage /> : <Auth />} </>}
     </div>
   );
 }

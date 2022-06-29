@@ -25,7 +25,8 @@ export const useUserContext = () => {
 
 export const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [displayName, setDisplayName] = useState(null);
+  // 初期値はUnregisteredにしておく
+  const [displayName, setDisplayName] = useState("Unregistered");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [index, setIndex] = useState("");
@@ -93,8 +94,6 @@ export const UserContextProvider = ({ children }) => {
   };
 
   const signInUser = (email, password) => {
-    // dev開発用
-    // setDisplayName("docker");
     setLoading(true);
     signInWithEmailAndPassword(auth, email, password)
       .then(async (res) => {
@@ -121,9 +120,14 @@ export const UserContextProvider = ({ children }) => {
       .finally(() => setLoading(false));
   };
 
-  const logoutUser = () => {
+  const waitingInAuthRoom = () => {
     signOut(auth);
-    setDisplayName(null)
+    setDisplayName("Preregistered");
+  };
+
+  const signOutUser = () => {
+    signOut(auth);
+    setDisplayName("Unregistered");
   };
 
   const forgotPassword = (email) => {
@@ -137,7 +141,8 @@ export const UserContextProvider = ({ children }) => {
     error,
     signInUser,
     registerUser,
-    logoutUser,
+    signOutUser,
+    waitingInAuthRoom,
     forgotPassword,
     index,
     setIndex,

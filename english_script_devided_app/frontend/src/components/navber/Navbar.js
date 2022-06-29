@@ -14,15 +14,20 @@ const AppNavBar = ({
   inputURL,
   onSubmit,
 }) => {
-  const { logoutUser, user, displayName } = useUserContext();
+  const { signOutUser, waitingInAuthRoom, user, displayName } = useUserContext();
 
 
   const onClickForManagePage = () => {
     window.location.href = `${IP_AND_PORT}mypage`;
   }
 
-  const onClickForLogout = () => {
-    logoutUser();
+  const onClickForSignin = () => {
+    // displayNameをPreregisteredに変更
+    waitingInAuthRoom();
+  }
+
+  const onClickForSignout = () => {
+    signOutUser();
   }
 
   // URLinput
@@ -75,7 +80,9 @@ const AppNavBar = ({
             <Col xs={2} style={{ justifyContent: "end", alignItems:"center",  display: "flex" }}>
               <NavDropdown title="Options" id="basic-nav-dropdown" style={{ fontSize: "medium" }}>
                 {/* <NavDropdown.Item onClick={onClickForManagePage}>Manage Page</NavDropdown.Item> */}
-                <NavDropdown.Item onClick={onClickForLogout}>Logout</NavDropdown.Item>
+                {/* <NavDropdown.Item onClick={onClickForSignout}>Register</NavDropdown.Item> */}
+                <NavDropdown.Item onClick={onClickForSignin}>SignIn</NavDropdown.Item>
+                <NavDropdown.Item onClick={onClickForSignout}>Signout</NavDropdown.Item>
                 <NavDropdown.Item>Cancel</NavDropdown.Item>
               </NavDropdown>
             </Col>

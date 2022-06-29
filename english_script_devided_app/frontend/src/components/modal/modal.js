@@ -71,7 +71,7 @@ const ChildModal = ({ handleWholeClose, v, getSavedMovies }) => {
 }
 
 
-const ModalEdit = ({ title, v, getSavedMovies, putUnSavedMovie}) => {
+const ModalEdit = ({ title, v, getSavedMovies, putUnSavedMovie, unregistered}) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -85,7 +85,7 @@ const ModalEdit = ({ title, v, getSavedMovies, putUnSavedMovie}) => {
   }
 
   const putMovie = async () => {
-    if(user.displayName == "localhost"){
+    if(unregistered){
       putUnSavedMovie(editValue, v);
     }else{
       await putMovieTask({ title: editValue, v: v });

@@ -55,6 +55,9 @@ const YoutubePage = () => {
   const [word_list_unregisterd, setWord_list_unregisterd] = useState([]);
   // 連想配列でmovieのidから上記二つの配列のindexを検索
   const [mapping, setMapping] = useState({});
+  
+  // userが非登録userであるかrender前に判定しておく．
+  const unregistered = (user.displayName == "Unregistered");
 
   useEffect(() => {
     onYouTubeIframeAPIReady();
@@ -153,7 +156,7 @@ const YoutubePage = () => {
       setAddError(true)
     } else {
       setAddError(false)
-      if(user.displayName == "localhost"){
+      if (unregistered){
         heapPostWord();
       }else{
         await postWordTask(video_id, { word: word, list_id: list_id, v: video_id });
@@ -187,7 +190,7 @@ const YoutubePage = () => {
 
   const getSavedWords = async (v) => {
     let all_words = [];
-    if(user.displayName == "localhost"){
+    if (unregistered){
       getUnSavedWords(v);
     }else{
       const res = await getWordsTask(v);
@@ -322,7 +325,7 @@ const YoutubePage = () => {
   }
 
   const postMovie = async (title, v) => {
-    if(user.displayName == "localhost"){
+    if (unregistered){
       heapPostMovie(title,v);
     }else{
       await postMovieTask({ title: title, v: v });
@@ -336,7 +339,7 @@ const YoutubePage = () => {
   }
 
   const getSavedMovies = async () => {
-    if(user.displayName == "localhost"){
+    if (unregistered){
       getHeapSavedMovies();
     }else{
       // json形式で取得
@@ -479,7 +482,7 @@ const YoutubePage = () => {
                 {movie_list.map((item, index) => (
                   <li key={`section-${index}`} >
                     <ListItemButton style={{ width: "100%", backgroundColor: "#202020" }}>
-                      <ModalEdit title={item.title} v={item.v} getSavedMovies={getSavedMovies} putUnSavedMovie={putHeapSavedMovie}></ModalEdit>
+                      <ModalEdit title={item.title} v={item.v} getSavedMovies={getSavedMovies} putUnSavedMovie={putHeapSavedMovie} unregistered={unregistered}></ModalEdit>
                       <div style={{ width: "5%" }}></div>
                       <ListItemText style={{ width: "95%", color: "#FAFAFA" }} className="movielist" id={`text-${index}`} primary={`${item.title}`} onClick={() => handleClickToSelectMovie(item.v)} />
                     </ListItemButton>

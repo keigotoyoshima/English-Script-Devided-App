@@ -59,7 +59,7 @@ const YoutubePage = () => {
   // userが非登録userであるかrender前に判定しておく．useEffectでの実行だとrenderが終わった後にしか実行されないため, 適さない．
 
   useEffect(() => {
-    // setTimeoutで時差を作ると常にwindow.YT==trueになるのでIFrame Player API の読み込みの読み込みに時間かかっている模様．
+    // setTimeoutで時差を作ると常にwindow.YT==trueになるのでIFrame Player API の読み込みの読み込みに時間かかっている模様．(main.jsの方がiframe_apiよりも読み込みが早い)
     if (!window.YT) { // If not, load the script asynchronously
       setTimeout(() => {
         onYouTubeIframeAPIReady();

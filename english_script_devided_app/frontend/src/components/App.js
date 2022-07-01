@@ -4,11 +4,12 @@ import Auth from "./userContext/auth";
 import YoutubePage from "./pages/YoutubePage";
 
 function App() {
-  const { displayName, user, loading, error } = useUserContext();
+  const { displayName } = useUserContext();
 
   return (
+    // 表示分岐するときは，なるべく変数を一つにしたほうがいい．
     <div className="App" style={{height:"100%"}}>
-      {loading ? <h2 style={{ color: "#FAFAFA" }}>Loading...</h2> : <> {displayName != "Preregistered" ? <YoutubePage /> : <Auth />} </>}
+      {displayName == "loading" ? <h2 style={{ color: "#FAFAFA" }}>Loading...</h2> : <> {displayName == "Preregistered" ? <Auth /> : <YoutubePage /> } </>}
     </div>
   );
 }

@@ -71,13 +71,13 @@ const ChildModal = ({ handleWholeClose, v, getSavedMovies }) => {
 }
 
 
-const ModalEdit = ({ title, v, getSavedMovies, putUnSavedMovie, unregistered}) => {
+const ModalEdit = ({ title, v, getSavedMovies, putUnSavedMovie}) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const { putMovieTask } = useDjangoApiContext()
   const [editValue, setEditValue] = useState("")
-  const { user } = useUserContext()
+  const { user, displayName } = useUserContext()
 
   const updateInputValue = (evt) => {
     const val = evt.target.value;
@@ -85,7 +85,7 @@ const ModalEdit = ({ title, v, getSavedMovies, putUnSavedMovie, unregistered}) =
   }
 
   const putMovie = async () => {
-    if(unregistered){
+    if (displayName == "Unregistered"){
       putUnSavedMovie(editValue, v);
     }else{
       await putMovieTask({ title: editValue, v: v });

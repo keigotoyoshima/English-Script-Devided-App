@@ -32,7 +32,7 @@ export const UserContextProvider = ({ children }) => {
   const [index, setIndex] = useState("");
 
   useState(() => {
-    setLoading(true);
+    // auth変わった時呼ばれる
     const unsubscribe = onAuthStateChanged(auth, (res) => {
       if (res) {
         setUser(res);
@@ -40,7 +40,6 @@ export const UserContextProvider = ({ children }) => {
         setUser(null);
       }
       setError("");
-      setLoading(false);
     });
     return unsubscribe;
   }, []);
@@ -94,7 +93,7 @@ export const UserContextProvider = ({ children }) => {
   };
 
   const signInUser = (email, password) => {
-    setLoading(true);
+    setDisplayName("loading")
     signInWithEmailAndPassword(auth, email, password)
       .then(async (res) => {
         let response = await getUserTask(res.user.displayName);
@@ -117,7 +116,8 @@ export const UserContextProvider = ({ children }) => {
             break;
         }
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+      });
   };
 
   const waitingInAuthRoom = () => {

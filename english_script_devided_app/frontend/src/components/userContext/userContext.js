@@ -52,10 +52,9 @@ export const UserContextProvider = ({ children }) => {
 
   // displayNameを重複不可にする必要あり
   const registerUser = async (email, password, name) => {
-    setLoading(true);
+    setDisplayName("loading")
     // nameが一意に定まるか判定
     let response = await getUserTask(name);
-
     if (response.status == 204){
       createUserWithEmailAndPassword(auth, email, password)
         .then(async () => {
@@ -79,15 +78,16 @@ export const UserContextProvider = ({ children }) => {
         }
         )
         .catch((err) => {
+          setDisplayName("Preregistered");  
           switch (err.code) {
             case 'auth/email-already-in-use':
               setError('Email already in use !')
           }
         })
-        .finally(() => setLoading(false));
+        .finally(() => {});
     }else{
       setError('Name is already used !')
-      setLoading(false);
+      setDisplayName("Preregistered");
     }
     
   };

@@ -17,8 +17,10 @@ import { useDjangoApiContext } from "../frontend_api/DjangoApi";
 import { useYoutubeIframeApiContext } from "../frontend_api/YoutubeIframeApi";
 import ModalEdit from "../modal/modal";
 import axios from "axios";
-
+import Drawer from '@material-ui/core/Drawer';
+import { Box } from "@mui/material";
 const base_url = "https://www.youtube.com/embed/"
+import { makeStyles } from "@material-ui/core";
 
 
 const YoutubePage = () => {
@@ -54,6 +56,8 @@ const YoutubePage = () => {
   const [word_list_unregisterd, setWord_list_unregisterd] = useState([]);
   // 連想配列でmovieのidから上記二つの配列のindexを検索
   const [mapping, setMapping] = useState({});
+
+  const [open, setopen] = useState(false);
   
   // userが非登録userであるかrender前に判定しておく．useEffectでの実行だとrenderが終わった後にしか実行されないため, 適さない．
 
@@ -378,9 +382,23 @@ const YoutubePage = () => {
     setLabelURL("URL");
   }
 
+  const toggleRightSideOpen = () => {
+    setopen(!open);
+  }
+  
+  // style -----
+  const useStyles = makeStyles({
+    paper: {
+      background: "#202020"
+    }
+  });
+
+  const classes = useStyles();
+
+
   return (
     <div style={{ height: "100%" }}>
-        <AppNavBar style={{ height: "6%" }} inputURL={inputURL} labelURL={labelURL} onSubmit={onSubmit} setInputURL={setInputURL} ></AppNavBar>
+      <AppNavBar style={{ height: "6%" }} inputURL={inputURL} labelURL={labelURL} onSubmit={onSubmit} setInputURL={setInputURL} toggleRightSideOpen={toggleRightSideOpen}></AppNavBar>
         <Row style={{ height: "94%"}}>
           <Col xs={1} style={{ height: "100%" }}>
             <List sx={{
@@ -405,7 +423,7 @@ const YoutubePage = () => {
               ))}
             </List>
           </Col>
-          <Col xs={9} style={{ height: "100%", display:"flex", alignItems: "center", justifyContent:"center" }}>
+          <Col xs={11} style={{ height: "100%", display:"flex", alignItems: "center", justifyContent:"center" }}>
 
               <Row style={{ height: "98%", width:"85%" }}>
                 <Col xs={6} style={{ height: "100%" }}>
@@ -477,36 +495,33 @@ const YoutubePage = () => {
 
 
           </Col>
-          <Col xs={2} style={{height:"100%", display:"flex", alignItems:"center", justifyContent:"end"}}>
-            <Row style={{height:"98%"}}>
-              <List sx={{
-                height: '98%',
-                width: '100%',
-                maxwidth: 50,
-                bgcolor: '#202020',
-                position: 'relative',
-                overflow: 'auto',
-                maxHeight: '100%',
-                '& ul': { padding: 0 },
-              }}
-                subheader={<li />}>
-                {movie_list.map((item, index) => {
-                  return item.title == "pass" ? 
-                    <li key={`section-${index}`} ></li>
+          <Drawer anchor='right' open={open} onClose={toggleRightSideOpen} classes={{ paper: classes.paper }}>
+            <List sx={{
+              height: '98%',
+              width: '100%',
+              maxwidth: 50,
+              bgcolor: '#202020',
+              position: 'relative',
+              overflow: 'auto',
+              maxHeight: '100%',
+              '& ul': { padding: 0 },
+                }}
+              subheader={<li />}>
+              {movie_list.map((item, index) => {
+                return item.title == "pass" ?
+                  <li key={`section-${index}`} ></li>
                   :
-                    <li key={`section-${index}`} >
-                      <ListItemButton style={{ width: "100%", backgroundColor: "#202020" }}>
-                        <ModalEdit title={item.title} v={item.v} getSavedMovies={getSavedMovies} putHeapSavedMovie={putHeapSavedMovie} deleteHeapSavedMovie={deleteHeapSavedMovie} ></ModalEdit>
-                        <div style={{ width: "5%" }}></div>
-                        <ListItemText style={{ width: "95%", color: "#FAFAFA" }} className="movielist" id={`text-${index}`} primary={`${item.title}`} onClick={() => handleClickToSelectMovie(item.v)} />
-                      </ListItemButton>
-                      <Divider style={{ height: "0.5px", width: "100%", backgroundColor: "white", }} />
-                    </li>
-
-                })}
-              </List>
-            </Row>
-          </Col>
+                  <li key={`section-${index}`} >
+                    <ListItemButton style={{ width: "100%", backgroundColor: "#202020" }}>
+                      <ModalEdit title={item.title} v={item.v} getSavedMovies={getSavedMovies} putHeapSavedMovie={putHeapSavedMovie} deleteHeapSavedMovie={deleteHeapSavedMovie} ></ModalEdit>
+                      <div style={{ width: "5%" }}></div>
+                      <ListItemText style={{ width: "95%", color: "#FAFAFA" }} className="movielist" id={`text-${index}`} primary={`${item.title}`} onClick={() => handleClickToSelectMovie(item.v)} />
+                    </ListItemButton>
+                    <Divider style={{ height: "0.5px", width: "100%", backgroundColor: "white", }} />
+                  </li>
+              })}
+            </List>
+          </Drawer>
         </Row>
     </div>
   );

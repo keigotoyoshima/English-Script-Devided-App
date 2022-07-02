@@ -6,13 +6,15 @@ import { useUserContext } from "../userContext/userContext";
 import { IP_AND_PORT } from "../frontend_api/DjangoApi";
 import { TextField } from "@mui/material";
 import { Button } from "react-bootstrap";
-
+import { BiMenu } from "react-icons/bi";
+import {Button as ButtonCore} from '@material-ui/core';
 
 const AppNavBar = ({
   labelURL,
   setInputURL,
   inputURL,
   onSubmit,
+  toggleRightSideOpen,
 }) => {
   const { signOutUser, waitingInAuthRoom, user, displayName } = useUserContext();
 
@@ -72,12 +74,12 @@ const AppNavBar = ({
         </Col>
         <Col xs={3}>
           <Row style={{height:"100%"}}>
-            <Col xs={10} style={{ justifyContent: "center", alignItems: "center", display:"flex"}}>
+            <Col xs={8} style={{ justifyContent: "center", alignItems: "center", display:"flex"}}>
               <Navbar.Text style={{ fontSize: "medium", paddingTop: "0.6rem", color: "#888888"}}>
                 Signed in as: {displayName}
               </Navbar.Text>
             </Col>
-            <Col xs={2} style={{ justifyContent: "end", alignItems:"center",  display: "flex" }}>
+            <Col xs={2} style={{ justifyContent: "end", alignItems:"center",  display: "flex", paddingRight: "0" }}>
               <NavDropdown title="Options" id="basic-nav-dropdown" style={{ fontSize: "medium" }}>
                 {/* <NavDropdown.Item onClick={onClickForManagePage}>Manage Page</NavDropdown.Item> */}
                 {/* <NavDropdown.Item onClick={onClickForSignout}>Register</NavDropdown.Item> */}
@@ -85,6 +87,9 @@ const AppNavBar = ({
                 <NavDropdown.Item onClick={onClickForSignout}>Signout</NavDropdown.Item>
                 <NavDropdown.Item>Cancel</NavDropdown.Item>
               </NavDropdown>
+            </Col>
+            <Col xs={2} style={{ justifyContent: "end", alignItems: "center", display: "flex" }}>
+              <ButtonCore onClick={toggleRightSideOpen}><BiMenu style={{ color: "white", fontSize: "30px"}}/></ButtonCore>
             </Col>
           </Row>
         </Col>

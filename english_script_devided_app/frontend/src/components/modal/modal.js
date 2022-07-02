@@ -22,13 +22,18 @@ const style = {
   p: 4,
 };
 
-const ChildModal = ({ handleWholeClose, v, getSavedMovies }) => {
+const ChildModal = ({ handleWholeClose, v, getSavedMovies, deleteHeapSavedMovie}) => {
   const [open, setOpen] = React.useState(false);
   const { deleteMovieTask } = useDjangoApiContext()
+  const { displayName } = useUserContext()
 
 
   const handleDelete = async () => {
-    await deleteMovieTask(v)
+    if (displayName == "Unregistered") {
+      deleteHeapSavedMovie(v);
+    } else {
+      await deleteMovieTask(v);
+    }
     handleClose()
     handleWholeClose()
     getSavedMovies()
@@ -71,7 +76,7 @@ const ChildModal = ({ handleWholeClose, v, getSavedMovies }) => {
 }
 
 
-const ModalEdit = ({ title, v, getSavedMovies, putUnSavedMovie}) => {
+const ModalEdit = ({ title, v, getSavedMovies, putHeapSavedMovie, deleteHeapSavedMovie}) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -86,7 +91,7 @@ const ModalEdit = ({ title, v, getSavedMovies, putUnSavedMovie}) => {
 
   const putMovie = async () => {
     if (displayName == "Unregistered"){
-      putUnSavedMovie(editValue, v);
+      putHeapSavedMovie(editValue, v);
     }else{
       await putMovieTask({ title: editValue, v: v });
     }
@@ -119,7 +124,7 @@ const ModalEdit = ({ title, v, getSavedMovies, putUnSavedMovie}) => {
             <Button style={{ width: "20%", elevation: "0", fontSize: "0.6rem", minWidth: "50px", boxShadow: "none", backgroundColor: "gray" }} size="small" variant="contained" elevation={0} onClick={() => handleClose()}>
               Cancel
             </Button>
-            <ChildModal handleWholeClose={() => handleClose()} v={v} getSavedMovies={getSavedMovies} />
+            <ChildModal handleWholeClose={() => handleClose()} v={v} getSavedMovies={getSavedMovies} deleteHeapSavedMovie={deleteHeapSavedMovie} />
           </Row>
 
         </Box>

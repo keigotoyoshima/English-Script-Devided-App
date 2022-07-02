@@ -262,6 +262,12 @@ const YoutubePage = () => {
     setMovie_list(list);
   }
 
+  const deleteHeapSavedMovie = (v) => {
+    let index = mapping[v];
+    movie_list_unregisterd[index].title = "pass";
+    let list = movie_list_unregisterd.slice();
+    setMovie_list(list);
+  }
 
   const getHeapSavedWords = (v) => {
     let list = [];
@@ -288,7 +294,11 @@ const YoutubePage = () => {
     let data = { title: title, v: v };
     if (v in mapping) {
       // 連想配列に既に登録済みの場合
-      // 特に何もしない
+      // deleteして再び登録する場合が考えられる．
+      let index = mapping[v];
+      movie_list_unregisterd[index].title = title;
+      let list = movie_list_unregisterd.slice();
+      setMovie_list(list);
     } else {
       // javascriptは配列を代入すると参照渡しになる．useStateしてもstateが変わってないため，意味をなさない．そこで，sliceで値渡しにしてuseStateする.
       movie_list_unregisterd.push(data);
@@ -364,6 +374,8 @@ const YoutubePage = () => {
         setIsLoadingVideo(false);
       }
     }
+    setInputURL("");
+    setLabelURL("URL");
   }
 
   return (
@@ -478,16 +490,20 @@ const YoutubePage = () => {
                 '& ul': { padding: 0 },
               }}
                 subheader={<li />}>
-                {movie_list.map((item, index) => (
-                  <li key={`section-${index}`} >
-                    <ListItemButton style={{ width: "100%", backgroundColor: "#202020" }}>
-                      <ModalEdit title={item.title} v={item.v} getSavedMovies={getSavedMovies} putUnSavedMovie={putHeapSavedMovie}></ModalEdit>
-                      <div style={{ width: "5%" }}></div>
-                      <ListItemText style={{ width: "95%", color: "#FAFAFA" }} className="movielist" id={`text-${index}`} primary={`${item.title}`} onClick={() => handleClickToSelectMovie(item.v)} />
-                    </ListItemButton>
-                    <Divider style={{ height: "0.5px", width: "100%", backgroundColor: "white", }} />
-                  </li>
-                ))}
+                {movie_list.map((item, index) => {
+                  return item.title == "pass" ? 
+                    <li key={`section-${index}`} ></li>
+                  :
+                    <li key={`section-${index}`} >
+                      <ListItemButton style={{ width: "100%", backgroundColor: "#202020" }}>
+                        <ModalEdit title={item.title} v={item.v} getSavedMovies={getSavedMovies} putHeapSavedMovie={putHeapSavedMovie} deleteHeapSavedMovie={deleteHeapSavedMovie} ></ModalEdit>
+                        <div style={{ width: "5%" }}></div>
+                        <ListItemText style={{ width: "95%", color: "#FAFAFA" }} className="movielist" id={`text-${index}`} primary={`${item.title}`} onClick={() => handleClickToSelectMovie(item.v)} />
+                      </ListItemButton>
+                      <Divider style={{ height: "0.5px", width: "100%", backgroundColor: "white", }} />
+                    </li>
+
+                })}
               </List>
             </Row>
           </Col>

@@ -81,6 +81,7 @@ const ModalDic = ({ openModalDic, setOpenModalDic, startText, word, addError,sav
                 startText={startText}
                 saveWordAndTime={saveWordAndTime}
                 addError={addError}
+                handleClose={handleClose}
               />
             }
           </Paper>

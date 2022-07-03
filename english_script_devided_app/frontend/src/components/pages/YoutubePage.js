@@ -401,7 +401,7 @@ const YoutubePage = () => {
               {vocabulary_list.map((item, index) => (
                 <li key={item.id} >
                   <ListItem key={`item-${item.list_id}`}>
-                    <Checkbox style={{ width: "100%", color: "#FAFAFA" }} ></Checkbox>
+                    <Checkbox style={{ color: "#FAFAFA", padding:"0px" }} ></Checkbox>
                     {/* ここにオンクリック */}
                     <ListItemButton>
                       <ListItemText style={{ width: "100%", color: "#FAFAFA" }} className="wordlist" id={`text-${item.list_id}`} primary={`${item.word}`} primaryTypographyProps={{ fontSize: '25px' }} onClick={() => changeCurrentTime(item.list_id)} />

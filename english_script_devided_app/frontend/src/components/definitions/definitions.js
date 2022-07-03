@@ -8,7 +8,8 @@ import { TextField } from "@mui/material";
 const Definitions = (props) =>{
 
   const onClick = () => {
-    props.saveWordAndTime()
+    props.saveWordAndTime();
+    props.handleClose();
   }
 
 

@@ -15,12 +15,13 @@ import { useUserContext } from "../userContext/userContext"
 import { useState, useEffect } from "react";
 import { useDjangoApiContext } from "../frontend_api/DjangoApi";
 import { useYoutubeIframeApiContext } from "../frontend_api/YoutubeIframeApi";
-import ModalEdit from "../modal/modal";
+import ModalEdit from "../modal/modalEdit";
 import axios from "axios";
 import Drawer from '@material-ui/core/Drawer';
 import { Box } from "@mui/material";
 const base_url = "https://www.youtube.com/embed/"
 import { makeStyles } from "@material-ui/core";
+import ModalDic from "../modal/modalDic";
 
 
 const YoutubePage = () => {
@@ -57,7 +58,10 @@ const YoutubePage = () => {
   // 連想配列でmovieのidから上記二つの配列のindexを検索
   const [mapping, setMapping] = useState({});
 
-  const [open, setopen] = useState(false);
+  const [openMovieSideBar, setOpenMovieSideBar] = useState(false);
+
+  const [openModalDic, setOpenModalDic] = useState(false);
+
   
   // userが非登録userであるかrender前に判定しておく．useEffectでの実行だとrenderが終わった後にしか実行されないため, 適さない．
 
@@ -98,11 +102,6 @@ const YoutubePage = () => {
   }, [video_id]);
 
 
-  useEffect(() => {
-    if (word != "") {
-      callDictionaryApi(word)
-    }
-  }, [word]);
 
   useEffect(() => {
     // currnetTime = 動画が今何秒か．
@@ -244,19 +243,6 @@ const YoutubePage = () => {
       getSavedWords(video_id);
     }
   }
-  const callDictionaryApi = async (word) => {
-    let data = await dictionaryApi("en", word)
-    setIsloadingMeanings(false)
-    if (data) {
-      setheaderError(false)
-      setMeaning_list(data)
-
-    } else {
-      // falseが返ってきた場合
-      setheaderError(true);
-
-    }
-  }
 
   const putHeapSavedMovie = (editValue, v) => {
     let index = mapping[v];
@@ -353,6 +339,7 @@ const YoutubePage = () => {
   }
 
   const handleClickToSearch = (word, list_id) => {
+    setOpenModalDic(true);
     setWord(word);
     setList_id(list_id);
   }
@@ -383,7 +370,7 @@ const YoutubePage = () => {
   }
 
   const toggleRightSideOpen = () => {
-    setopen(!open);
+    setOpenMovieSideBar(!openMovieSideBar);
   }
   
   // style -----
@@ -430,27 +417,9 @@ const YoutubePage = () => {
                   <Paper elevation={5} style={{ height: "50%", backgroundColor:"black" }}>
                     <div id="player"></div>
                   </Paper>
-                  <Paper elevation={5} style={{ height: "48%", overflow: "scroll", backgroundColor: "#202020"}} className="mt-3" >
-                    <Header
-                      style={{ height: "20%", backgroundColor: "#202020" }}
-                      word={word}
-                      headerError={headerError}
-                    />
-                    {isLoadingMeanings && (
-                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80%' }}>
-                        <CircularProgress />
-                      </div>
-                    )}
-                    {!isLoadingMeanings && transcription_list.length != 0 && word != "" &&
-                      <Definitions style={{ height: "80%" }}
-                        meaning_list={meaning_list}
-                        word={word}
-                        startText={transcription_list[list_id].startText}
-                        saveWordAndTime={saveWordAndTime}
-                        addError={addError}
-                      />
-                    }
-                  </Paper>
+                  {transcription_list.length != 0 && list_id != "" &&
+                    <ModalDic openModalDic={openModalDic} setOpenModalDic={setOpenModalDic} startText={transcription_list[list_id].startText} word={word} addError={addError} saveWordAndTime={saveWordAndTime}></ModalDic>
+                  }
                 </Col>
                 <Col xs={6} style={{ height: "100%" }}>
                   <Paper style={{ height: "100%", overflow: "scroll", backgroundColor: "#202020"}}>
@@ -495,7 +464,7 @@ const YoutubePage = () => {
 
 
           </Col>
-          <Drawer anchor='right' open={open} onClose={toggleRightSideOpen} classes={{ paper: classes.paper }}>
+          <Drawer anchor='right' open={openMovieSideBar} onClose={toggleRightSideOpen} classes={{ paper: classes.paper }}>
             <List sx={{
               height: '98%',
               width: '100%',

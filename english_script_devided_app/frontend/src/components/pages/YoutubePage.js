@@ -413,16 +413,16 @@ const YoutubePage = () => {
           </Col>
           <Col xs={11} style={{ height: "100%", display:"flex", alignItems: "center", justifyContent:"center" }}>
 
-              <Row style={{ height: "98%", width:"85%" }}>
-                <Col xs={6} style={{ height: "100%" }}>
-                  <Paper elevation={5} style={{ height: "50%", backgroundColor:"black" }}>
+              <Row style={{ height: "98%", width:"98%" }}>
+                <Col xs={7} style={{ height: "100%" }}>
+                  <Paper elevation={5} style={{ height: "100%", width: "100%", backgroundColor:"black" }}>
                     <div id="player"></div>
                   </Paper>
                   {transcription_list.length != 0 && list_id != "" &&
                     <ModalDic openModalDic={openModalDic} setOpenModalDic={setOpenModalDic} startText={transcription_list[list_id].startText} word={word} addError={addError} saveWordAndTime={saveWordAndTime}></ModalDic>
                   }
                 </Col>
-                <Col xs={6} style={{ height: "100%" }}>
+                <Col xs={5} style={{ height: "100%" }}>
                   <Paper style={{ height: "100%", overflow: "scroll", backgroundColor: "#202020"}}>
                   <Button style={{ color: "#888888" }} variant="text" onClick={() => {
                     handleClickToDisplay()

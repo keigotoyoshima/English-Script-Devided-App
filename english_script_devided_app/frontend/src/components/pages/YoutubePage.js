@@ -466,6 +466,7 @@ const YoutubePage = () => {
 
           </Col>
           <Drawer anchor='right' open={openMovieSideBar} onClose={toggleRightSideOpen} classes={{ paper: classes.paper }}>
+            {movie_list.length == 0 ?
             <List sx={{
               height: '98%',
               width: '100%',
@@ -475,7 +476,22 @@ const YoutubePage = () => {
               overflow: 'auto',
               maxHeight: '100%',
               '& ul': { padding: 0 },
-                }}
+            }}
+              subheader={<li />}>
+              <li key="no_movie" >
+                <ListItemText style={{ width: "100%", color: "#FAFAFA" }} className="movielist"  primary="No movie that you learned in the past yet." />
+              </li>
+            </List> :
+            <List sx={{
+              height: '98%',
+              width: '100%',
+              maxwidth: 50,
+              bgcolor: '#202020',
+              position: 'relative',
+              overflow: 'auto',
+              maxHeight: '100%',
+              '& ul': { padding: 0 },
+            }}
               subheader={<li />}>
               {movie_list.map((item, index) => {
                 return item.title == "pass" ?
@@ -491,6 +507,7 @@ const YoutubePage = () => {
                   </li>
               })}
             </List>
+            }
           </Drawer>
         </Row>
     </div>

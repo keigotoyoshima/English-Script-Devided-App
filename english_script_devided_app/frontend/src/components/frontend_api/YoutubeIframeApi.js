@@ -52,7 +52,7 @@ export const YoutubeIframeApiContextProvider = ({ children }) => {
         setCurrentTime(t);
       }
       lastTime = player.getCurrentTime();
-      setTimeout(checkPlayerTime, interval); /// repeat function call in 1 second
+      setTimeout(checkPlayerTime, interval); 
     }
     setTimeout(checkPlayerTime, interval); /// initial call delayed 
   }
@@ -82,13 +82,17 @@ export const YoutubeIframeApiContextProvider = ({ children }) => {
     return time;
   }
 
-
+  // 現在の動画の読み込みを停止してキャンセルします。
   const stopVideo = () => {
     player.stopVideo();
   }
 
+  // 一時停止
+  const pauseVideo = () => {
+    player.pauseVideo();
+  }
+
   const seekVideo = (startTime) => {
-    // player.seekTo(seconds:Number, allowSeekAhead:Boolean):Void
     player.seekTo(startTime, true)
   }
 
@@ -102,7 +106,8 @@ export const YoutubeIframeApiContextProvider = ({ children }) => {
     onPlayerStateChange,
     seekVideo,
     loadVideo,
-    currentTime
+    pauseVideo,
+    currentTime,
   };
   return (
     <YoutubeIframeApiContext.Provider value={contextValue}>

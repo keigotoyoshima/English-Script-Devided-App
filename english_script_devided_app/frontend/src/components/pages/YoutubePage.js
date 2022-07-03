@@ -47,7 +47,7 @@ const YoutubePage = () => {
 
   const { getAllMoviesTask: getMoviesTask, postMovieTask, getAllWordsTask: getWordsTask, postWordTask } = useDjangoApiContext()
 
-  const { onYouTubeIframeAPIReady, onPlayerStateChange, seekVideo, loadVideo, currentTime } = useYoutubeIframeApiContext()
+  const { onYouTubeIframeAPIReady, onPlayerStateChange, seekVideo, loadVideo, pauseVideo, currentTime } = useYoutubeIframeApiContext()
 
   const { user, displayName } = useUserContext()
 
@@ -339,6 +339,7 @@ const YoutubePage = () => {
   }
 
   const handleClickToSearch = (word, list_id) => {
+    pauseVideo();
     setOpenModalDic(true);
     setWord(word);
     setList_id(list_id);

@@ -98,7 +98,6 @@ export const YoutubeIframeApiContextProvider = ({ children }) => {
 
   const loadVideo = (v) => {
     player.loadVideoById(v);
-    player.stopVideo();
   }
 
   const contextValue = {

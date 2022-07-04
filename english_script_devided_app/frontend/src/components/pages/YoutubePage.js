@@ -15,13 +15,29 @@ import { useUserContext } from "../userContext/userContext"
 import { useState, useEffect } from "react";
 import { useDjangoApiContext } from "../frontend_api/DjangoApi";
 import { useYoutubeIframeApiContext } from "../frontend_api/YoutubeIframeApi";
-import ModalEdit from "../modal/modalEdit";
+import ModalEdit from "../modal/ModalEdit";
 import axios from "axios";
 import Drawer from '@material-ui/core/Drawer';
 import { Box } from "@mui/material";
 const base_url = "https://www.youtube.com/embed/"
 import { makeStyles } from "@material-ui/core";
-import ModalDic from "../modal/modalDic";
+import ModalDic from "../modal/ModalDic";
+import ModalDelete from "../modal/ModalDelete";
+import Modal from '@mui/material/Modal';
+import CssTextField from "../theme/MuiThemeTextField";
+
+const style = {
+  position: 'absolute',
+  top: '30%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  height: 200,
+  bgcolor: '#202020',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 
 const YoutubePage = () => {
@@ -61,6 +77,12 @@ const YoutubePage = () => {
   const [openMovieSideBar, setOpenMovieSideBar] = useState(false);
 
   const [openModalDic, setOpenModalDic] = useState(false);
+
+  const [modalEditOpen, setModalEditOpen] = useState(false);
+  const [modalEditTitle, setModalEditTitle] = useState("");
+  const [modalEditVideoId, setModalEditVideoId] = useState("");
+
+
 
   
   // userが非登録userであるかrender前に判定しておく．useEffectでの実行だとrenderが終わった後にしか実行されないため, 適さない．
@@ -370,8 +392,30 @@ const YoutubePage = () => {
     setLabelURL("URL");
   }
 
-  const toggleRightSideOpen = () => {
-    setOpenMovieSideBar(!openMovieSideBar);
+  const handleCloseRightSideBar = () => setOpenMovieSideBar(false);
+  const handleOpenRightSideBar = () => setOpenMovieSideBar(true);
+
+  const handleCloseModalEdit = () => setModalEditOpen(false);
+  const handleOpenModalEdit = () => setModalEditOpen(true);
+  
+
+  const { putMovieTask } = useDjangoApiContext()
+  const [editValue, setEditValue] = useState("")
+
+  const updateInputValue = (evt) => {
+    const val = evt.target.value;
+    setEditValue(val);
+  }
+
+  const putMovie = async () => {
+    console.log("putMvoie is called");
+    if (displayName == "Unregistered") {
+      putHeapSavedMovie(editValue, modalEditVideoId);
+    } else {
+      await putMovieTask({ title: editValue, v: modalEditVideoId });
+    }
+    getSavedMovies();
+    handleCloseModalEdit();
   }
   
   // style -----
@@ -386,7 +430,7 @@ const YoutubePage = () => {
 
   return (
     <div style={{ height: "100%" }}>
-      <AppNavBar style={{ height: "6%" }} inputURL={inputURL} labelURL={labelURL} onSubmit={onSubmit} setInputURL={setInputURL} toggleRightSideOpen={toggleRightSideOpen}></AppNavBar>
+      <AppNavBar style={{ height: "6%" }} inputURL={inputURL} labelURL={labelURL} onSubmit={onSubmit} setInputURL={setInputURL} handleOpenRightSideBar={handleOpenRightSideBar}></AppNavBar>
         <Row style={{ height: "94%"}}>
           <Col xs={1} style={{ height: "100%" }}>
             <List sx={{
@@ -421,6 +465,26 @@ const YoutubePage = () => {
                   {transcription_list.length != 0 && list_id != "" &&
                     <ModalDic openModalDic={openModalDic} setOpenModalDic={setOpenModalDic} startText={transcription_list[list_id].startText} word={word} addError={addError} saveWordAndTime={saveWordAndTime}></ModalDic>
                   }
+                  <Modal
+                    open={modalEditOpen}
+                    onClose={handleCloseModalEdit}
+                  >
+                    <Box sx={style}>
+                      <Row style={{ alignItems: "center", height: "50%" }}>
+                    <CssTextField style={{ color: "#202020" }} defaultValue={modalEditTitle} id="outlined-basic" variant="outlined" size='small' onChange={e => updateInputValue(e)} inputProps={{ style: { color: "#FAFAFA" } }} InputLabelProps={{ style: { color: "#888888" } }}
+                        />
+                      </Row>
+                      <Row style={{ justifyContent: "space-evenly", alignItems: "center", height: "50%", }}>
+                        <Button style={{ width: "20%", elevation: "0", fontSize: "0.6rem", minWidth: "50px", boxShadow: "none", backgroundColor: "#00CCFF" }} size="small" variant="contained" elevation={0} onClick={() => putMovie()}>
+                          Save
+                        </Button>
+                        <Button style={{ width: "20%", elevation: "0", fontSize: "0.6rem", minWidth: "50px", boxShadow: "none", backgroundColor: "gray" }} size="small" variant="contained" elevation={0} onClick={() => handleCloseModalEdit()}>Cancel</Button>
+                        <ModalDelete handleWholeClose={() => handleCloseModalEdit()} v={modalEditVideoId} getSavedMovies={getSavedMovies} deleteHeapSavedMovie={deleteHeapSavedMovie} />
+                      </Row>
+
+                    </Box>
+                  </Modal>
+
                 </Col>
                 <Col xs={5} style={{ height: "100%" }}>
                   <Paper style={{ height: "100%", overflow: "scroll", backgroundColor: "#202020"}}>
@@ -465,7 +529,7 @@ const YoutubePage = () => {
 
 
           </Col>
-          <Drawer anchor='right' open={openMovieSideBar} onClose={toggleRightSideOpen} classes={{ paper: classes.paper }}>
+        <Drawer anchor='right' open={openMovieSideBar} onClose={handleCloseRightSideBar} classes={{ paper: classes.paper }}>
             {movie_list.length == 0 ?
             <List sx={{
               height: '98%',
@@ -499,7 +563,7 @@ const YoutubePage = () => {
                   :
                   <li key={`section-${index}`} >
                     <ListItemButton style={{ width: "100%", backgroundColor: "#202020" }}>
-                      <ModalEdit title={item.title} v={item.v} getSavedMovies={getSavedMovies} putHeapSavedMovie={putHeapSavedMovie} deleteHeapSavedMovie={deleteHeapSavedMovie} ></ModalEdit>
+                      <ModalEdit title={item.title} v={item.v} handleCloseRightSideBar={handleCloseRightSideBar} handleOpenModalEdit={handleOpenModalEdit} setModalEditTitle={setModalEditTitle} setModalEditVideoId={setModalEditVideoId} ></ModalEdit>
                       <div style={{ width: "5%" }}></div>
                       <ListItemText style={{ width: "95%", color: "#FAFAFA" }} className="movielist" id={`text-${index}`} primary={`${item.title}`} onClick={() => handleClickToSelectMovie(item.v)} />
                     </ListItemButton>

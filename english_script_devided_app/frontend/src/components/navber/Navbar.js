@@ -14,7 +14,7 @@ const AppNavBar = ({
   setInputURL,
   inputURL,
   onSubmit,
-  toggleRightSideOpen,
+  handleOpenRightSideBar,
 }) => {
   const { signOutUser, waitingInAuthRoom, user, displayName } = useUserContext();
 
@@ -89,7 +89,7 @@ const AppNavBar = ({
               </NavDropdown>
             </Col>
             <Col xs={2} style={{ justifyContent: "end", alignItems: "center", display: "flex" }}>
-              <ButtonCore onClick={toggleRightSideOpen}><BiMenu style={{ color: "white", fontSize: "30px"}}/></ButtonCore>
+              <ButtonCore onClick={handleOpenRightSideBar}><BiMenu style={{ color: "white", fontSize: "30px"}}/></ButtonCore>
             </Col>
           </Row>
         </Col>

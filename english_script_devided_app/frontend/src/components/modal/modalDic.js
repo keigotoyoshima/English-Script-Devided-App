@@ -36,13 +36,10 @@ const ModalDic = ({ openModalDic, setOpenModalDic, startText, word, addError,sav
       setIsloadingMeanings(true);
       callDictionaryApi(word);
     }
-    console.log(word, 'word in ModalDic useEffect');
   }, [word]);
 
   const callDictionaryApi = async (word) => {
-    console.log("callDictionaryApi is called");
     let data = await dictionaryApi("en", word);
-    console.log(data, 'data');
     setIsloadingMeanings(false);
     if (data) {
       setheaderError(false);

@@ -22,113 +22,19 @@ const style = {
   p: 4,
 };
 
-const ChildModal = ({ handleWholeClose, v, getSavedMovies, deleteHeapSavedMovie}) => {
-  const [open, setOpen] = React.useState(false);
-  const { deleteMovieTask } = useDjangoApiContext()
-  const { displayName } = useUserContext()
-
-
-  const handleDelete = async () => {
-    if (displayName == "Unregistered") {
-      deleteHeapSavedMovie(v);
-    } else {
-      await deleteMovieTask(v);
-    }
-    handleClose()
-    handleWholeClose()
-    getSavedMovies()
-  }
-
+const ModalEdit = ({ title, v, handleCloseRightSideBar, handleOpenModalEdit, setModalEditVideoId, setModalEditTitle}) => {
   const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  return (
-    <div style={{ width: "20%", padding: "0" }}>
-      <Button style={{ width: "100%", elevation: "0", fontSize: "0.6rem", minWidth: "50px", boxShadow: "none", backgroundColor: "#FF0000" }} size="small" variant="contained" elevation={0} onClick={() => handleOpen()}>Delete</Button>
-      <Modal
-        hideBackdrop
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="child-modal-title"
-        aria-describedby="child-modal-description"
-      >
-        <Box sx={{ ...style, width: "auto", height: "auto" }}>
-
-          <h2 id="child-modal-title" style={{ height: "50%", color: "#FAFAFA"}}>Are you sure ?</h2>
-          <Row style={{ justifyContent: "space-evenly", height: "50%"}}>
-            <Button style={{ width: "auto", elevation: "0", fontSize: "0.6rem", minWidth: "50px", boxShadow: "none", backgroundColor: "#FF0000", height:"30%" }} size="small" variant="contained" elevation={0} onClick={() => handleDelete()}>
-              Yes
-            </Button>
-            <Button style={{ width: "auto", elevation: "0", fontSize: "0.6rem", minWidth: "50px", boxShadow: "none", backgroundColor: "gray", height: "30%" }} size="small" variant="contained" elevation={0} onClick={() => handleClose()}>
-              No
-            </Button>
-          </Row>
-
-        </Box>
-      </Modal>
-    </div>
-  );
-}
-
-
-const ModalEdit = ({ title, v, getSavedMovies, putHeapSavedMovie, deleteHeapSavedMovie}) => {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const { putMovieTask } = useDjangoApiContext()
-  const [editValue, setEditValue] = useState("")
-  const { user, displayName } = useUserContext()
-
-  const updateInputValue = (evt) => {
-    const val = evt.target.value;
-    setEditValue(val);
+    handleCloseRightSideBar(false); 
+    handleOpenModalEdit(true);
+    setModalEditVideoId(v);
+    setModalEditTitle(title);
   }
-
-  const putMovie = async () => {
-    if (displayName == "Unregistered"){
-      putHeapSavedMovie(editValue, v);
-    }else{
-      await putMovieTask({ title: editValue, v: v });
-    }
-    getSavedMovies();
-    handleClose();
-  }
-
-  
 
   return (
     <div>
       <Button style={{ width: "3%", elevation: "0", fontSize: "0.6rem", minWidth: "50px", boxShadow: "none", backgroundColor: "gray" }} size="small" variant="contained" elevation={0} onClick={() => handleOpen()}>
         Edit
       </Button>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-      >
-        <Box sx={style}>
-          <Row style={{ alignItems: "center", height: "50%" }}>
-            <CssTextField style={{ color:"#202020"}} defaultValue={title} id="outlined-basic" variant="outlined" size='small' onChange={e => updateInputValue(e)} 
-              inputProps={{ style: {color: "#FAFAFA" } }} InputLabelProps={{ style: { color: "#888888"} }}
-            />
-          </Row>
-          <Row style={{ justifyContent: "space-evenly", alignItems: "center", height: "50%", }}>
-            <Button style={{ width: "20%", elevation: "0", fontSize: "0.6rem", minWidth: "50px", boxShadow: "none", backgroundColor: "#00CCFF" }} size="small" variant="contained" elevation={0} onClick={() => putMovie()}>
-              Save
-            </Button>
-            <Button style={{ width: "20%", elevation: "0", fontSize: "0.6rem", minWidth: "50px", boxShadow: "none", backgroundColor: "gray" }} size="small" variant="contained" elevation={0} onClick={() => handleClose()}>
-              Cancel
-            </Button>
-            <ChildModal handleWholeClose={() => handleClose()} v={v} getSavedMovies={getSavedMovies} deleteHeapSavedMovie={deleteHeapSavedMovie} />
-          </Row>
-
-        </Box>
-      </Modal>
     </div>
   );
 }
